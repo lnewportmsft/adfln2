@@ -1,0 +1,79 @@
+{
+	"name": "CopyMultiTableJSONArray",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEachTableInArray",
+				"type": "ForEach",
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "CopyFromSQLDBtoBlob",
+							"type": "Copy",
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source.tableName}"
+								},
+								{
+									"name": "Destination",
+									"value": "raw/@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource"
+								},
+								"sink": {
+									"type": "BlobSink"
+								},
+								"enableStaging": false,
+								"enableSkipIncompatibleRow": true,
+								"dataIntegrationUnits": 0
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"tableName": "[dbo].[mktzips]"
+						},
+						"destination": {
+							"fileName": "[dbo].[mktzips].txt"
+						}
+					},
+					{
+						"source": {
+							"tableName": "[dbo].[zcshapes]"
+						},
+						"destination": {
+							"fileName": "[dbo].[zcshapes].txt"
+						}
+					}
+				]
+			}
+		},
+		"folder": {
+			"name": "Copy Demos"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
