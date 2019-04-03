@@ -1,0 +1,14 @@
+{
+	"name": "SourceDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": "[dbo].[data_source_table]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

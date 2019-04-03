@@ -16,6 +16,10 @@
 					"source": {
 						"type": "SqlSource"
 					},
+					"dataset": {
+						"referenceName": "WatermarkDataset",
+						"type": "DatasetReference"
+					},
 					"firstRowOnly": true
 				}
 			},
