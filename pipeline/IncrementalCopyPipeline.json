@@ -87,6 +87,12 @@
 						"referenceName": "SourceDataset",
 						"type": "DatasetReference"
 					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkDataset",
+						"type": "DatasetReference"
+					}
 				]
 			},
 			{
