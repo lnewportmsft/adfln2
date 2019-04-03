@@ -37,6 +37,10 @@
 					"source": {
 						"type": "SqlSource",
 						"sqlReaderQuery": "select MAX(LastModifytime) as NewWatermarkvalue from data_source_table"
+					},
+					"dataset": {
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference"
 					}
 				}
 			},
@@ -77,7 +81,13 @@
 					},
 					"enableStaging": false,
 					"dataIntegrationUnits": 0
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset",
+						"type": "DatasetReference"
+					}
+				]
 			},
 			{
 				"name": "StoredProceduretoWriteWatermarkActivity",
