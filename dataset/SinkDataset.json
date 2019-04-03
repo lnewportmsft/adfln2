@@ -1,0 +1,27 @@
+{
+	"name": "SinkDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": ",",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"fileName": {
+				"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')",
+				"type": "Expression"
+			},
+			"folderPath": "adftutorial/incrementalcopy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
