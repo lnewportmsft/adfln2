@@ -1,0 +1,20 @@
+{
+	"name": "CurrencyDatasetCAD1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Currency_CAD.txt",
+				"container": "demo"
+			},
+			"columnDelimiter": "\t",
+			"firstRowAsHeader": false
+		},
+		"schema": []
+	}
+}

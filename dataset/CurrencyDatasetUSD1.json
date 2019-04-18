@@ -1,0 +1,20 @@
+{
+	"name": "CurrencyDatasetUSD1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Currency_USD.txt",
+				"container": "demo"
+			},
+			"columnDelimiter": "\t",
+			"firstRowAsHeader": false
+		},
+		"schema": []
+	}
+}
