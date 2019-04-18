@@ -1,0 +1,20 @@
+{
+	"name": "movie_dataflow_source1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "movies.csv",
+				"container": "demo"
+			},
+			"columnDelimiter": ",",
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}

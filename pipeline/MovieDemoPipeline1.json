@@ -1,0 +1,33 @@
+{
+	"name": "MovieDemoPipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "ExecuteMovieDemoDataFlow",
+				"type": "ExecuteDataFlow",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false
+				},
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "MovieDemo1",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "MyAzureBlobLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					},
+					"compute": {
+						"computeType": "General",
+						"coreCount": 8
+					}
+				}
+			}
+		]
+	}
+}
