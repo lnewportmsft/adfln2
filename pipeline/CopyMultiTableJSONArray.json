@@ -42,7 +42,19 @@
 								"enableStaging": false,
 								"enableSkipIncompatibleRow": true,
 								"dataIntegrationUnits": 0
-							}
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SinkDataset",
+									"type": "DatasetReference"
+								}
+							]
 						}
 					]
 				}
