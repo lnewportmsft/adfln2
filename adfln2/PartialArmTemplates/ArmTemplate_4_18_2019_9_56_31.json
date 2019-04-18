@@ -6,26 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfln2"
-		},
-		"AzureSqlDWLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
-		},
-		"AzureSqlDatabaseLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
-		},
-		"MyAzureBlobLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
-		},
-		"SinkDataset_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
-		},
-		"SinkDataset_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "adftutorial/incrementalcopy"
 		}
 	},
 	"variables": {
@@ -41,8 +21,6 @@
 					{
 						"name": "ForEachTableInArray",
 						"type": "ForEach",
-						"dependsOn": [],
-						"userProperties": [],
 						"typeProperties": {
 							"items": {
 								"value": "@pipeline().parameters.cw_items",
@@ -53,7 +31,6 @@
 								{
 									"name": "CopyFromSQLDBtoBlob",
 									"type": "Copy",
-									"dependsOn": [],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -85,15 +62,13 @@
 									"inputs": [
 										{
 											"referenceName": "SourceDataset",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "SinkDataset",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								}
@@ -126,8 +101,7 @@
 				},
 				"folder": {
 					"name": "Copy Demos"
-				},
-				"annotations": []
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
@@ -143,7 +117,6 @@
 					{
 						"name": "LookupOldWaterMarkActivity",
 						"type": "Lookup",
-						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -151,15 +124,13 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource"
 							},
 							"dataset": {
 								"referenceName": "WatermarkDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": true
 						}
@@ -167,7 +138,6 @@
 					{
 						"name": "LookupNewWaterMarkActivity",
 						"type": "Lookup",
-						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -175,7 +145,6 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
@@ -183,8 +152,7 @@
 							},
 							"dataset": {
 								"referenceName": "SourceDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						}
 					},
@@ -212,7 +180,6 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
@@ -230,15 +197,13 @@
 						"inputs": [
 							{
 								"referenceName": "SourceDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SinkDataset",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -260,7 +225,6 @@
 							"secureOutput": false,
 							"secureInput": false
 						},
-						"userProperties": [],
 						"typeProperties": {
 							"storedProcedureName": "[concat('[', 'dbo].[sp_write_watermark]')]",
 							"storedProcedureParameters": {
@@ -288,41 +252,12 @@
 				],
 				"folder": {
 					"name": "Copy Demos"
-				},
-				"annotations": []
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/WatermarkDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
-				"[concat(variables('factoryId'), '/datasets/SinkDataset')]",
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"DWTableName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"typeProperties": {
-					"tableName": {
-						"value": "@dataset().DWTableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
+				"[concat(variables('factoryId'), '/datasets/SinkDataset')]"
 			]
 		},
 		{
@@ -334,15 +269,11 @@
 					"referenceName": "AzureSqlDatabaseLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": "dummyName"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SinkDataset')]",
@@ -353,7 +284,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureBlob",
 				"typeProperties": {
 					"format": {
@@ -366,15 +296,12 @@
 						"firstRowAsHeader": false
 					},
 					"fileName": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]",
+						"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')",
 						"type": "Expression"
 					},
-					"folderPath": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
+					"folderPath": "adftutorial/incrementalcopy"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SourceDataset')]",
@@ -385,15 +312,11 @@
 					"referenceName": "AzureSqlDatabaseLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": "[concat('[', 'dbo].[data_source_table]')]"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/WatermarkDataset')]",
@@ -404,54 +327,11 @@
 					"referenceName": "AzureSqlDatabaseLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": "[concat('[', 'dbo].[watermarktable]')]"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDW",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDWLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MyAzureBlobLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('MyAzureBlobLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoDayStatsSink1')]",
@@ -462,7 +342,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -473,10 +352,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoTotalByPaymentType1')]",
@@ -487,7 +363,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -498,10 +373,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoVendorStatsSink1')]",
@@ -512,7 +384,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -523,10 +394,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/USDOutput1')]",
@@ -537,7 +405,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -548,10 +415,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/movie_dataflow_sink1')]",
@@ -562,7 +426,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -573,10 +436,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/movie_dataflow_source1')]",
@@ -587,7 +447,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -599,10 +458,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input1')]",
@@ -613,7 +469,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -625,10 +480,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_fare_input1')]",
@@ -639,7 +491,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -651,10 +502,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Currency Converter1')]",
@@ -671,8 +519,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "USDCurrency",
-							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency"
 						},
 						{
 							"dataset": {
@@ -680,8 +527,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "CADSource",
-							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource"
 						}
 					],
 					"sinks": [
@@ -742,8 +588,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "Movies",
-							"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies"
 						}
 					],
 					"sinks": [
@@ -783,8 +628,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "TripData",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData"
 						},
 						{
 							"dataset": {
@@ -792,8 +636,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "TripFare",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare"
 						}
 					],
 					"sinks": [
@@ -859,7 +702,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -870,10 +712,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CurrencyDatasetCAD1')]",
@@ -884,7 +723,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -896,10 +734,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/CurrencyDatasetUSD1')]",
@@ -910,7 +745,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -922,10 +756,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoDayStatsSink2')]",
@@ -936,7 +767,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -947,10 +777,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoTotalByPaymentType2')]",
@@ -961,7 +788,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -972,10 +798,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoVendorStatsSink2')]",
@@ -986,7 +809,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -997,10 +819,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/USDOutput2')]",
@@ -1011,7 +830,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -1022,10 +840,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/movie_dataflow_sink2')]",
@@ -1036,7 +851,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -1047,10 +861,7 @@
 					"firstRowAsHeader": false
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/movie_dataflow_source2')]",
@@ -1061,7 +872,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -1073,10 +883,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input2')]",
@@ -1087,7 +894,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -1099,10 +905,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_fare_input2')]",
@@ -1113,7 +916,6 @@
 					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
@@ -1125,10 +927,7 @@
 					"firstRowAsHeader": true
 				},
 				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
+			}
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Currency Converter2')]",
@@ -1145,8 +944,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "USDCurrency",
-							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency"
 						},
 						{
 							"dataset": {
@@ -1154,8 +952,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "CADSource",
-							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource"
 						}
 					],
 					"sinks": [
@@ -1216,8 +1013,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "Movies",
-							"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies"
 						}
 					],
 					"sinks": [
@@ -1257,8 +1053,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "TripData",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData"
 						},
 						{
 							"dataset": {
@@ -1266,8 +1061,7 @@
 								"type": "DatasetReference"
 							},
 							"name": "TripFare",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare",
-							"typeProperties": {}
+							"script": "source(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare"
 						}
 					],
 					"sinks": [
