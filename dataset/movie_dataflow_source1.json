@@ -15,6 +15,19 @@
 			"columnDelimiter": ",",
 			"firstRowAsHeader": true
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "movieId",
+				"type": "String"
+			},
+			{
+				"name": "title",
+				"type": "String"
+			},
+			{
+				"name": "genres",
+				"type": "String"
+			}
+		]
 	}
 }

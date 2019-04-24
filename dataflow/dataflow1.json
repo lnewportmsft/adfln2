@@ -1,0 +1,24 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "movie_dataflow_source1",
+						"type": "DatasetReference"
+					},
+					"name": "source1",
+					"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> source1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1",
+					"script": "source1 derive() ~> DerivedColumn1"
+				}
+			]
+		}
+	}
+}
