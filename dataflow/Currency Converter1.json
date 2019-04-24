@@ -11,7 +11,7 @@
 						"type": "DatasetReference"
 					},
 					"name": "USDCurrency",
-					"script": "source(allowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency"
+					"script": "source(output(\n\t\t\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDCurrency"
 				},
 				{
 					"dataset": {
