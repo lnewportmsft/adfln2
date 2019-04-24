@@ -17,21 +17,27 @@
 		},
 		"schema": [
 			{
+				"name": "movie",
 				"type": "String"
 			},
 			{
+				"name": "title",
 				"type": "String"
 			},
 			{
+				"name": "genres",
 				"type": "String"
 			},
 			{
+				"name": "year",
 				"type": "String"
 			},
 			{
+				"name": "Rating",
 				"type": "String"
 			},
 			{
+				"name": "Rotton Tomato",
 				"type": "String"
 			}
 		]
