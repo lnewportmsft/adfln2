@@ -27,14 +27,6 @@
 			"type": "string",
 			"defaultValue": "adftutorial/incrementalcopy"
 		},
-		"moviesdb_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "moviesDB.csv"
-		},
-		"moviesdb_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "demo"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -76,12 +68,6 @@
 					},
 					"SinkDataset_properties_typeProperties_folderPath": {
 						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
-					},
-					"moviesdb_properties_typeProperties_fileName": {
-						"value": "[parameters('moviesdb_properties_typeProperties_fileName')]"
-					},
-					"moviesdb_properties_typeProperties_folderPath": {
-						"value": "[parameters('moviesdb_properties_typeProperties_folderPath')]"
 					}
 				}
 			},

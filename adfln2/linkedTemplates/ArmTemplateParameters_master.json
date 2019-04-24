@@ -20,12 +20,6 @@
 		"SinkDataset_properties_typeProperties_folderPath": {
 			"value": "adftutorial/incrementalcopy"
 		},
-		"moviesdb_properties_typeProperties_fileName": {
-			"value": "moviesDB.csv"
-		},
-		"moviesdb_properties_typeProperties_folderPath": {
-			"value": "demo"
-		},
 		"containerUri": {
 			"value": ""
 		},
