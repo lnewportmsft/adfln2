@@ -1,0 +1,88 @@
+{
+	"name": "ScheduleAzure-SSISIntegrationRuntime1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Start Azure-SSIS IR",
+				"description": "Call REST API to start Azure-SSIS IR.",
+				"type": "WebActivity",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/start?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"message": "Start my IR"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com"
+					}
+				}
+			},
+			{
+				"name": "Execute SSIS Package",
+				"description": "Run a SSIS package by Execute SSIS Package Activity.",
+				"type": "ExecuteSSISPackage",
+				"dependsOn": [
+					{
+						"activity": "Start Azure-SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"loggingLevel": "Basic",
+					"connectVia": {
+						"referenceName": "lgnssisir",
+						"type": "IntegrationRuntimeReference"
+					}
+				}
+			},
+			{
+				"name": "Stop Azure-SSIS IR",
+				"description": "Call REST API to stop Azure-SSIS IR.",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute SSIS Package",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/stop?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"message": "Stop my IR"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com"
+					}
+				}
+			}
+		]
+	}
+}
