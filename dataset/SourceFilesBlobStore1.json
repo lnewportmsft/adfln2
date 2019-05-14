@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "Connection to your source files in Azure Blob Store.",
 		"linkedServiceName": {
-			"referenceName": "MyAzureBlobLinkedService",
+			"referenceName": "sourceBlob_LS",
 			"type": "LinkedServiceReference"
 		},
 		"type": "AzureBlob",
