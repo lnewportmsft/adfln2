@@ -20,11 +20,32 @@
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
+		"lgndatabricks_accessToken": {
+			"value": ""
+		},
+		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+			"value": "sinkdata/staged_sink"
+		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
 		},
 		"SinkDataset_properties_typeProperties_folderPath": {
 			"value": "adftutorial/incrementalcopy"
+		},
+		"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
+			"value": "_success"
+		},
+		"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
+			"value": "data/source"
+		},
+		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+			"value": "Product.csv"
+		},
+		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+			"value": "data/source"
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "lnewport.database.windows.net"
