@@ -76,6 +76,10 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
 		},
+		"sourceBlob_LS_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -129,6 +133,9 @@
 					},
 					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					},
+					"sourceBlob_LS_sasUri": {
+						"value": "[parameters('sourceBlob_LS_sasUri')]"
 					},
 					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"

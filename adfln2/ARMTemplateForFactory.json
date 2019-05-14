@@ -75,6 +75,10 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
+		},
+		"sourceBlob_LS_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
 		}
 	},
 	"variables": {
@@ -914,7 +918,7 @@
 			"properties": {
 				"description": "Connection to your source files in Azure Blob Store.",
 				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
+					"referenceName": "sourceBlob_LS",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -925,7 +929,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
 			]
 		},
 		{
@@ -1522,6 +1526,19 @@
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoDayStatsSink1')]",
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoTotalByPaymentType1')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sourceBlob_LS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"sasUri": "[parameters('sourceBlob_LS_sasUri')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

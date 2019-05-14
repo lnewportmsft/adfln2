@@ -13,6 +13,31 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/TaxiDemoTotalByPaymentType1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "demo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoVendorStatsSink1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -835,7 +860,8 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/taxi_trip_data_input1')]",
 				"[concat(variables('factoryId'), '/datasets/taxi_trip_fare_input1')]",
-				"[concat(variables('factoryId'), '/datasets/TaxiDemoVendorStatsSink1')]"
+				"[concat(variables('factoryId'), '/datasets/TaxiDemoVendorStatsSink1')]",
+				"[concat(variables('factoryId'), '/datasets/TaxiDemoTotalByPaymentType1')]"
 			]
 		},
 		{

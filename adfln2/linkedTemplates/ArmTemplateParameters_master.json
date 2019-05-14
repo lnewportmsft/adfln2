@@ -56,6 +56,9 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"value": ""
 		},
+		"sourceBlob_LS_sasUri": {
+			"value": ""
+		},
 		"containerUri": {
 			"value": ""
 		},
