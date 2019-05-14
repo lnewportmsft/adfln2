@@ -7,6 +7,16 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfln2"
 		},
+		"integrationRuntime_integrationRuntime1": {
+			"type": "string",
+			"metadata": "Integration Runtime Name",
+			"defaultValue": "integrationRuntime1"
+		},
+		"integrationRuntime_lgnssisir": {
+			"type": "string",
+			"metadata": "Integration Runtime Name",
+			"defaultValue": "lgnssisir"
+		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
@@ -26,6 +36,17 @@
 		"SinkDataset_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "adftutorial/incrementalcopy"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "lnewport.database.windows.net"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "lnewport"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
 		}
 	},
 	"variables": {
@@ -107,18 +128,18 @@
 						"defaultValue": [
 							{
 								"source": {
-									"tableName": "[concat('[', 'dbo].[mktzips]')]"
+									"tableName": "[[dbo].[mktzips]"
 								},
 								"destination": {
-									"fileName": "[concat('[', 'dbo].[mktzips].txt')]"
+									"fileName": "[[dbo].[mktzips].txt"
 								}
 							},
 							{
 								"source": {
-									"tableName": "[concat('[', 'dbo].[zcshapes]')]"
+									"tableName": "[[dbo].[zcshapes]"
 								},
 								"destination": {
-									"fileName": "[concat('[', 'dbo].[zcshapes].txt')]"
+									"fileName": "[[dbo].[zcshapes].txt"
 								}
 							}
 						]
@@ -262,7 +283,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[concat('[', 'dbo].[sp_write_watermark]')]",
+							"storedProcedureName": "[[dbo].[sp_write_watermark]",
 							"storedProcedureParameters": {
 								"LastModifiedtime": {
 									"value": {
@@ -296,6 +317,111 @@
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SinkDataset')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ScheduleAzure-SSISIntegrationRuntime1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Start Azure-SSIS IR",
+						"description": "Call REST API to start Azure-SSIS IR.",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/start?api-version=2018-06-01",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"message": "Start my IR"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://management.azure.com"
+							}
+						}
+					},
+					{
+						"name": "Execute SSIS Package",
+						"description": "Run a SSIS package by Execute SSIS Package Activity.",
+						"type": "ExecuteSSISPackage",
+						"dependsOn": [
+							{
+								"activity": "Start Azure-SSIS IR",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"packageLocation": {
+								"packagePath": "Foldername/Packages/Package.dtsx"
+							},
+							"connectVia": {
+								"referenceName": "lgnssisir",
+								"type": "IntegrationRuntimeReference"
+							},
+							"loggingLevel": "Basic",
+							"projectConnectionManagers": {},
+							"packageConnectionManagers": {}
+						}
+					},
+					{
+						"name": "Stop Azure-SSIS IR",
+						"description": "Call REST API to stop Azure-SSIS IR.",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Execute SSIS Package",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/stop?api-version=2018-06-01",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"message": "Stop my IR"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://management.azure.com"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/', parameters('integrationRuntime_lgnssisir'))]"
 			]
 		},
 		{
@@ -361,7 +487,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -387,7 +515,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": "\t",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -413,7 +543,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": "\t",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
@@ -478,7 +610,7 @@
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"typeProperties": {
-					"tableName": "[concat('[', 'dbo].[data_source_table]')]"
+					"tableName": "[[dbo].[data_source_table]"
 				}
 			},
 			"dependsOn": [
@@ -502,7 +634,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": true
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -527,7 +661,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -552,7 +688,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -577,7 +715,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -597,7 +737,7 @@
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"typeProperties": {
-					"tableName": "[concat('[', 'dbo].[watermarktable]')]"
+					"tableName": "[[dbo].[watermarktable]"
 				}
 			},
 			"dependsOn": [
@@ -621,7 +761,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": false
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -647,7 +789,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": true
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
@@ -686,7 +830,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": true
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
@@ -737,7 +883,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": true
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -763,7 +911,9 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"firstRowAsHeader": true
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": []
 			},
@@ -806,6 +956,46 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('MyAzureBlobLinkedService_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime1'))]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_lgnssisir'))]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "East US 2",
+						"nodeSize": "Standard_D8_v3",
+						"numberOfNodes": 2,
+						"maxParallelExecutionsPerNode": 1
+					},
+					"ssisProperties": {
+						"catalogInfo": {
+							"catalogServerEndpoint": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]",
+							"catalogAdminUserName": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]",
+							"catalogAdminPassword": {
+								"type": "SecureString",
+								"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+							},
+							"catalogPricingTier": "S1"
+						},
+						"edition": "Standard",
+						"licenseType": "BasePrice"
+					}
 				}
 			},
 			"dependsOn": []
@@ -1002,6 +1192,66 @@
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoVendorStatsSink1')]",
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoDayStatsSink1')]",
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoTotalByPaymentType1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CurrencyConverter')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Currency Converter1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Currency Converter1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"USDCurrency": {},
+									"CADSource": {},
+									"USDSink": {},
+									"CADSink": {}
+								}
+							},
+							"staging": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Currency Converter1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset_New1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "dummyName"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
 			]
 		}
 	]

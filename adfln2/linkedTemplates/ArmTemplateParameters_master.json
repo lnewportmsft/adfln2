@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "adfln2"
 		},
+		"integrationRuntime_integrationRuntime1": {
+			"value": "integrationRuntime1"
+		},
+		"integrationRuntime_lgnssisir": {
+			"value": "lgnssisir"
+		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},
@@ -19,6 +25,15 @@
 		},
 		"SinkDataset_properties_typeProperties_folderPath": {
 			"value": "adftutorial/incrementalcopy"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "lnewport.database.windows.net"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "lnewport"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
 		},
 		"containerUri": {
 			"value": ""
