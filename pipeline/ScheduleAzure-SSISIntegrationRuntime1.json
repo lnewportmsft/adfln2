@@ -45,11 +45,14 @@
 					"secureInput": false
 				},
 				"typeProperties": {
-					"loggingLevel": "Basic",
+					"packageLocation": {
+						"packagePath": "Foldername/Packages/Package.dtsx"
+					},
 					"connectVia": {
 						"referenceName": "lgnssisir",
 						"type": "IntegrationRuntimeReference"
-					}
+					},
+					"loggingLevel": "Basic"
 				}
 			},
 			{
