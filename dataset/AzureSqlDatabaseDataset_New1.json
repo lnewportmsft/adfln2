@@ -1,0 +1,15 @@
+{
+	"name": "AzureSqlDatabaseDataset_New1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "dummyName"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
