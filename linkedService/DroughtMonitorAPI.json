@@ -1,0 +1,13 @@
+{
+	"name": "DroughtMonitorAPI",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "API for the drought monitor project to retrieve drought statistics for US counties",
+		"type": "RestService",
+		"typeProperties": {
+			"url": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
