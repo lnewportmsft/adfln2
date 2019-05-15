@@ -5,7 +5,7 @@
 		"typeProperties": {
 			"computeProperties": {
 				"location": "East US 2",
-				"nodeSize": "Standard_D8_v3",
+				"nodeSize": "Standard_D2_v3",
 				"numberOfNodes": 2,
 				"maxParallelExecutionsPerNode": 1
 			},
@@ -18,6 +18,13 @@
 						"value": "**********"
 					},
 					"catalogPricingTier": "S1"
+				},
+				"customSetupScriptProperties": {
+					"blobContainerUri": "https://lgnstorage.blob.core.windows.net/ssisir",
+					"sasToken": {
+						"type": "SecureString",
+						"value": "**********"
+					}
 				},
 				"edition": "Standard",
 				"licenseType": "BasePrice"
