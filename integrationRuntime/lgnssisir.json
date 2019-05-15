@@ -6,8 +6,12 @@
 			"computeProperties": {
 				"location": "East US 2",
 				"nodeSize": "Standard_D2_v3",
-				"numberOfNodes": 2,
-				"maxParallelExecutionsPerNode": 1
+				"numberOfNodes": 1,
+				"maxParallelExecutionsPerNode": 1,
+				"vNetProperties": {
+					"vNetId": "/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourceGroups/LNewportMI/providers/Microsoft.Network/virtualNetworks/miVNet",
+					"subnet": "default"
+				}
 			},
 			"ssisProperties": {
 				"catalogInfo": {
