@@ -1,0 +1,15 @@
+{
+	"name": "NOAAFTPServer",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "FTP Server for NOAA content",
+		"type": "FtpServer",
+		"typeProperties": {
+			"host": "ftp://ftp.ncdc.noaa.gov/",
+			"port": 21,
+			"enableSsl": false,
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
