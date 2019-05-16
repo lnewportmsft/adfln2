@@ -47,6 +47,12 @@
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "data/source"
 		},
+		"DroughtMonitorAPI_properties_typeProperties_url": {
+			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"sourceBlob_LS_sasUri": {
+			"value": ""
+		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "lnewport.database.windows.net"
 		},
@@ -56,7 +62,7 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"value": ""
 		},
-		"sourceBlob_LS_sasUri": {
+		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
 		},
 		"containerUri": {

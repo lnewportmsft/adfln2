@@ -65,6 +65,14 @@
 			"type": "string",
 			"defaultValue": "data/source"
 		},
+		"DroughtMonitorAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"sourceBlob_LS_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
+		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
 			"defaultValue": "lnewport.database.windows.net"
@@ -76,9 +84,8 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 			"type": "secureString"
 		},
-		"sourceBlob_LS_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
+		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+			"type": "secureString"
 		},
 		"containerUri": {
 			"type": "string",
@@ -125,6 +132,12 @@
 					"lgndatabricks_accessToken": {
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
+					"DroughtMonitorAPI_properties_typeProperties_url": {
+						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
+					},
+					"sourceBlob_LS_sasUri": {
+						"value": "[parameters('sourceBlob_LS_sasUri')]"
+					},
 					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
 					},
@@ -134,8 +147,8 @@
 					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
 					},
-					"sourceBlob_LS_sasUri": {
-						"value": "[parameters('sourceBlob_LS_sasUri')]"
+					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
 					},
 					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
@@ -154,12 +167,6 @@
 					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -178,6 +185,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
