@@ -1,5 +1,5 @@
 {
-	"name": "ScheduleAzure-SSISIntegrationRuntime1",
+	"name": "ScheduleAzure-SSISIntegrationRuntime",
 	"properties": {
 		"activities": [
 			{
