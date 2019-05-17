@@ -16,7 +16,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlDWTable11",
+						"referenceName": "AzureSqlDWTable11_New1",
 						"type": "DatasetReference"
 					},
 					"name": "sinkIntoDW",
@@ -38,7 +38,7 @@
 				},
 				{
 					"name": "ConvertDate",
-					"script": "RenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate"
+					"script": "RenameColumns derive(newdate = left(start,instr(start,' ')-1)) ~> ConvertDate"
 				},
 				{
 					"name": "DurationFilter",
