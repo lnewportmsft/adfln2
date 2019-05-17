@@ -19,6 +19,9 @@
 					}
 				}
 			}
-		]
+		],
+		"folder": {
+			"name": "Data Flow Demos"
+		}
 	}
 }
