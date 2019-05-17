@@ -94,7 +94,7 @@
 				},
 				{
 					"name": "CreateFullName",
-					"script": "sourceName derive(fullname = {First Name} + ' ' {Last Name}e}) ~> CreateFullName"
+					"script": "sourceName derive(fullname = {First Name} + ' ' + {Last Name}\r\n\r\n) ~> CreateFullName"
 				},
 				{
 					"name": "CheckForDupes",
