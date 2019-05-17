@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlDWTable11_New1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDWLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Misc"
+		},
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "templatedemodata"
+		}
+	}
+}
