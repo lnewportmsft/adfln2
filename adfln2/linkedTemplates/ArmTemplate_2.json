@@ -86,6 +86,9 @@
 						}
 					}
 				],
+				"folder": {
+					"name": "Data Flow Demos"
+				},
 				"annotations": []
 			},
 			"dependsOn": []
