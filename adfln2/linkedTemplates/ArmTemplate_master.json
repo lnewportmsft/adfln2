@@ -21,10 +21,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
 		},
-		"AzureSqlDatabaseLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
-		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -64,6 +60,10 @@
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "data/source"
+		},
+		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "lnewportdatabase"
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -203,8 +203,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AzureSqlDatabaseLinkedService_connectionString": {
-						"value": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
+					"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},

@@ -7,9 +7,9 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfln2"
 		},
-		"AzureSqlDatabaseLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
+		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "lnewportdatabase"
 		}
 	},
 	"variables": {
@@ -266,7 +266,14 @@
 				"annotations": [],
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]",
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "lnakv",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName')]"
+					},
 					"password": {
 						"type": "AzureKeyVaultSecret",
 						"store": {

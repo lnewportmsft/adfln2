@@ -14,9 +14,6 @@
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},
-		"AzureSqlDatabaseLinkedService_connectionString": {
-			"value": ""
-		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
@@ -46,6 +43,9 @@
 		},
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "data/source"
+		},
+		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
+			"value": "lnewportdatabase"
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
