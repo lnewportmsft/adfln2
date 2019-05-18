@@ -87,6 +87,14 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
 		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://lnakv.vault.azure.net/"
+		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -123,9 +131,6 @@
 					"AzureSqlDWLinkedService_connectionString": {
 						"value": "[parameters('AzureSqlDWLinkedService_connectionString')]"
 					},
-					"AzureSqlDatabaseLinkedService_connectionString": {
-						"value": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
-					},
 					"MyAzureBlobLinkedService_connectionString": {
 						"value": "[parameters('MyAzureBlobLinkedService_connectionString')]"
 					},
@@ -150,6 +155,12 @@
 					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
 					},
+					"lnakv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
+					},
+					"USGSSecretStore_properties_typeProperties_baseUrl": {
+						"value": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+					},
 					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
 					},
@@ -167,6 +178,12 @@
 					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -186,11 +203,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
+					"AzureSqlDatabaseLinkedService_connectionString": {
+						"value": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
 					}
 				}
 			},

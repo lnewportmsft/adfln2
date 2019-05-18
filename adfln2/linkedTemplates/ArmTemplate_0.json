@@ -21,10 +21,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
 		},
-		"AzureSqlDatabaseLinkedService_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
-		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -55,6 +51,14 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
 		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://lnakv.vault.azure.net/"
+		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -78,6 +82,14 @@
 		"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "data/source"
+		},
+		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "Product.csv"
+		},
+		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "data/source"
 		}
 	},
 	"variables": {
@@ -93,19 +105,6 @@
 				"type": "AzureSqlDW",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDWLinkedService_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseLinkedService')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -235,6 +234,32 @@
 						"edition": "Standard",
 						"licenseType": "BasePrice"
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnakv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/USGSSecretStore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -371,45 +396,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"typeProperties": {
-					"tableName": "dummyName"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset_New1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": "dummyName"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
 			]
 		},
 		{
@@ -592,22 +578,51 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset')]",
+			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source files in Azure Blob Store.",
+				"linkedServiceName": {
+					"referenceName": "sourceBlob_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
+					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TaxiDemoDayStatsSink1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
+					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "AzureSqlTable",
+				"type": "DelimitedText",
 				"typeProperties": {
-					"tableName": "[[dbo].[data_source_table]"
-				}
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "demo"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
 			]
 		}
 	]

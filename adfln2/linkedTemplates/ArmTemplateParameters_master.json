@@ -65,6 +65,12 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
 		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"value": "https://lnakv.vault.azure.net/"
+		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"value": "https://USGS-SecretStore.vault.azure.net/"
+		},
 		"containerUri": {
 			"value": ""
 		},
