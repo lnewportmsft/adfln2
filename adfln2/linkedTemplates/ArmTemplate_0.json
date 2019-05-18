@@ -265,6 +265,8 @@
 							"body": {
 								"message": "Start my IR"
 							},
+							"linkedServices": [],
+							"datasets": [],
 							"authentication": {
 								"type": "MSI",
 								"resource": "https://management.azure.com"
