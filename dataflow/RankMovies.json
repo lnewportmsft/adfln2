@@ -20,7 +20,7 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink1",
-					"script": "Window1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
+					"script": "Select1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
 				}
 			],
 			"transformations": [
@@ -31,6 +31,10 @@
 				{
 					"name": "Window1",
 					"script": "DerivedColumn1 window(over(dummy),\n\tasc(combo, true),\n\tRANK = rank(combo)) ~> Window1"
+				},
+				{
+					"name": "Select1",
+					"script": "Window1 select(mapColumn(\n\t\tmovie,\n\t\ttitle,\n\t\tgenres,\n\t\tyear,\n\t\tRating,\n\t\tRottenTomato = {Rotton Tomato},\n\t\tdummy,\n\t\tcombo,\n\t\tRANK\n\t))~> Select1"
 				}
 			]
 		}
