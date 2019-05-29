@@ -1,0 +1,89 @@
+{
+	"name": "IterateAndCopySQLTables",
+	"properties": {
+		"activities": [
+			{
+				"name": "IterateSQLTables",
+				"type": "ForEach",
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.tableList",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy Data",
+							"type": "Copy",
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
+										"type": "Expression"
+									}
+								},
+								"sink": {
+									"type": "SqlDWSink",
+									"allowPolyBase": true,
+									"writeBatchSize": 10000,
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
+										"type": "Expression"
+									},
+									"polyBaseSettings": {
+										"rejectValue": 0,
+										"rejectType": "value",
+										"useTypeDefault": false
+									}
+								},
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "MyAzureBlobLinkedService",
+										"type": "LinkedServiceReference"
+									}
+								},
+								"dataIntegrationUnits": 0
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlDatabaseDataset",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlDWDataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"DWTableName": {
+											"value": "[@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"tableList": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "Copy Demos"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
