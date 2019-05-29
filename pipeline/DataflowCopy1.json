@@ -1,0 +1,110 @@
+{
+	"name": "DataflowCopy1",
+	"properties": {
+		"description": "Run dataflow with Explicit copy to ingest copy source",
+		"activities": [
+			{
+				"name": "LoadData",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "HttpReadSetting",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSetting"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSetting"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DATE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STLPCPI_20171116",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STLPCPI_20171116",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STLPCPI_20181115",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STLPCPI_20181115",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "PerCapIncomeSTLSource",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "StagingParquet1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "STLFED",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "LoadData",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "STLFED",
+						"type": "DataFlowReference"
+					}
+				}
+			}
+		]
+	}
+}
