@@ -1,0 +1,16 @@
+{
+	"name": "HttpServerSourceDatasetEntity1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "STLFEDMOIL",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

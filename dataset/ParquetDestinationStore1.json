@@ -1,0 +1,17 @@
+{
+	"name": "ParquetDestinationStore1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
