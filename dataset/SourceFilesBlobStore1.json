@@ -8,7 +8,7 @@
 		},
 		"type": "AzureBlob",
 		"typeProperties": {
-			"fileName": "Product.csv",
+			"fileName": "",
 			"folderPath": "data/source"
 		}
 	}
