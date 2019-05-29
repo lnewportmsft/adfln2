@@ -47,7 +47,7 @@
 							{
 								"source": {
 									"name": "STLPCPI_20171116",
-									"type": "Int32"
+									"type": "String"
 								},
 								"sink": {
 									"name": "STLPCPI_20171116",
@@ -57,7 +57,7 @@
 							{
 								"source": {
 									"name": "STLPCPI_20181115",
-									"type": "Int32"
+									"type": "String"
 								},
 								"sink": {
 									"name": "STLPCPI_20181115",
