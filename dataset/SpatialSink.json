@@ -10,7 +10,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@concat('updates', , formatDateTime(trigger().startTime, 'MM'),formatDateTime(trigger().startTime, 'dd'),formatDateTime(trigger().startTime, 'yyyy'), '.csv'))",
+					"value": "@concat('updates', formatDateTime(trigger().startTime, 'MM'),formatDateTime(trigger().startTime, 'dd'),formatDateTime(trigger().startTime, 'yyyy'), '.csv')))",
 					"type": "Expression"
 				},
 				"folderPath": {
