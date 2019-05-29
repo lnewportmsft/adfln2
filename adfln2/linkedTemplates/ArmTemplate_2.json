@@ -349,7 +349,7 @@
 								"formatSettings": {
 									"type": "DelimitedTextWriteSetting",
 									"quoteAllText": true,
-									"fileExtension": ".txt"
+									"fileExtension": ".csv"
 								}
 							},
 							"enableStaging": false,
@@ -414,6 +414,11 @@
 						}
 					}
 				],
+				"parameters": {
+					"year": {
+						"type": "string"
+					}
+				},
 				"folder": {
 					"name": "Copy Demos"
 				},
