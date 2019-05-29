@@ -77,7 +77,15 @@
 						}
 					},
 					"sink": {
-						"type": "BlobSink"
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSetting"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSetting",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
 					},
 					"enableStaging": false,
 					"dataIntegrationUnits": 0
@@ -90,7 +98,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SinkDataset",
+						"referenceName": "SpatialSink",
 						"type": "DatasetReference"
 					}
 				]
