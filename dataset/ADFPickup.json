@@ -7,7 +7,7 @@
 		},
 		"type": "FileShare",
 		"typeProperties": {
-			"fileName": "",
+			"fileName": "*jpg",
 			"folderPath": ""
 		}
 	}
