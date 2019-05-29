@@ -15,6 +15,19 @@
 			},
 			"compressionCodec": "snappy"
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "DATE",
+				"type": "UTF8"
+			},
+			{
+				"name": "STLPCPI_20171116",
+				"type": "UTF8"
+			},
+			{
+				"name": "STLPCPI_20181115",
+				"type": "UTF8"
+			}
+		]
 	}
 }
