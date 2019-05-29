@@ -1,0 +1,34 @@
+{
+	"name": "PerCapIncomeSTL",
+	"properties": {
+		"description": "Per Capita Personal Income in St. Louis, MO-IL (MSA) (STLPCPI)",
+		"linkedServiceName": {
+			"referenceName": "STLFEDMOIL",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DATE",
+				"type": "String"
+			},
+			{
+				"name": "STLPCPI_20171116",
+				"type": "String"
+			},
+			{
+				"name": "STLPCPI_20181115",
+				"type": "String"
+			}
+		]
+	}
+}
