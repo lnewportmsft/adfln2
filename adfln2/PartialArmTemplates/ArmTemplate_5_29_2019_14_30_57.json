@@ -1,0 +1,29 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "adfln2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/STLFEDMOIL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?bgcolor=%23e1e9f0&chart_type=column&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=alfred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=STLPCPI,STLPCPI&scale=left,left&cosd=2001-01-01,2001-01-01&coed=2016-01-01,2017-01-01&line_color=%234572a7,%23aa4643&link_values=false,false&line_style=solid,solid&mark_type=none,none&mw=3,3&lw=2,2&ost=-99999,-99999&oet=99999,99999&mma=0,0&fml=a,a&fq=Annual,Annual&fam=avg,avg&fgst=lin,lin&fgsnd=2009-06-01,2009-06-01&line_index=1,2&transformation=lin,lin&vintage_date=2017-11-16,2018-11-15&nd=1969-01-01,2001-01-01",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			}
+		}
+	]
+}
