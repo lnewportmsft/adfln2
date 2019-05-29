@@ -9,8 +9,8 @@
 						"referenceName": "StagingParquet1",
 						"type": "DatasetReference"
 					},
-					"name": "source1",
-					"script": "source(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> source1"
+					"name": "STLPCPI",
+					"script": "source(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> STLPCPI"
 				}
 			]
 		}
