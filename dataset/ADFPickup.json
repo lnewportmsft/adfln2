@@ -1,0 +1,14 @@
+{
+	"name": "ADFPickup",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LGNP50",
+			"type": "LinkedServiceReference"
+		},
+		"type": "FileShare",
+		"typeProperties": {
+			"fileName": "",
+			"folderPath": ""
+		}
+	}
+}
