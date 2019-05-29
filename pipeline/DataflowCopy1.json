@@ -4,7 +4,7 @@
 		"description": "Run dataflow with Explicit copy to ingest copy source",
 		"activities": [
 			{
-				"name": "LoadData",
+				"name": "LoadSTLPCPI",
 				"type": "Copy",
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -85,7 +85,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "LoadData",
+						"activity": "LoadSTLPCPI",
 						"dependencyConditions": [
 							"Succeeded"
 						]
