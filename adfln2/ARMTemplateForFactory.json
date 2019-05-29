@@ -394,7 +394,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"notebookPath": "/Shared/Transformations",
+							"notebookPath": "/Transformations",
 							"baseParameters": {
 								"input": {
 									"value": "@pipeline().parameters.inputPath",
