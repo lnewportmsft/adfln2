@@ -9,7 +9,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "US/extracts/spatial/in",
+				"fileName": "@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+				"folderPath": "US/extracts/spatial",
 				"container": "raw"
 			},
 			"columnDelimiter": ",",
