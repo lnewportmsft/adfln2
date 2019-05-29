@@ -10,7 +10,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "updates.csv",
-				"folderPath": "US/extracts/spatial/ @concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+				"folderPath": "US/extracts/spatial/@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
 				"container": "raw"
 			},
 			"columnDelimiter": ",",
