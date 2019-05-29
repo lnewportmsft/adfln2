@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "movie_dataflow_source1",
+						"referenceName": "moviesDB",
 						"type": "DatasetReference"
 					},
 					"name": "source1",
