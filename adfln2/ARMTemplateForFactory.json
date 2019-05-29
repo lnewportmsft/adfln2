@@ -603,11 +603,6 @@
 						}
 					}
 				],
-				"parameters": {
-					"year": {
-						"type": "string"
-					}
-				},
 				"folder": {
 					"name": "Copy Demos"
 				},
@@ -1111,7 +1106,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "updates.csv",
+						"fileName": {
+							"value": "@concat(utcnow(),'updates.csv')",
+							"type": "Expression"
+						},
 						"folderPath": {
 							"value": "@concat('US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
 							"type": "Expression"

@@ -414,11 +414,6 @@
 						}
 					}
 				],
-				"parameters": {
-					"year": {
-						"type": "string"
-					}
-				},
 				"folder": {
 					"name": "Copy Demos"
 				},
