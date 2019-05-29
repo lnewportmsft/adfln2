@@ -37,7 +37,7 @@
 							{
 								"source": {
 									"name": "DATE",
-									"type": "String"
+									"type": "DateTime"
 								},
 								"sink": {
 									"name": "DATE",
@@ -47,7 +47,7 @@
 							{
 								"source": {
 									"name": "STLPCPI_20171116",
-									"type": "String"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "STLPCPI_20171116",
@@ -57,7 +57,7 @@
 							{
 								"source": {
 									"name": "STLPCPI_20181115",
-									"type": "String"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "STLPCPI_20181115",
