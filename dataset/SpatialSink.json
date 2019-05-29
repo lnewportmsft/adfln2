@@ -9,11 +9,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'), '/', updates.csv')",
+				"fileName": "updates.csv",
+				"folderPath": {
+					"value": "\n@concat('US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))\n",
 					"type": "Expression"
 				},
-				"folderPath": "US/extracts/spatial/",
 				"container": "raw"
 			},
 			"columnDelimiter": ",",
