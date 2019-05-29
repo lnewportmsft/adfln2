@@ -37,6 +37,10 @@
 					}
 				],
 				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IterateAndCopySQLTables",
+						"type": "PipelineReference"
+					},
 					"parameters": {
 						"tableList": {
 							"value": "@activity('LookupTableList').output.value",
