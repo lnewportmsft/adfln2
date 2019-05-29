@@ -1,5 +1,5 @@
 {
-	"name": "PerCapIncomeSTL",
+	"name": "PerCapIncomeSTLSource",
 	"properties": {
 		"description": "Per Capita Personal Income in St. Louis, MO-IL (MSA) (STLPCPI)",
 		"linkedServiceName": {
