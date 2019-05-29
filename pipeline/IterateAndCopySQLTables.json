@@ -38,7 +38,7 @@
 									"formatSettings": {
 										"type": "DelimitedTextWriteSetting",
 										"quoteAllText": true,
-										"fileExtension": ".txt"
+										"fileExtension": ".csv"
 									}
 								},
 								"enableStaging": true,
