@@ -1,0 +1,22 @@
+{
+	"name": "SpatialSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgndatalake",
+			"type": "LinkedServiceReference"
+		},
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "US/extracts/spatial/in",
+				"container": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
