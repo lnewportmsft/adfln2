@@ -1106,8 +1106,11 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": " @concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'), '/', updates.csv')",
-						"folderPath": "US/extracts/spatial/",
+						"fileName": "updates.csv",
+						"folderPath": {
+							"value": "@concat('US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+							"type": "Expression"
+						},
 						"container": "raw"
 					},
 					"columnDelimiter": ",",
