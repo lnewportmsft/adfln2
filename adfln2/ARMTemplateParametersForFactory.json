@@ -14,6 +14,9 @@
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},
+		"AzureSqlDatabaseLinkedService_connectionString": {
+			"value": ""
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
@@ -47,14 +50,14 @@
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "data/source"
 		},
-		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
-			"value": "lnewportdatabase"
-		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"value": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lgndatalake_properties_typeProperties_url": {
+			"value": "https://lgndatalake.dfs.core.windows.net"
 		},
 		"lnakv_properties_typeProperties_baseUrl": {
 			"value": "https://lnakv.vault.azure.net/"
@@ -73,9 +76,6 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
-		},
-		"lgndatalake_properties_typeProperties_url": {
-			"value": "https://lgndatalake.dfs.core.windows.net"
 		}
 	}
 }

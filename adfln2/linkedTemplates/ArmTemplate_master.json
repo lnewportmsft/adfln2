@@ -21,6 +21,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
 		},
+		"AzureSqlDatabaseLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -65,10 +69,6 @@
 			"type": "string",
 			"defaultValue": "data/source"
 		},
-		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "lnewportdatabase"
-		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
@@ -76,6 +76,10 @@
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lgndatalake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		},
 		"lnakv_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -98,10 +102,6 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
-		},
-		"lgndatalake_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		},
 		"containerUri": {
 			"type": "string",
@@ -139,6 +139,9 @@
 					"AzureSqlDWLinkedService_connectionString": {
 						"value": "[parameters('AzureSqlDWLinkedService_connectionString')]"
 					},
+					"AzureSqlDatabaseLinkedService_connectionString": {
+						"value": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
+					},
 					"MyAzureBlobLinkedService_connectionString": {
 						"value": "[parameters('MyAzureBlobLinkedService_connectionString')]"
 					},
@@ -153,6 +156,9 @@
 					},
 					"USGSSecretStore_properties_typeProperties_baseUrl": {
 						"value": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+					},
+					"lgndatalake_properties_typeProperties_url": {
+						"value": "[parameters('lgndatalake_properties_typeProperties_url')]"
 					},
 					"lnakv_properties_typeProperties_baseUrl": {
 						"value": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
@@ -171,21 +177,6 @@
 					},
 					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
-					},
-					"lgndatalake_properties_typeProperties_url": {
-						"value": "[parameters('lgndatalake_properties_typeProperties_url')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SinkDataset_properties_typeProperties_fileName": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
-					},
-					"SinkDataset_properties_typeProperties_folderPath": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -205,6 +196,18 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
+					},
+					"SinkDataset_properties_typeProperties_fileName": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
+					},
+					"SinkDataset_properties_typeProperties_folderPath": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
+					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]"
 					},
@@ -216,9 +219,6 @@
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
-						"value": "[parameters('AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},

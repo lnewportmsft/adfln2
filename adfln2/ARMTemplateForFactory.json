@@ -21,6 +21,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
 		},
+		"AzureSqlDatabaseLinkedService_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -65,10 +69,6 @@
 			"type": "string",
 			"defaultValue": "data/source"
 		},
-		"AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "lnewportdatabase"
-		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
@@ -76,6 +76,10 @@
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lgndatalake_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		},
 		"lnakv_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -98,10 +102,6 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
-		},
-		"lgndatalake_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -1093,6 +1093,38 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SpatialSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd')), 'updates.csv'",
+							"type": "Expression"
+						},
+						"folderPath": "US/extracts/spatial",
+						"container": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemoDayStatsSink1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1680,19 +1712,10 @@
 				"annotations": [],
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "lnakv",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName')]"
-					}
+					"connectionString": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lnakv')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DroughtMonitorAPI')]",
@@ -1768,6 +1791,23 @@
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
 					"existingClusterId": "0430-194140-psalm148"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lgndatalake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lgndatalake_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('lgndatalake_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -2211,52 +2251,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/names1001')]",
 				"[concat(variables('factoryId'), '/datasets/dupefolder1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/lgndatalake')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('lgndatalake_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('lgndatalake_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SpatialSink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
-						"folderPath": "US/extracts/spatial",
-						"container": "raw"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
 			]
 		}
 	]
