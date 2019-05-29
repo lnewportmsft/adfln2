@@ -13,7 +13,9 @@
 				"container": "demo"
 			},
 			"columnDelimiter": ",",
-			"firstRowAsHeader": true
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
 		},
 		"schema": [
 			{
