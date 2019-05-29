@@ -1,0 +1,14 @@
+{
+	"name": "adfdropoff",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MyAzureBlobLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureBlob",
+		"typeProperties": {
+			"fileName": "",
+			"folderPath": "adfdropoff"
+		}
+	}
+}
