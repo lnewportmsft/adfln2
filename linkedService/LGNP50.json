@@ -1,0 +1,16 @@
+{
+	"name": "LGNP50",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "D:\\adfpickup",
+			"userId": "adfpickup",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3MDgxZWU3Ni00YzMxLTRlN2UtYWI4ZC1jOGEyY2Y5Zjk1NjUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntime1",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
