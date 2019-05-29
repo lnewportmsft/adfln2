@@ -31,17 +31,14 @@
 									}
 								},
 								"sink": {
-									"type": "SqlDWSink",
-									"allowPolyBase": true,
-									"writeBatchSize": 10000,
-									"preCopyScript": {
-										"value": "TRUNCATE TABLE [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
-										"type": "Expression"
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSetting"
 									},
-									"polyBaseSettings": {
-										"rejectValue": 0,
-										"rejectType": "value",
-										"useTypeDefault": false
+									"formatSettings": {
+										"type": "DelimitedTextWriteSetting",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
 									}
 								},
 								"enableStaging": true,
@@ -61,14 +58,8 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "AzureSqlDWDataset",
-									"type": "DatasetReference",
-									"parameters": {
-										"DWTableName": {
-											"value": "[@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "DelimitedText1",
+									"type": "DatasetReference"
 								}
 							]
 						}
