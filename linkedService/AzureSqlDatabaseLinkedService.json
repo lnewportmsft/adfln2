@@ -1,25 +1,11 @@
 {
 	"name": "AzureSqlDatabaseLinkedService",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
-			"connectionString": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "lnakv",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "lnewportdatabase"
-			},
-			"password": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "lnakv",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "lnewportdatabase"
-			}
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=lnewport.database.windows.net;initial catalog=AdventureWorksLT;user id=lnewport",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFERkxOMl9jODIxYzU2ZS0xMmM1LTQ0ZTEtYjk4ZS0yNTc3MTE0ZWQ4MGYiDQp9"
 		}
-	},
-	"type": "Microsoft.DataFactory/factories/linkedservices"
+	}
 }
