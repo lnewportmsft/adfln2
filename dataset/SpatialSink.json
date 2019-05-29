@@ -11,7 +11,7 @@
 				"type": "AzureBlobFSLocation",
 				"fileName": "updates.csv",
 				"folderPath": {
-					"value": "@concat('raw/US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+					"value": "@concat('US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
 					"type": "Expression"
 				},
 				"container": "raw"
