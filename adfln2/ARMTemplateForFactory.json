@@ -63,7 +63,7 @@
 		},
 		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
-			"defaultValue": "Product.csv"
+			"defaultValue": ""
 		},
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
@@ -1029,7 +1029,7 @@
 			"properties": {
 				"description": "Dataset to check if '_success' flag/ file is available in source. If not, then the activity fails, letting you know that source dataset is not ready.\nContext: In Spark/ Hadoop environments, generally users leverage flags to identify if the data has been correctly written through the distributed compute engines. E.g. '_success' defines all nodes have successfully written the data.",
 				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
+					"referenceName": "sourceBlob_LS",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1049,7 +1049,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
 			]
 		},
 		{
@@ -1842,6 +1842,36 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Daily')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "IncrementalCopyPipeline",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2019-05-30T01:00:00.000Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/IncrementalCopyPipeline')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime1'))]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -2254,37 +2284,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/names1001')]",
 				"[concat(variables('factoryId'), '/datasets/dupefolder1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Daily')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "IncrementalCopyPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-05-30T01:00:00.000Z",
-						"timeZone": "UTC",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/IncrementalCopyPipeline')]"
 			]
 		}
 	]

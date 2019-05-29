@@ -1,0 +1,59 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "adfln2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceAvailabilityBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Dataset to check if '_success' flag/ file is available in source. If not, then the activity fails, letting you know that source dataset is not ready.\nContext: In Spark/ Hadoop environments, generally users leverage flags to identify if the data has been correctly written through the distributed compute engines. E.g. '_success' defines all nodes have successfully written the data.",
+				"linkedServiceName": {
+					"referenceName": "sourceBlob_LS",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureBlob",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": false
+					},
+					"fileName": "_success",
+					"folderPath": "data/source"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source files in Azure Blob Store.",
+				"linkedServiceName": {
+					"referenceName": "sourceBlob_LS",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "",
+					"folderPath": "data/source"
+				}
+			}
+		}
+	]
+}

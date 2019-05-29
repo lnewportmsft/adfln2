@@ -63,7 +63,7 @@
 		},
 		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
-			"defaultValue": "Product.csv"
+			"defaultValue": ""
 		},
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
