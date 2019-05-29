@@ -263,7 +263,14 @@
 					{
 						"name": "LookupOldWaterMarkActivity",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "InsertNewData",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -287,7 +294,14 @@
 					{
 						"name": "LookupNewWaterMarkActivity",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "InsertNewData",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -407,6 +421,26 @@
 									"type": "String"
 								}
 							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabaseLinkedService",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "InsertNewData",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[usp_insertdatasourcetable]"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureSqlDatabaseLinkedService",
