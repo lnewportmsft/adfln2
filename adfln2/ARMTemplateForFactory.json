@@ -29,6 +29,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'lgndatabricks'"
 		},
+		"lgndatalake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'lgndatalake'"
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -69,6 +73,14 @@
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://lnakv.vault.azure.net/"
+		},
 		"sourceBlob_LS_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
@@ -87,13 +99,9 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
 		},
-		"lnakv_properties_typeProperties_baseUrl": {
+		"lgndatalake_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://lnakv.vault.azure.net/"
-		},
-		"USGSSecretStore_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -243,6 +251,48 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/Currency Converter1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Dedupe Pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Deduplication Data Flow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dedupeProb21",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"sourceName": {},
+									"sinkDupes": {},
+									"sinkNoDupes": {}
+								}
+							},
+							"staging": {}
+						}
+					}
+				],
+				"folder": {
+					"name": "Data Flow Demos"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dedupeProb21')]"
 			]
 		},
 		{
@@ -481,7 +531,15 @@
 								}
 							},
 							"sink": {
-								"type": "BlobSink"
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSetting"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSetting",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
 							},
 							"enableStaging": false,
 							"dataIntegrationUnits": 0
@@ -495,7 +553,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SinkDataset",
+								"referenceName": "SpatialSink",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -553,7 +611,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/WatermarkDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
-				"[concat(variables('factoryId'), '/datasets/SinkDataset')]",
+				"[concat(variables('factoryId'), '/datasets/SpatialSink')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
 			]
 		},
@@ -583,8 +641,6 @@
 							"body": {
 								"message": "Start my IR"
 							},
-							"linkedServices": [],
-							"datasets": [],
 							"authentication": {
 								"type": "MSI",
 								"resource": "https://management.azure.com"
@@ -665,6 +721,48 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SearchLogAnalytics')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is a sample that takes the U-SQL SearchLog analytics example and turns it into an ADF Data Flow: https://kromerbigdata.com/2019/03/03/u-sql-searchlog-aggregations-as-adf-data-flows/",
+				"activities": [
+					{
+						"name": "SearchLog",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "SearchLog1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"searchLog": {},
+									"sinkIntoDW": {}
+								}
+							},
+							"staging": {}
+						}
+					}
+				],
+				"folder": {
+					"name": "Data Flow Demos"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/SearchLog1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDWDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -685,6 +783,51 @@
 						"value": "@dataset().DWTableName",
 						"type": "Expression"
 					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Misc"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"typeProperties": {
+					"tableName": "templatedemodata"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11_New1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Misc"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "templatedemodata"
 				}
 			},
 			"dependsOn": [
@@ -1077,6 +1220,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dupefolder1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "output/dupes",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/movie_dataflow_sink1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1198,6 +1369,241 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/names1001')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "90 Records.csv",
+						"folderPath": "SampleData/HR",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Emp ID",
+						"type": "String"
+					},
+					{
+						"name": "Name Prefix",
+						"type": "String"
+					},
+					{
+						"name": "First Name",
+						"type": "String"
+					},
+					{
+						"name": "Middle Initial",
+						"type": "String"
+					},
+					{
+						"name": "Last Name",
+						"type": "String"
+					},
+					{
+						"name": "Gender",
+						"type": "String"
+					},
+					{
+						"name": "E Mail",
+						"type": "String"
+					},
+					{
+						"name": "Father's Name",
+						"type": "String"
+					},
+					{
+						"name": "Mother's Name",
+						"type": "String"
+					},
+					{
+						"name": "Mother's Maiden Name",
+						"type": "String"
+					},
+					{
+						"name": "Date of Birth",
+						"type": "String"
+					},
+					{
+						"name": "Time of Birth",
+						"type": "String"
+					},
+					{
+						"name": "Age in Yrs.",
+						"type": "String"
+					},
+					{
+						"name": "Weight in Kgs.",
+						"type": "String"
+					},
+					{
+						"name": "Date of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Quarter of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Half of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Year of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Month of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Month Name of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Short Month",
+						"type": "String"
+					},
+					{
+						"name": "Day of Joining",
+						"type": "String"
+					},
+					{
+						"name": "DOW of Joining",
+						"type": "String"
+					},
+					{
+						"name": "Short DOW",
+						"type": "String"
+					},
+					{
+						"name": "Age in Company (Years)",
+						"type": "String"
+					},
+					{
+						"name": "Salary",
+						"type": "String"
+					},
+					{
+						"name": "Last % Hike",
+						"type": "String"
+					},
+					{
+						"name": "SSN",
+						"type": "String"
+					},
+					{
+						"name": "Phone No. ",
+						"type": "String"
+					},
+					{
+						"name": "Place Name",
+						"type": "String"
+					},
+					{
+						"name": "County",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "State",
+						"type": "String"
+					},
+					{
+						"name": "Zip",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "User Name",
+						"type": "String"
+					},
+					{
+						"name": "Password",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/searchLog1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "SearchLog.tsv",
+						"folderPath": "SampleData/USQL",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": "\t",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "_c0",
+						"type": "String"
+					},
+					{
+						"name": "_c1",
+						"type": "String"
+					},
+					{
+						"name": "_c2",
+						"type": "String"
+					},
+					{
+						"name": "_c3",
+						"type": "String"
+					},
+					{
+						"name": "_c4",
+						"type": "String"
+					},
+					{
+						"name": "_c5",
+						"type": "String"
+					},
+					{
+						"name": "_c6",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1281,14 +1687,6 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "[parameters('AzureSqlDatabaseLinkedService_properties_typeProperties_connectionString_secretName')]"
-					},
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "lnakv",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "lnewportdatabase"
 					}
 				}
 			},
@@ -1344,6 +1742,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/USGSSecretStore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/lgndatabricks')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1357,6 +1768,19 @@
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
 					"existingClusterId": "0430-194140-psalm148"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnakv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -1539,6 +1963,63 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SearchLog1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "searchLog1",
+								"type": "DatasetReference"
+							},
+							"name": "searchLog",
+							"script": "source(output(\n\t\t{_col0_} as integer,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as integer,\n\t\t{_col5_} as string,\n\t\t{_col6_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> searchLog",
+							"typeProperties": {}
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlDWTable11_New1",
+								"type": "DatasetReference"
+							},
+							"name": "sinkIntoDW",
+							"script": "DurationFilter sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstaged: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sinkIntoDW"
+						}
+					],
+					"transformations": [
+						{
+							"name": "totalDurationByRegion",
+							"script": "DateFilter aggregate(groupBy(region),\n\ttotalduration = sum(duration)) ~> totalDurationByRegion"
+						},
+						{
+							"name": "RenameColumns",
+							"script": "searchLog select(mapColumn(\n\t\tuserid = {_col0_},\n\t\tstart = {_col1_},\n\t\tregion = {_col2_},\n\t\tquery = {_col3_},\n\t\tduration = {_col4_},\n\t\turls = {_col5_},\n\t\tclickedurls = {_col6_}\n\t))~> RenameColumns"
+						},
+						{
+							"name": "DateFilter",
+							"script": "ConvertDate filter(newdate > toDate('2012-02-06','yyyy-MM-dd')) ~> DateFilter"
+						},
+						{
+							"name": "ConvertDate",
+							"script": "RenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate"
+						},
+						{
+							"name": "DurationFilter",
+							"script": "totalDurationByRegion filter(totalduration > 200) ~> DurationFilter"
+						}
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/searchLog1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlDWTable11_New1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TaxiDemo1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1617,212 +2098,6 @@
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoVendorStatsSink1')]",
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoDayStatsSink1')]",
 				"[concat(variables('factoryId'), '/datasets/TaxiDemoTotalByPaymentType1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/names1001')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "90 Records.csv",
-						"folderPath": "SampleData/HR",
-						"container": "mycontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Emp ID",
-						"type": "String"
-					},
-					{
-						"name": "Name Prefix",
-						"type": "String"
-					},
-					{
-						"name": "First Name",
-						"type": "String"
-					},
-					{
-						"name": "Middle Initial",
-						"type": "String"
-					},
-					{
-						"name": "Last Name",
-						"type": "String"
-					},
-					{
-						"name": "Gender",
-						"type": "String"
-					},
-					{
-						"name": "E Mail",
-						"type": "String"
-					},
-					{
-						"name": "Father's Name",
-						"type": "String"
-					},
-					{
-						"name": "Mother's Name",
-						"type": "String"
-					},
-					{
-						"name": "Mother's Maiden Name",
-						"type": "String"
-					},
-					{
-						"name": "Date of Birth",
-						"type": "String"
-					},
-					{
-						"name": "Time of Birth",
-						"type": "String"
-					},
-					{
-						"name": "Age in Yrs.",
-						"type": "String"
-					},
-					{
-						"name": "Weight in Kgs.",
-						"type": "String"
-					},
-					{
-						"name": "Date of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Quarter of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Half of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Year of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Month of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Month Name of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Short Month",
-						"type": "String"
-					},
-					{
-						"name": "Day of Joining",
-						"type": "String"
-					},
-					{
-						"name": "DOW of Joining",
-						"type": "String"
-					},
-					{
-						"name": "Short DOW",
-						"type": "String"
-					},
-					{
-						"name": "Age in Company (Years)",
-						"type": "String"
-					},
-					{
-						"name": "Salary",
-						"type": "String"
-					},
-					{
-						"name": "Last % Hike",
-						"type": "String"
-					},
-					{
-						"name": "SSN",
-						"type": "String"
-					},
-					{
-						"name": "Phone No. ",
-						"type": "String"
-					},
-					{
-						"name": "Place Name",
-						"type": "String"
-					},
-					{
-						"name": "County",
-						"type": "String"
-					},
-					{
-						"name": "City",
-						"type": "String"
-					},
-					{
-						"name": "State",
-						"type": "String"
-					},
-					{
-						"name": "Zip",
-						"type": "String"
-					},
-					{
-						"name": "Region",
-						"type": "String"
-					},
-					{
-						"name": "User Name",
-						"type": "String"
-					},
-					{
-						"name": "Password",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dupefolder1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "output/dupes",
-						"container": "mycontainer"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
 			]
 		},
 		{
@@ -1924,7 +2199,7 @@
 						},
 						{
 							"name": "CreateFullName",
-							"script": "sourceName derive(fullname = {First Name} + ' ' + {Last Name}\r\n\r\n) ~> CreateFullName"
+							"script": "sourceName derive(fullname = {First Name} + ' ' + {Last Name}) ~> CreateFullName"
 						},
 						{
 							"name": "CheckForDupes",
@@ -1939,273 +2214,50 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Dedupe Pipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/lgndatalake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Deduplication Data Flow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dedupeProb21",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"sourceName": {},
-									"sinkDupes": {},
-									"sinkNoDupes": {}
-								}
-							},
-							"staging": {}
-						}
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lgndatalake_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('lgndatalake_accountKey')]"
 					}
-				],
-				"folder": {
-					"name": "Data Flow Demos"
-				},
-				"annotations": []
+				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dedupeProb21')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/searchLog1')]",
+			"name": "[concat(parameters('factoryName'), '/SpatialSink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
+					"referenceName": "lgndatalake",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "SearchLog.tsv",
-						"folderPath": "SampleData/USQL",
-						"container": "mycontainer"
+						"type": "AzureBlobFSLocation",
+						"fileName": "@concat('in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+						"folderPath": "US/extracts/spatial",
+						"container": "raw"
 					},
-					"columnDelimiter": "\t",
+					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": [
-					{
-						"name": "_c0",
-						"type": "String"
-					},
-					{
-						"name": "_c1",
-						"type": "String"
-					},
-					{
-						"name": "_c2",
-						"type": "String"
-					},
-					{
-						"name": "_c3",
-						"type": "String"
-					},
-					{
-						"name": "_c4",
-						"type": "String"
-					},
-					{
-						"name": "_c5",
-						"type": "String"
-					},
-					{
-						"name": "_c6",
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Misc"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"typeProperties": {
-					"tableName": "templatedemodata"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SearchLog1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "searchLog1",
-								"type": "DatasetReference"
-							},
-							"name": "searchLog",
-							"script": "source(output(\n\t\t{_col0_} as integer,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as integer,\n\t\t{_col5_} as string,\n\t\t{_col6_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> searchLog",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlDWTable11_New1",
-								"type": "DatasetReference"
-							},
-							"name": "sinkIntoDW",
-							"script": "DurationFilter sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstaged: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sinkIntoDW"
-						}
-					],
-					"transformations": [
-						{
-							"name": "totalDurationByRegion",
-							"script": "DateFilter aggregate(groupBy(region),\n\ttotalduration = sum(duration)) ~> totalDurationByRegion"
-						},
-						{
-							"name": "RenameColumns",
-							"script": "searchLog select(mapColumn(\n\t\tuserid = {_col0_},\n\t\tstart = {_col1_},\n\t\tregion = {_col2_},\n\t\tquery = {_col3_},\n\t\tduration = {_col4_},\n\t\turls = {_col5_},\n\t\tclickedurls = {_col6_}\n\t))~> RenameColumns"
-						},
-						{
-							"name": "DateFilter",
-							"script": "ConvertDate filter(newdate > toDate('2012-02-06','yyyy-MM-dd')) ~> DateFilter"
-						},
-						{
-							"name": "ConvertDate",
-							"script": "RenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate"
-						},
-						{
-							"name": "DurationFilter",
-							"script": "totalDurationByRegion filter(totalduration > 200) ~> DurationFilter"
-						}
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/searchLog1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqlDWTable11_New1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SearchLogAnalytics')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "This is a sample that takes the U-SQL SearchLog analytics example and turns it into an ADF Data Flow: https://kromerbigdata.com/2019/03/03/u-sql-searchlog-aggregations-as-adf-data-flows/",
-				"activities": [
-					{
-						"name": "SearchLog",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "SearchLog1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"searchLog": {},
-									"sinkIntoDW": {}
-								}
-							},
-							"staging": {}
-						}
-					}
-				],
-				"folder": {
-					"name": "Data Flow Demos"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/SearchLog1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11_New1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Misc"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": "templatedemodata"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/lnakv')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/USGSSecretStore')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }

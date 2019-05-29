@@ -20,6 +20,9 @@
 		"lgndatabricks_accessToken": {
 			"value": ""
 		},
+		"lgndatalake_accountKey": {
+			"value": ""
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"value": ""
 		},
@@ -50,6 +53,12 @@
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"value": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"value": "https://lnakv.vault.azure.net/"
+		},
 		"sourceBlob_LS_sasUri": {
 			"value": ""
 		},
@@ -65,11 +74,8 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
 		},
-		"lnakv_properties_typeProperties_baseUrl": {
-			"value": "https://lnakv.vault.azure.net/"
-		},
-		"USGSSecretStore_properties_typeProperties_baseUrl": {
-			"value": "https://USGS-SecretStore.vault.azure.net/"
+		"lgndatalake_properties_typeProperties_url": {
+			"value": "https://lgndatalake.dfs.core.windows.net"
 		}
 	}
 }

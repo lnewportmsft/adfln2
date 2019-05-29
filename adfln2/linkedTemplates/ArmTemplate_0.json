@@ -29,9 +29,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'lgndatabricks'"
 		},
+		"lgndatalake_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'lgndatalake'"
+		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"USGSSecretStore_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://lnakv.vault.azure.net/"
 		},
 		"sourceBlob_LS_sasUri": {
 			"type": "secureString",
@@ -51,13 +63,9 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
 		},
-		"lnakv_properties_typeProperties_baseUrl": {
+		"lgndatalake_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://lnakv.vault.azure.net/"
-		},
-		"USGSSecretStore_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
 		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
@@ -74,22 +82,6 @@
 		"SinkDataset_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "adftutorial/incrementalcopy"
-		},
-		"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "_success"
-		},
-		"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "data/source"
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "Product.csv"
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "data/source"
 		}
 	},
 	"variables": {
@@ -157,6 +149,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/USGSSecretStore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/lgndatabricks')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -170,6 +175,19 @@
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
 					"existingClusterId": "0430-194140-psalm148"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnakv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -239,27 +257,18 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/lnakv')]",
+			"name": "[concat(parameters('factoryName'), '/lgndatalake')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "AzureKeyVault",
+				"type": "AzureBlobFS",
 				"typeProperties": {
-					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/USGSSecretStore')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+					"url": "[parameters('lgndatalake_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('lgndatalake_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -290,8 +299,6 @@
 							"body": {
 								"message": "Start my IR"
 							},
-							"linkedServices": [],
-							"datasets": [],
 							"authentication": {
 								"type": "MSI",
 								"resource": "https://management.azure.com"
@@ -392,6 +399,51 @@
 						"value": "@dataset().DWTableName",
 						"type": "Expression"
 					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Misc"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"typeProperties": {
+					"tableName": "templatedemodata"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11_New1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDWLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Misc"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "templatedemodata"
 				}
 			},
 			"dependsOn": [
@@ -542,84 +594,6 @@
 					},
 					"folderPath": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceAvailabilityBlobStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Dataset to check if '_success' flag/ file is available in source. If not, then the activity fails, letting you know that source dataset is not ready.\nContext: In Spark/ Hadoop environments, generally users leverage flags to identify if the data has been correctly written through the distributed compute engines. E.g. '_success' defines all nodes have successfully written the data.",
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"format": {
-						"type": "TextFormat",
-						"columnDelimiter": ",",
-						"rowDelimiter": "",
-						"nullValue": "\\N",
-						"treatEmptyAsNull": true,
-						"skipLineCount": 0,
-						"firstRowAsHeader": false
-					},
-					"fileName": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your source files in Azure Blob Store.",
-				"linkedServiceName": {
-					"referenceName": "sourceBlob_LS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/sourceBlob_LS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TaxiDemoDayStatsSink1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "demo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
