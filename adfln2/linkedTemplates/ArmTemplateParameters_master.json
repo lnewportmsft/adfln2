@@ -17,6 +17,9 @@
 		"AzureSqlDatabaseLinkedService_connectionString": {
 			"value": ""
 		},
+		"LGNP50_password": {
+			"value": ""
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
@@ -24,6 +27,12 @@
 			"value": ""
 		},
 		"lgndatalake_accountKey": {
+			"value": ""
+		},
+		"ADFPickup_properties_typeProperties_fileName": {
+			"value": "*jpg"
+		},
+		"ADFPickup_properties_typeProperties_folderPath": {
 			"value": ""
 		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
@@ -50,8 +59,20 @@
 		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "data/source"
 		},
+		"adfdropoff_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"adfdropoff_properties_typeProperties_folderPath": {
+			"value": "adfdropoff"
+		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"LGNP50_properties_typeProperties_userId": {
+			"value": "adfpickup"
+		},
+		"STLFEDMOIL_properties_typeProperties_url": {
+			"value": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?bgcolor=%23e1e9f0&chart_type=column&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=alfred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=STLPCPI,STLPCPI&scale=left,left&cosd=2001-01-01,2001-01-01&coed=2016-01-01,2017-01-01&line_color=%234572a7,%23aa4643&link_values=false,false&line_style=solid,solid&mark_type=none,none&mw=3,3&lw=2,2&ost=-99999,-99999&oet=99999,99999&mma=0,0&fml=a,a&fq=Annual,Annual&fam=avg,avg&fgst=lin,lin&fgsnd=2009-06-01,2009-06-01&line_index=1,2&transformation=lin,lin&vintage_date=2017-11-16,2018-11-15&nd=1969-01-01,2001-01-01"
 		},
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"value": "https://USGS-SecretStore.vault.azure.net/"

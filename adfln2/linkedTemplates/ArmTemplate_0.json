@@ -41,6 +41,10 @@
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
+		"STLFEDMOIL_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://alfred.stlouisfed.org/graph/alfredgraph.csv?bgcolor=%23e1e9f0&chart_type=column&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=alfred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=STLPCPI,STLPCPI&scale=left,left&cosd=2001-01-01,2001-01-01&coed=2016-01-01,2017-01-01&line_color=%234572a7,%23aa4643&link_values=false,false&line_style=solid,solid&mark_type=none,none&mw=3,3&lw=2,2&ost=-99999,-99999&oet=99999,99999&mma=0,0&fml=a,a&fq=Annual,Annual&fam=avg,avg&fgst=lin,lin&fgsnd=2009-06-01,2009-06-01&line_index=1,2&transformation=lin,lin&vintage_date=2017-11-16,2018-11-15&nd=1969-01-01,2001-01-01"
+		},
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
@@ -144,6 +148,21 @@
 					"port": 21,
 					"enableSsl": false,
 					"enableServerCertificateValidation": false,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/STLFEDMOIL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('STLFEDMOIL_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
 				}
 			},
@@ -507,34 +526,6 @@
 						"container": "demo"
 					},
 					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": false,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CurrencyDatasetCAD1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "Currency_CAD.txt",
-						"container": "demo"
-					},
-					"columnDelimiter": "\t",
 					"escapeChar": "\\",
 					"firstRowAsHeader": false,
 					"quoteChar": "\""
