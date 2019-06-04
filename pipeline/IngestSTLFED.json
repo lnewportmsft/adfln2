@@ -1,5 +1,5 @@
 {
-	"name": "DataflowCopy1",
+	"name": "IngestSTLFED",
 	"properties": {
 		"description": "Run dataflow with Explicit copy to ingest copy source",
 		"activities": [
@@ -105,6 +105,9 @@
 					}
 				}
 			}
-		]
+		],
+		"folder": {
+			"name": "Data Flow Demos"
+		}
 	}
 }
