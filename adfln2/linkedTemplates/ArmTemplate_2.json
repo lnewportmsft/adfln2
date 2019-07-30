@@ -11,6 +11,18 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LGNP50'"
 		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
+		"adfdropoff_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"adfdropoff_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "adfdropoff"
+		},
 		"LGNP50_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "adfpickup"
@@ -28,6 +40,24 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/adfdropoff')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "[parameters('adfdropoff_properties_typeProperties_fileName')]",
+					"folderPath": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dupefolder1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -466,6 +496,23 @@
 						"type": "SecureString",
 						"value": "[parameters('LGNP50_password')]"
 					}
+				},
+				"connectVia": {
+					"referenceName": "[parameters('integrationRuntime_integrationRuntime1')]",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('SqlServer1_connectionString')]"
 				},
 				"connectVia": {
 					"referenceName": "[parameters('integrationRuntime_integrationRuntime1')]",
@@ -1041,7 +1088,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "USDCurrency",
-							"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency",
 							"typeProperties": {}
 						},
 						{
@@ -1050,7 +1096,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "CADSource",
-							"script": "source(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource",
 							"typeProperties": {}
 						}
 					],
@@ -1060,35 +1105,17 @@
 								"referenceName": "USDOutput1",
 								"type": "DatasetReference"
 							},
-							"name": "USDSink",
-							"script": "ConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink"
+							"name": "USDSink"
 						},
 						{
 							"dataset": {
 								"referenceName": "CADOutput1",
 								"type": "DatasetReference"
 							},
-							"name": "CADSink",
-							"script": "ConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
+							"name": "CADSink"
 						}
 					],
-					"transformations": [
-						{
-							"name": "Union",
-							"description": "The Union combines 2 streams together",
-							"script": "USDCurrency, CADSource union(byName: true)~> Union"
-						},
-						{
-							"name": "NewCurrencyColumn",
-							"description": "Create a new calculated column from currency rate",
-							"script": "Union derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn"
-						},
-						{
-							"name": "ConditionalSplit1",
-							"description": "Split the data on state to create 2 streams",
-							"script": "NewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)"
-						}
-					]
+					"script": "\n\nsource(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
 				}
 			},
 			"dependsOn": []
@@ -1107,7 +1134,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "Movies",
-							"script": "source(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies",
 							"typeProperties": {}
 						}
 					],
@@ -1117,16 +1143,10 @@
 								"referenceName": "movie_dataflow_sink1",
 								"type": "DatasetReference"
 							},
-							"name": "Output",
-							"script": "MoviesYear sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> Output"
+							"name": "Output"
 						}
 					],
-					"transformations": [
-						{
-							"name": "MoviesYear",
-							"script": "Movies derive(year = toInteger(trim(right(title, 6), '()')),\n\t\ttitle = toString(left(title, length(title)-6))) ~> MoviesYear"
-						}
-					]
+					"script": "\n\nsource(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies\nMovies derive(year = toInteger(trim(right(title, 6), '()')),\n\t\ttitle = toString(left(title, length(title)-6))) ~> MoviesYear\nMoviesYear sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> Output"
 				}
 			},
 			"dependsOn": [
@@ -1148,7 +1168,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "source1",
-							"script": "source(output(\n\t\tmovie as string,\n\t\ttitle as string,\n\t\tgenres as string,\n\t\tyear as integer,\n\t\tRating as integer,\n\t\t{Rotton Tomato} as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1",
 							"typeProperties": {}
 						}
 					],
@@ -1158,24 +1177,10 @@
 								"referenceName": "RankedMovieSink",
 								"type": "DatasetReference"
 							},
-							"name": "sink1",
-							"script": "Select1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
+							"name": "sink1"
 						}
 					],
-					"transformations": [
-						{
-							"name": "DerivedColumn1",
-							"script": "source1 derive(dummy = 1,\n\t\tcombo = (Rating * 5) + {Rotton Tomato}) ~> DerivedColumn1"
-						},
-						{
-							"name": "Window1",
-							"script": "DerivedColumn1 window(over(dummy),\n\tasc(combo, true),\n\tRANK = rank(combo)) ~> Window1"
-						},
-						{
-							"name": "Select1",
-							"script": "Window1 select(mapColumn(\n\t\tmovie,\n\t\ttitle,\n\t\tgenres,\n\t\tyear,\n\t\tRating,\n\t\tRottenTomato = {Rotton Tomato},\n\t\tdummy,\n\t\tcombo,\n\t\tRANK\n\t))~> Select1"
-						}
-					]
+					"script": "\n\nsource(output(\n\t\tmovie as string,\n\t\ttitle as string,\n\t\tgenres as string,\n\t\tyear as integer,\n\t\tRating as integer,\n\t\t{Rotton Tomato} as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource1 derive(dummy = 1,\n\t\tcombo = (Rating * 5) + {Rotton Tomato}) ~> DerivedColumn1\nDerivedColumn1 window(over(dummy),\n\tasc(combo, true),\n\tRANK = rank(combo)) ~> Window1\nWindow1 select(mapColumn(\n\t\tmovie,\n\t\ttitle,\n\t\tgenres,\n\t\tyear,\n\t\tRating,\n\t\tRottenTomato = {Rotton Tomato},\n\t\tdummy,\n\t\tcombo,\n\t\tRANK\n\t)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
 				}
 			},
 			"dependsOn": [
@@ -1196,7 +1201,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "STLPCPI",
-							"script": "source(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> STLPCPI",
 							"typeProperties": {}
 						}
 					],
@@ -1206,153 +1210,13 @@
 								"referenceName": "AzureSqlDatabaseDataset_New1",
 								"type": "DatasetReference"
 							},
-							"name": "sink1",
-							"script": "ConverToInts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
+							"name": "sink1"
 						}
 					],
-					"transformations": [
-						{
-							"name": "ConverToInts",
-							"script": "STLPCPI derive(DATE = toDate(DATE),\n\t\tSTLPCPI_20171116 = toInteger(STLPCPI_20171116),\n\t\tSTLPCPI_20181115 = toInteger(STLPCPI_20181115)) ~> ConverToInts"
-						}
-					]
+					"script": "\n\nsource(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> STLPCPI\nSTLPCPI derive(DATE = toDate(DATE),\n\t\tSTLPCPI_20171116 = toInteger(STLPCPI_20171116),\n\t\tSTLPCPI_20181115 = toInteger(STLPCPI_20181115)) ~> ConverToInts\nConverToInts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SearchLog1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "searchLog1",
-								"type": "DatasetReference"
-							},
-							"name": "searchLog",
-							"script": "source(output(\n\t\t{_col0_} as integer,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as integer,\n\t\t{_col5_} as string,\n\t\t{_col6_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> searchLog",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlDWTable11_New1",
-								"type": "DatasetReference"
-							},
-							"name": "sinkIntoDW",
-							"script": "DurationFilter sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tstaged: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sinkIntoDW"
-						}
-					],
-					"transformations": [
-						{
-							"name": "totalDurationByRegion",
-							"script": "DateFilter aggregate(groupBy(region),\n\ttotalduration = sum(duration)) ~> totalDurationByRegion"
-						},
-						{
-							"name": "RenameColumns",
-							"script": "searchLog select(mapColumn(\n\t\tuserid = {_col0_},\n\t\tstart = {_col1_},\n\t\tregion = {_col2_},\n\t\tquery = {_col3_},\n\t\tduration = {_col4_},\n\t\turls = {_col5_},\n\t\tclickedurls = {_col6_}\n\t))~> RenameColumns"
-						},
-						{
-							"name": "DateFilter",
-							"script": "ConvertDate filter(newdate > toDate('2012-02-06','yyyy-MM-dd')) ~> DateFilter"
-						},
-						{
-							"name": "ConvertDate",
-							"script": "RenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate"
-						},
-						{
-							"name": "DurationFilter",
-							"script": "totalDurationByRegion filter(totalduration > 200) ~> DurationFilter"
-						}
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/searchLog1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TaxiDemo1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "taxi_trip_data_input1",
-								"type": "DatasetReference"
-							},
-							"name": "TripData",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "taxi_trip_fare_input1",
-								"type": "DatasetReference"
-							},
-							"name": "TripFare",
-							"script": "source(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoVendorStatsSink1",
-								"type": "DatasetReference"
-							},
-							"name": "VendorStatsSink",
-							"script": "AggregateVendorStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> VendorStatsSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoDayStatsSink1",
-								"type": "DatasetReference"
-							},
-							"name": "DayStatsSink",
-							"script": "AggregateDayStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> DayStatsSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoTotalByPaymentType1",
-								"type": "DatasetReference"
-							},
-							"name": "TotalPaymentByPaymentType",
-							"script": "AggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> TotalPaymentByPaymentType"
-						}
-					],
-					"transformations": [
-						{
-							"name": "JoinMatchedData",
-							"script": "TripData, TripFare join(hack_license == { hack_license}\n\t&& TripData@medallion == TripFare@medallion\n\t&& vendor_id == { vendor_id}\n\t&& pickup_datetime == { pickup_datetime},\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinMatchedData"
-						},
-						{
-							"name": "AggregateVendorStats",
-							"script": "JoinMatchedData aggregate(groupBy(vendor_id),\n\tpassenger_count = round(sum(passenger_count), 2),\n\t\ttrip_time_in_secs = round(sum(trip_time_in_secs)/60, 2),\n\t\ttrip_distance = round(sum(trip_distance), 2),\n\t\tTotalTripFare = round(sum({ total_amount}), 2)) ~> AggregateVendorStats"
-						},
-						{
-							"name": "AggregateDayStats",
-							"script": "JoinMatchedData aggregate(groupBy(DayOfTheWeek = dayOfWeek(toDate(pickup_datetime,'yyyy-mm-dd hh:mm:ss'))),\n\ttrip_distance = round(avg(trip_distance), 2),\n\t\tpassenger_count = round(avg(passenger_count), 2),\n\t\ttrip_time_in_secs = round(avg(trip_time_in_secs)/60, 2),\n\t\taverage_fare = round(avg({ total_amount}), 2)) ~> AggregateDayStats"
-						},
-						{
-							"name": "AggregateByPaymentType",
-							"script": "TripFare aggregate(groupBy({ payment_type}),\n\teach(match(type=='double'), concat($$, '_total') = round(sum ($$)))) ~> AggregateByPaymentType"
-						}
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/taxi_trip_data_input1')]",
-				"[concat(variables('factoryId'), '/datasets/taxi_trip_fare_input1')]"
-			]
 		}
 	]
 }

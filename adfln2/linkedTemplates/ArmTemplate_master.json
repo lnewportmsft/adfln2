@@ -7,6 +7,11 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfln2"
 		},
+		"integrationRuntime_DFIR": {
+			"type": "string",
+			"metadata": "Integration Runtime Name",
+			"defaultValue": "DFIR"
+		},
 		"integrationRuntime_integrationRuntime1": {
 			"type": "string",
 			"metadata": "Integration Runtime Name",
@@ -32,6 +37,10 @@
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
+		},
+		"SqlServer1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
 		},
 		"lgndatabricks_accessToken": {
 			"type": "secureString",
@@ -158,6 +167,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"integrationRuntime_DFIR": {
+						"value": "[parameters('integrationRuntime_DFIR')]"
+					},
 					"integrationRuntime_integrationRuntime1": {
 						"value": "[parameters('integrationRuntime_integrationRuntime1')]"
 					},
@@ -250,12 +262,6 @@
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"adfdropoff_properties_typeProperties_fileName": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
-					},
-					"adfdropoff_properties_typeProperties_folderPath": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -279,6 +285,15 @@
 					},
 					"LGNP50_password": {
 						"value": "[parameters('LGNP50_password')]"
+					},
+					"SqlServer1_connectionString": {
+						"value": "[parameters('SqlServer1_connectionString')]"
+					},
+					"adfdropoff_properties_typeProperties_fileName": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
+					},
+					"adfdropoff_properties_typeProperties_folderPath": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					},
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"

@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adfln2"
 		},
+		"integrationRuntime_DFIR": {
+			"value": "DFIR"
+		},
 		"integrationRuntime_integrationRuntime1": {
 			"value": "integrationRuntime1"
 		},
@@ -21,6 +24,9 @@
 			"value": ""
 		},
 		"MyAzureBlobLinkedService_connectionString": {
+			"value": ""
+		},
+		"SqlServer1_connectionString": {
 			"value": ""
 		},
 		"lgndatabricks_accessToken": {
