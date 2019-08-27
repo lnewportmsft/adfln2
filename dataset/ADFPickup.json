@@ -5,9 +5,10 @@
 			"referenceName": "LGNP50",
 			"type": "LinkedServiceReference"
 		},
+		"annotations": [],
 		"type": "FileShare",
 		"typeProperties": {
-			"fileName": "*jpg",
+			"fileName": "",
 			"folderPath": ""
 		}
 	}
