@@ -109,6 +109,27 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"value": "@dataset().FolderPath"
+		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"value": "@dataset().FolderPath"
+		},
+		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
+			"value": "d:\\adfpickup"
+		},
+		"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
+			"value": "/raw"
+		},
+		"trigger1_properties_pipeline_parameters_LastModified_From": {
+			"value": "@trigger().outputs.windowStartTime"
+		},
+		"trigger1_properties_pipeline_parameters_LastModified_To": {
+			"value": "@trigger().outputs.windowEndTime"
 		}
 	}
 }

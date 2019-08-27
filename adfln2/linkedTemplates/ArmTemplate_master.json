@@ -148,6 +148,34 @@
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
 		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
+		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
+		},
+		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
+			"type": "string",
+			"defaultValue": "d:\\adfpickup"
+		},
+		"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
+			"type": "string",
+			"defaultValue": "/raw"
+		},
+		"trigger1_properties_pipeline_parameters_LastModified_From": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowStartTime"
+		},
+		"trigger1_properties_pipeline_parameters_LastModified_To": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -312,6 +340,9 @@
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
 					},
+					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
+					},
 					"ADFPickup_properties_typeProperties_fileName": {
 						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
 					},
@@ -337,6 +368,24 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
+					},
+					"trigger1_properties_pipeline_parameters_FolderPath_Source": {
+						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]"
+					},
+					"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
+						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Destination')]"
+					},
+					"trigger1_properties_pipeline_parameters_LastModified_From": {
+						"value": "[parameters('trigger1_properties_pipeline_parameters_LastModified_From')]"
+					},
+					"trigger1_properties_pipeline_parameters_LastModified_To": {
+						"value": "[parameters('trigger1_properties_pipeline_parameters_LastModified_To')]"
 					}
 				}
 			},
