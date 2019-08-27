@@ -1,0 +1,43 @@
+{
+	"name": "FileServerDataSourceStore1",
+	"properties": {
+		"description": "Connection to your data source store.  ",
+		"linkedServiceName": {
+			"referenceName": "LGNP50",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderPath": {
+				"type": "String"
+			},
+			"LastModified_From": {
+				"type": "String"
+			},
+			"LastModified_To": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "FileShare",
+		"typeProperties": {
+			"fileName": "",
+			"folderPath": {
+				"value": "@dataset().FolderPath",
+				"type": "Expression"
+			},
+			"modifiedDatetimeStart": {
+				"value": "@dataset().LastModified_From",
+				"type": "Expression"
+			},
+			"modifiedDatetimeEnd": {
+				"value": "@dataset().LastModified_To",
+				"type": "Expression"
+			},
+			"key": "*",
+			"bucketName": {
+				"value": "@dataset().FolderPath",
+				"type": "Expression"
+			}
+		}
+	}
+}
