@@ -23,13 +23,17 @@
 			"type": "string",
 			"defaultValue": "adfdropoff"
 		},
+		"LGNP50_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "D:\\adfpickup"
+		},
 		"LGNP50_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "adfpickup"
 		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"type": "string",
-			"defaultValue": "*jpg"
+			"defaultValue": ""
 		},
 		"ADFPickup_properties_typeProperties_folderPath": {
 			"type": "string",
@@ -490,7 +494,7 @@
 				"annotations": [],
 				"type": "FileServer",
 				"typeProperties": {
-					"host": "D:\\adfpickup",
+					"host": "[parameters('LGNP50_properties_typeProperties_host')]",
 					"userId": "[parameters('LGNP50_properties_typeProperties_userId')]",
 					"password": {
 						"type": "SecureString",
@@ -867,10 +871,10 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSetting"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "DelimitedTextWriteSetting",
+									"type": "DelimitedTextWriteSettings",
 									"quoteAllText": true,
 									"fileExtension": ".csv"
 								}
@@ -1005,10 +1009,10 @@
 										"sink": {
 											"type": "DelimitedTextSink",
 											"storeSettings": {
-												"type": "AzureBlobStorageWriteSetting"
+												"type": "AzureBlobStorageWriteSettings"
 											},
 											"formatSettings": {
-												"type": "DelimitedTextWriteSetting",
+												"type": "DelimitedTextWriteSettings",
 												"quoteAllText": true,
 												"fileExtension": ".csv"
 											}
@@ -1115,6 +1119,20 @@
 							"name": "CADSink"
 						}
 					],
+					"transformations": [
+						{
+							"name": "Union",
+							"description": "The Union combines 2 streams together"
+						},
+						{
+							"name": "NewCurrencyColumn",
+							"description": "Create a new calculated column from currency rate"
+						},
+						{
+							"name": "ConditionalSplit1",
+							"description": "Split the data on state to create 2 streams"
+						}
+					],
 					"script": "\n\nsource(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
 				}
 			},
@@ -1146,12 +1164,17 @@
 							"name": "Output"
 						}
 					],
+					"transformations": [
+						{
+							"name": "MoviesYear"
+						}
+					],
 					"script": "\n\nsource(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies\nMovies derive(year = toInteger(trim(right(title, 6), '()')),\n\t\ttitle = toString(left(title, length(title)-6))) ~> MoviesYear\nMoviesYear sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> Output"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/movie_dataflow_source1')]",
-				"[concat(variables('factoryId'), '/datasets/movie_dataflow_sink1')]"
+				"[concat(variables('factoryId'), '/datasets/movie_dataflow_sink1')]",
+				"[concat(variables('factoryId'), '/datasets/movie_dataflow_source1')]"
 			]
 		},
 		{
@@ -1178,6 +1201,17 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						},
+						{
+							"name": "Window1"
+						},
+						{
+							"name": "Select1"
 						}
 					],
 					"script": "\n\nsource(output(\n\t\tmovie as string,\n\t\ttitle as string,\n\t\tgenres as string,\n\t\tyear as integer,\n\t\tRating as integer,\n\t\t{Rotton Tomato} as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource1 derive(dummy = 1,\n\t\tcombo = (Rating * 5) + {Rotton Tomato}) ~> DerivedColumn1\nDerivedColumn1 window(over(dummy),\n\tasc(combo, true),\n\tRANK = rank(combo)) ~> Window1\nWindow1 select(mapColumn(\n\t\tmovie,\n\t\ttitle,\n\t\tgenres,\n\t\tyear,\n\t\tRating,\n\t\tRottenTomato = {Rotton Tomato},\n\t\tdummy,\n\t\tcombo,\n\t\tRANK\n\t)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
@@ -1211,6 +1245,11 @@
 								"type": "DatasetReference"
 							},
 							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "ConverToInts"
 						}
 					],
 					"script": "\n\nsource(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> STLPCPI\nSTLPCPI derive(DATE = toDate(DATE),\n\t\tSTLPCPI_20171116 = toInteger(STLPCPI_20171116),\n\t\tSTLPCPI_20181115 = toInteger(STLPCPI_20181115)) ~> ConverToInts\nConverToInts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"

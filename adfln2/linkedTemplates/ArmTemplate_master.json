@@ -52,7 +52,7 @@
 		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"type": "string",
-			"defaultValue": "*jpg"
+			"defaultValue": ""
 		},
 		"ADFPickup_properties_typeProperties_folderPath": {
 			"type": "string",
@@ -102,9 +102,17 @@
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
+		"LGNP50_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "D:\\adfpickup"
+		},
 		"LGNP50_properties_typeProperties_userId": {
 			"type": "string",
 			"defaultValue": "adfpickup"
+		},
+		"NOAAFTPServer_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "ftp://ftp.ncdc.noaa.gov/"
 		},
 		"STLFEDMOIL_properties_typeProperties_url": {
 			"type": "string",
@@ -193,6 +201,9 @@
 					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
+					},
+					"NOAAFTPServer_properties_typeProperties_host": {
+						"value": "[parameters('NOAAFTPServer_properties_typeProperties_host')]"
 					},
 					"STLFEDMOIL_properties_typeProperties_url": {
 						"value": "[parameters('STLFEDMOIL_properties_typeProperties_url')]"
@@ -294,6 +305,9 @@
 					},
 					"adfdropoff_properties_typeProperties_folderPath": {
 						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
+					},
+					"LGNP50_properties_typeProperties_host": {
+						"value": "[parameters('LGNP50_properties_typeProperties_host')]"
 					},
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
