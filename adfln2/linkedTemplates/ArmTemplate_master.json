@@ -50,6 +50,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'lgndatalake'"
 		},
+		"lgnstorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -227,6 +231,9 @@
 					"lgndatalake_accountKey": {
 						"value": "[parameters('lgndatalake_accountKey')]"
 					},
+					"lgnstorage_connectionString": {
+						"value": "[parameters('lgnstorage_connectionString')]"
+					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
 					},
@@ -342,18 +349,6 @@
 					},
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
-					},
-					"ADFPickup_properties_typeProperties_fileName": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
-					},
-					"ADFPickup_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -375,6 +370,38 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ADFPickup_properties_typeProperties_fileName": {
+						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
+					},
+					"ADFPickup_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
 					"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]"
 					},
@@ -390,7 +417,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_3')]"
 			]
 		}
 	]

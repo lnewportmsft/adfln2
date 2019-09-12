@@ -35,6 +35,9 @@
 		"lgndatalake_accountKey": {
 			"value": ""
 		},
+		"lgnstorage_connectionString": {
+			"value": ""
+		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"value": ""
 		},
