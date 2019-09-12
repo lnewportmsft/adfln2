@@ -1,5 +1,5 @@
 {
-	"name": "DelimitedText2",
+	"name": "lgndatalake_curated",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lgndatalake",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileSystem": "raw"
+				"fileSystem": "curated"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
