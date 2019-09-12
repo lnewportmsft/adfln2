@@ -31,10 +31,6 @@
 			"type": "string",
 			"defaultValue": "adfpickup"
 		},
-		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
-		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -42,12 +38,37 @@
 		"ADFPickup_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/WatermarkDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": "[[dbo].[watermarktable]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/adfdropoff')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -530,27 +551,126 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobFSDataDestinationStore1')]",
+			"name": "[concat(parameters('factoryName'), '/EmployeeFiles1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Connection to your data destination store.  ",
 				"linkedServiceName": {
-					"referenceName": "lgndatalake",
+					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"FolderPath": {
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Function",
+						"type": "String"
+					},
+					{
+						"name": "Level",
+						"type": "String"
+					},
+					{
+						"name": "Role",
+						"type": "String"
+					},
+					{
+						"name": "StartDate",
+						"type": "String"
+					},
+					{
+						"name": "EndDate",
 						"type": "String"
 					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimEmp1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"folderPath": {
-						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "surrogatekey",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmpFunction",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Level",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Role",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "date"
+					},
+					{
+						"name": "iscurrent",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "processtime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[DimEmp]"
 				}
 			},
 			"dependsOn": []
@@ -996,7 +1116,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WatermarkDataset')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/IterateAndCopySQLTables')]",
@@ -1108,147 +1230,51 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Currency Converter1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/FileServerDataSourceStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Sample demo data flow to convert currencies",
-				"type": "MappingDataFlow",
+				"description": "Connection to your data source store.  ",
+				"linkedServiceName": {
+					"referenceName": "LGNP50",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "String"
+					},
+					"LastModified_From": {
+						"type": "String"
+					},
+					"LastModified_To": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "FileShare",
 				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "CurrencyDatasetUSD1",
-								"type": "DatasetReference"
-							},
-							"name": "USDCurrency",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "CurrencyDatasetCAD1",
-								"type": "DatasetReference"
-							},
-							"name": "CADSource",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "USDOutput1",
-								"type": "DatasetReference"
-							},
-							"name": "USDSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "CADOutput1",
-								"type": "DatasetReference"
-							},
-							"name": "CADSink"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Union",
-							"description": "The Union combines 2 streams together"
-						},
-						{
-							"name": "NewCurrencyColumn",
-							"description": "Create a new calculated column from currency rate"
-						},
-						{
-							"name": "ConditionalSplit1",
-							"description": "Split the data on state to create 2 streams"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MovieDemo1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "movie_dataflow_source1",
-								"type": "DatasetReference"
-							},
-							"name": "Movies",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "movie_dataflow_sink1",
-								"type": "DatasetReference"
-							},
-							"name": "Output"
-						}
-					],
-					"transformations": [
-						{
-							"name": "MoviesYear"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\tmovieId as string,\n\t\ttitle as string,\n\t\tgenres as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> Movies\nMovies derive(year = toInteger(trim(right(title, 6), '()')),\n\t\ttitle = toString(left(title, length(title)-6))) ~> MoviesYear\nMoviesYear sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> Output"
+					"fileName": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]",
+					"folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					},
+					"modifiedDatetimeStart": {
+						"value": "@dataset().LastModified_From",
+						"type": "Expression"
+					},
+					"modifiedDatetimeEnd": {
+						"value": "@dataset().LastModified_To",
+						"type": "Expression"
+					},
+					"key": "*",
+					"bucketName": {
+						"value": "@dataset().FolderPath",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/movie_dataflow_sink1')]",
-				"[concat(variables('factoryId'), '/datasets/movie_dataflow_source1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RankMovies')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "moviesDB",
-								"type": "DatasetReference"
-							},
-							"name": "source1",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "RankedMovieSink",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "DerivedColumn1"
-						},
-						{
-							"name": "Window1"
-						},
-						{
-							"name": "Select1"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\tmovie as string,\n\t\ttitle as string,\n\t\tgenres as string,\n\t\tyear as integer,\n\t\tRating as integer,\n\t\t{Rotton Tomato} as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nsource1 derive(dummy = 1,\n\t\tcombo = (Rating * 5) + {Rotton Tomato}) ~> DerivedColumn1\nDerivedColumn1 window(over(dummy),\n\tasc(combo, true),\n\tRANK = rank(combo)) ~> Window1\nWindow1 select(mapColumn(\n\t\tmovie,\n\t\ttitle,\n\t\tgenres,\n\t\tyear,\n\t\tRating,\n\t\tRottenTomato = {Rotton Tomato},\n\t\tdummy,\n\t\tcombo,\n\t\tRANK\n\t)) ~> Select1\nSelect1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sink1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/moviesDB')]"
+				"[concat(variables('factoryId'), '/linkedServices/LGNP50')]"
 			]
 		}
 	]

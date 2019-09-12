@@ -41,11 +41,20 @@
 		"ADFPickup_properties_typeProperties_folderPath": {
 			"value": ""
 		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"value": "@dataset().FolderPath"
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"value": ""
 		},
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "sinkdata/staged_sink"
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"value": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"value": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
@@ -98,27 +107,6 @@
 		"sourceBlob_LS_sasUri": {
 			"value": ""
 		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
-			"value": "lnewport.database.windows.net"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
-			"value": "lnewport"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
-			"value": ""
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
-			"value": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"value": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"value": "@dataset().FolderPath"
-		},
-		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-			"value": "@dataset().FolderPath"
-		},
 		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 			"value": "d:\\adfpickup"
 		},
@@ -130,6 +118,18 @@
 		},
 		"trigger1_properties_pipeline_parameters_LastModified_To": {
 			"value": "@trigger().outputs.windowEndTime"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "lnewport.database.windows.net"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "lnewport"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+			"value": ""
 		},
 		"containerUri": {
 			"value": ""

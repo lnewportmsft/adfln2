@@ -83,6 +83,10 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
+		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
 		}
 	},
 	"variables": {
@@ -428,6 +432,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobFSDataDestinationStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data destination store.  ",
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFSFile",
+				"typeProperties": {
+					"folderPath": {
+						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDWDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -510,26 +542,6 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"typeProperties": {
-					"tableName": "dummyName"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset_New1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
 				"typeProperties": {
 					"tableName": "dummyName"
 				}

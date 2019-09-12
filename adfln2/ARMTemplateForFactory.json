@@ -58,6 +58,10 @@
 			"type": "string",
 			"defaultValue": ""
 		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -65,6 +69,14 @@
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sinkdata/staged_sink"
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"type": "string",
@@ -134,32 +146,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
 		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
-			"type": "string",
-			"defaultValue": "lnewport.database.windows.net"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
-			"type": "string",
-			"defaultValue": "lnewport"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
-			"type": "secureString"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
-			"type": "secureString"
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
-		},
-		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
-		},
 		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "d:\\adfpickup"
@@ -175,6 +161,20 @@
 		"trigger1_properties_pipeline_parameters_LastModified_To": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "lnewport.database.windows.net"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "lnewport"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+			"type": "secureString"
 		}
 	},
 	"variables": {
@@ -335,6 +335,95 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
 				"[concat(variables('factoryId'), '/datasets/SinkDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyNewFilesByLastModifiedDate1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Copy new and changed files only by using LastModifiedDate",
+				"activities": [
+					{
+						"name": "CopyNewFiles",
+						"description": "Copy new and changed files only by using LastModifiedDate",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "FileSystemSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "FileServerDataSourceStore1",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderPath": {
+										"value": "@pipeline().parameters.FolderPath_Source",
+										"type": "Expression"
+									},
+									"LastModified_From": {
+										"value": "@pipeline().parameters.LastModified_From",
+										"type": "Expression"
+									},
+									"LastModified_To": {
+										"value": "@pipeline().parameters.LastModified_To",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureBlobFSDataDestinationStore1",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderPath": {
+										"value": "@pipeline().parameters.FolderPath_Destination",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"FolderPath_Source": {
+						"type": "String",
+						"defaultValue": "/<myfolder>/<sub_folder>/"
+					},
+					"FolderPath_Destination": {
+						"type": "String",
+						"defaultValue": "/<myfolder>/<sub_folder>/"
+					},
+					"LastModified_From": {
+						"type": "String",
+						"defaultValue": "2019-02-01T00:00:00Z"
+					},
+					"LastModified_To": {
+						"type": "String",
+						"defaultValue": "2019-03-01T00:00:00Z"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/FileServerDataSourceStore1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureBlobFSDataDestinationStore1')]"
 			]
 		},
 		{
@@ -1279,6 +1368,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobFSDataDestinationStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data destination store.  ",
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFSFile",
+				"typeProperties": {
+					"folderPath": {
+						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDWDataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1541,6 +1658,54 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileServerDataSourceStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data source store.  ",
+				"linkedServiceName": {
+					"referenceName": "LGNP50",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "String"
+					},
+					"LastModified_From": {
+						"type": "String"
+					},
+					"LastModified_To": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "FileShare",
+				"typeProperties": {
+					"fileName": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]",
+					"folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					},
+					"modifiedDatetimeStart": {
+						"value": "@dataset().LastModified_From",
+						"type": "Expression"
+					},
+					"modifiedDatetimeEnd": {
+						"value": "@dataset().LastModified_To",
+						"type": "Expression"
+					},
+					"key": "*",
+					"bucketName": {
+						"value": "@dataset().FolderPath",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LGNP50')]"
 			]
 		},
 		{
@@ -2652,6 +2817,42 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "CopyNewFilesByLastModifiedDate1",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"FolderPath_Source": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]",
+						"FolderPath_Destination": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Destination')]",
+						"LastModified_From": "[parameters('trigger1_properties_pipeline_parameters_LastModified_From')]",
+						"LastModified_To": "[parameters('trigger1_properties_pipeline_parameters_LastModified_To')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Minute",
+					"interval": 15,
+					"startTime": "2019-08-27T17:47:00.000Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CopyNewFilesByLastModifiedDate1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_DFIR'))]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
@@ -3129,204 +3330,132 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/FileServerDataSourceStore1')]",
+			"name": "[concat(parameters('factoryName'), '/EmployeeFiles1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Connection to your data source store.  ",
 				"linkedServiceName": {
-					"referenceName": "LGNP50",
+					"referenceName": "MyAzureBlobLinkedService",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"FolderPath": {
-						"type": "String"
-					},
-					"LastModified_From": {
-						"type": "String"
-					},
-					"LastModified_To": {
-						"type": "String"
-					}
-				},
 				"annotations": [],
-				"type": "FileShare",
+				"type": "DelimitedText",
 				"typeProperties": {
-					"fileName": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]",
-					"folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "mycontainer"
 					},
-					"modifiedDatetimeStart": {
-						"value": "@dataset().LastModified_From",
-						"type": "Expression"
-					},
-					"modifiedDatetimeEnd": {
-						"value": "@dataset().LastModified_To",
-						"type": "Expression"
-					},
-					"key": "*",
-					"bucketName": {
-						"value": "@dataset().FolderPath",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LGNP50')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobFSDataDestinationStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data destination store.  ",
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
-				"parameters": {
-					"FolderPath": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"folderPath": {
-						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyNewFilesByLastModifiedDate1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Copy new and changed files only by using LastModifiedDate",
-				"activities": [
+				"schema": [
 					{
-						"name": "CopyNewFiles",
-						"description": "Copy new and changed files only by using LastModifiedDate",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "FileSystemSource",
-								"recursive": true
-							},
-							"sink": {
-								"type": "AzureBlobFSSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "FileServerDataSourceStore1",
-								"type": "DatasetReference",
-								"parameters": {
-									"FolderPath": {
-										"value": "@pipeline().parameters.FolderPath_Source",
-										"type": "Expression"
-									},
-									"LastModified_From": {
-										"value": "@pipeline().parameters.LastModified_From",
-										"type": "Expression"
-									},
-									"LastModified_To": {
-										"value": "@pipeline().parameters.LastModified_To",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzureBlobFSDataDestinationStore1",
-								"type": "DatasetReference",
-								"parameters": {
-									"FolderPath": {
-										"value": "@pipeline().parameters.FolderPath_Destination",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+						"name": "EmpID",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Function",
+						"type": "String"
+					},
+					{
+						"name": "Level",
+						"type": "String"
+					},
+					{
+						"name": "Role",
+						"type": "String"
+					},
+					{
+						"name": "StartDate",
+						"type": "String"
+					},
+					{
+						"name": "EndDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimEmp1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "surrogatekey",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmpFunction",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Level",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Role",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "date"
+					},
+					{
+						"name": "iscurrent",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "processtime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
 				],
-				"parameters": {
-					"FolderPath_Source": {
-						"type": "String",
-						"defaultValue": "/<myfolder>/<sub_folder>/"
-					},
-					"FolderPath_Destination": {
-						"type": "String",
-						"defaultValue": "/<myfolder>/<sub_folder>/"
-					},
-					"LastModified_From": {
-						"type": "String",
-						"defaultValue": "2019-02-01T00:00:00Z"
-					},
-					"LastModified_To": {
-						"type": "String",
-						"defaultValue": "2019-03-01T00:00:00Z"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/FileServerDataSourceStore1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureBlobFSDataDestinationStore1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "CopyNewFilesByLastModifiedDate1",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"FolderPath_Source": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]",
-						"FolderPath_Destination": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Destination')]",
-						"LastModified_From": "[parameters('trigger1_properties_pipeline_parameters_LastModified_From')]",
-						"LastModified_To": "[parameters('trigger1_properties_pipeline_parameters_LastModified_To')]"
-					}
-				},
-				"type": "TumblingWindowTrigger",
 				"typeProperties": {
-					"frequency": "Minute",
-					"interval": 15,
-					"startTime": "2019-08-27T17:47:00.000Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 50,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
+					"tableName": "[[dbo].[DimEmp]"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyNewFilesByLastModifiedDate1')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
 			]
 		}
 	]

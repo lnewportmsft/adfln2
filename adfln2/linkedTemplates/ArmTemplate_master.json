@@ -58,6 +58,10 @@
 			"type": "string",
 			"defaultValue": ""
 		},
+		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
+		},
 		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -65,6 +69,14 @@
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sinkdata/staged_sink"
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"type": "string",
@@ -134,32 +146,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
 		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
-			"type": "string",
-			"defaultValue": "lnewport.database.windows.net"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
-			"type": "string",
-			"defaultValue": "lnewport"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
-			"type": "secureString"
-		},
-		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
-			"type": "secureString"
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
-		},
-		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
-		},
 		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "d:\\adfpickup"
@@ -175,6 +161,20 @@
 		"trigger1_properties_pipeline_parameters_LastModified_To": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "lnewport.database.windows.net"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "lnewport"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
+		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+			"type": "secureString"
 		},
 		"containerUri": {
 			"type": "string",
@@ -259,6 +259,9 @@
 					},
 					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
+					},
+					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -340,14 +343,17 @@
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
 					},
-					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
-					},
 					"ADFPickup_properties_typeProperties_fileName": {
 						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
 					},
 					"ADFPickup_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -368,12 +374,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
 					},
 					"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]"
