@@ -1,0 +1,95 @@
+{
+	"name": "SourceDataset_zyh",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgnstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "nyctaxi"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "vendor_name",
+				"type": "String"
+			},
+			{
+				"name": "Trip_Pickup_DateTime",
+				"type": "String"
+			},
+			{
+				"name": "Trip_Dropoff_DateTime",
+				"type": "String"
+			},
+			{
+				"name": "Passenger_Count",
+				"type": "String"
+			},
+			{
+				"name": "Trip_Distance",
+				"type": "String"
+			},
+			{
+				"name": "Start_Lon",
+				"type": "String"
+			},
+			{
+				"name": "Start_Lat",
+				"type": "String"
+			},
+			{
+				"name": "Rate_Code",
+				"type": "String"
+			},
+			{
+				"name": "store_and_forward",
+				"type": "String"
+			},
+			{
+				"name": "End_Lon",
+				"type": "String"
+			},
+			{
+				"name": "End_Lat",
+				"type": "String"
+			},
+			{
+				"name": "Payment_Type",
+				"type": "String"
+			},
+			{
+				"name": "Fare_Amt",
+				"type": "String"
+			},
+			{
+				"name": "surcharge",
+				"type": "String"
+			},
+			{
+				"name": "mta_tax",
+				"type": "String"
+			},
+			{
+				"name": "Tip_Amt",
+				"type": "String"
+			},
+			{
+				"name": "Tolls_Amt",
+				"type": "String"
+			},
+			{
+				"name": "Total_Amt",
+				"type": "String"
+			}
+		]
+	}
+}
