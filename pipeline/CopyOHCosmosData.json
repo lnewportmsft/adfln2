@@ -1,0 +1,54 @@
+{
+	"name": "CopyOHCosmosData",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_437",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "movies"
+					},
+					{
+						"name": "Destination",
+						"value": "Container1"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DocumentDbCollectionSource",
+						"nestingSeparator": "."
+					},
+					"sink": {
+						"type": "DocumentDbCollectionSink",
+						"nestingSeparator": ".",
+						"writeBehavior": "insert"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_437",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_437",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

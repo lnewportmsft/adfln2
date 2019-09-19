@@ -1,0 +1,18 @@
+{
+	"name": "DestinationDataset_437",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lndb",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DocumentDbCollection",
+		"typeProperties": {
+			"collectionName": "Container1",
+			"format": {
+				"type": "JsonFormat",
+				"filePattern": "arrayOfObjects"
+			}
+		}
+	}
+}
