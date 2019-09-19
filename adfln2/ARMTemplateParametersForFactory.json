@@ -11,6 +11,9 @@
 		"integrationRuntime_integrationRuntime1": {
 			"value": "integrationRuntime1"
 		},
+		"integrationRuntime_integrationRuntime2": {
+			"value": "integrationRuntime2"
+		},
 		"integrationRuntime_lgnssisir": {
 			"value": "lgnssisir"
 		},
@@ -36,6 +39,12 @@
 			"value": ""
 		},
 		"lgnstorage_connectionString": {
+			"value": ""
+		},
+		"lndb_connectionString": {
+			"value": ""
+		},
+		"southridge_connectionString": {
 			"value": ""
 		},
 		"ADFPickup_properties_typeProperties_fileName": {

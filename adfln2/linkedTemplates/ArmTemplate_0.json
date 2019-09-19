@@ -17,6 +17,11 @@
 			"metadata": "Integration Runtime Name",
 			"defaultValue": "integrationRuntime1"
 		},
+		"integrationRuntime_integrationRuntime2": {
+			"type": "string",
+			"metadata": "Integration Runtime Name",
+			"defaultValue": "integrationRuntime2"
+		},
 		"integrationRuntime_lgnssisir": {
 			"type": "string",
 			"metadata": "Integration Runtime Name",
@@ -45,6 +50,14 @@
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
+		"lndb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lndb'"
+		},
+		"southridge_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'southridge'"
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -260,6 +273,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/lndb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('lndb_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/sourceBlob_LS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -268,6 +294,19 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"sasUri": "[parameters('sourceBlob_LS_sasUri')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/southridge')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('southridge_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -293,6 +332,16 @@
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime1'))]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime2'))]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -474,78 +523,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"DWTableName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"typeProperties": {
-					"tableName": {
-						"value": "@dataset().DWTableName",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Misc"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"typeProperties": {
-					"tableName": "templatedemodata"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDWTable11_New1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDWLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Misc"
-				},
-				"annotations": [],
-				"type": "AzureSqlDWTable",
-				"schema": [],
-				"typeProperties": {
-					"tableName": "templatedemodata"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDWLinkedService')]"
 			]
 		}
 	]

@@ -17,6 +17,11 @@
 			"metadata": "Integration Runtime Name",
 			"defaultValue": "integrationRuntime1"
 		},
+		"integrationRuntime_integrationRuntime2": {
+			"type": "string",
+			"metadata": "Integration Runtime Name",
+			"defaultValue": "integrationRuntime2"
+		},
 		"integrationRuntime_lgnssisir": {
 			"type": "string",
 			"metadata": "Integration Runtime Name",
@@ -53,6 +58,14 @@
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
+		"lndb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lndb'"
+		},
+		"southridge_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'southridge'"
 		},
 		"ADFPickup_properties_typeProperties_fileName": {
 			"type": "string",
@@ -213,6 +226,9 @@
 					"integrationRuntime_integrationRuntime1": {
 						"value": "[parameters('integrationRuntime_integrationRuntime1')]"
 					},
+					"integrationRuntime_integrationRuntime2": {
+						"value": "[parameters('integrationRuntime_integrationRuntime2')]"
+					},
 					"integrationRuntime_lgnssisir": {
 						"value": "[parameters('integrationRuntime_lgnssisir')]"
 					},
@@ -233,6 +249,12 @@
 					},
 					"lgnstorage_connectionString": {
 						"value": "[parameters('lgnstorage_connectionString')]"
+					},
+					"lndb_connectionString": {
+						"value": "[parameters('lndb_connectionString')]"
+					},
+					"southridge_connectionString": {
+						"value": "[parameters('southridge_connectionString')]"
 					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
@@ -305,12 +327,6 @@
 					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -332,23 +348,17 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"LGNP50_password": {
-						"value": "[parameters('LGNP50_password')]"
+					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
 					},
-					"SqlServer1_connectionString": {
-						"value": "[parameters('SqlServer1_connectionString')]"
+					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					},
 					"adfdropoff_properties_typeProperties_fileName": {
 						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
 					},
 					"adfdropoff_properties_typeProperties_folderPath": {
 						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
-					},
-					"LGNP50_properties_typeProperties_host": {
-						"value": "[parameters('LGNP50_properties_typeProperties_host')]"
-					},
-					"LGNP50_properties_typeProperties_userId": {
-						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
 					}
 				}
 			},
@@ -369,6 +379,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"LGNP50_password": {
+						"value": "[parameters('LGNP50_password')]"
+					},
+					"SqlServer1_connectionString": {
+						"value": "[parameters('SqlServer1_connectionString')]"
+					},
+					"LGNP50_properties_typeProperties_host": {
+						"value": "[parameters('LGNP50_properties_typeProperties_host')]"
+					},
+					"LGNP50_properties_typeProperties_userId": {
+						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
 					},
 					"ADFPickup_properties_typeProperties_fileName": {
 						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"

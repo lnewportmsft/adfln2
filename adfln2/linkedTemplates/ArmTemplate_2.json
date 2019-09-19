@@ -7,13 +7,13 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "adfln2"
 		},
-		"LGNP50_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LGNP50'"
+		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
 		},
-		"SqlServer1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "data/source"
 		},
 		"adfdropoff_properties_typeProperties_fileName": {
 			"type": "string",
@@ -22,20 +22,196 @@
 		"adfdropoff_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "adfdropoff"
-		},
-		"LGNP50_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "D:\\adfpickup"
-		},
-		"LGNP50_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "adfpickup"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": "[[dbo].[data_source_table]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_437')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "southridge",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DocumentDbCollection",
+				"typeProperties": {
+					"collectionName": "movies"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_zyh')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgnstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "nyctaxi"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "vendor_name",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Pickup_DateTime",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Dropoff_DateTime",
+						"type": "String"
+					},
+					{
+						"name": "Passenger_Count",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Distance",
+						"type": "String"
+					},
+					{
+						"name": "Start_Lon",
+						"type": "String"
+					},
+					{
+						"name": "Start_Lat",
+						"type": "String"
+					},
+					{
+						"name": "Rate_Code",
+						"type": "String"
+					},
+					{
+						"name": "store_and_forward",
+						"type": "String"
+					},
+					{
+						"name": "End_Lon",
+						"type": "String"
+					},
+					{
+						"name": "End_Lat",
+						"type": "String"
+					},
+					{
+						"name": "Payment_Type",
+						"type": "String"
+					},
+					{
+						"name": "Fare_Amt",
+						"type": "String"
+					},
+					{
+						"name": "surcharge",
+						"type": "String"
+					},
+					{
+						"name": "mta_tax",
+						"type": "String"
+					},
+					{
+						"name": "Tip_Amt",
+						"type": "String"
+					},
+					{
+						"name": "Tolls_Amt",
+						"type": "String"
+					},
+					{
+						"name": "Total_Amt",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source files in Azure Blob Store.",
+				"linkedServiceName": {
+					"referenceName": "sourceBlob_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
+					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SpatialSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('updates_', formatDateTime(trigger().startTime, 'MM'),formatDateTime(trigger().startTime, 'dd'),formatDateTime(trigger().startTime, 'yyyy'), '.csv')",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@concat('US/extracts/spatial/in/', formatDateTime(trigger().startTime, 'yyyy'), '/', formatDateTime(trigger().startTime, 'MM'), '/', formatDateTime(trigger().startTime, 'dd'))",
+							"type": "Expression"
+						},
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/StagingParquet1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -231,6 +407,44 @@
 					"quoteChar": "\""
 				},
 				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lgndatalake_curated')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "curated"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "PersonID",
+						"type": "String"
+					},
+					{
+						"name": "Name",
+						"type": "String"
+					},
+					{
+						"name": "LastModifytime",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": []
 		},
@@ -526,6 +740,87 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/nyctaxi_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "US/nyctaxi",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/searchLog1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -577,414 +872,6 @@
 						"type": "String"
 					}
 				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "trip_data_1.csv",
-						"container": "demo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/taxi_trip_fare_input1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "trip_fare_1.csv",
-						"container": "demo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LGNP50')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('LGNP50_properties_typeProperties_host')]",
-					"userId": "[parameters('LGNP50_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LGNP50_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "[parameters('integrationRuntime_integrationRuntime1')]",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SqlServer1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('SqlServer1_connectionString')]"
-				},
-				"connectVia": {
-					"referenceName": "[parameters('integrationRuntime_integrationRuntime1')]",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyMultiTableJSONArray')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEachTableInArray",
-						"type": "ForEach",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@pipeline().parameters.cw_items",
-								"type": "Expression"
-							},
-							"isSequential": true,
-							"activities": [
-								{
-									"name": "CopyFromSQLDBtoBlob",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [
-										{
-											"name": "Source",
-											"value": "@{item().source.tableName}"
-										},
-										{
-											"name": "Destination",
-											"value": "raw/@{item().destination.fileName}"
-										}
-									],
-									"typeProperties": {
-										"source": {
-											"type": "SqlSource"
-										},
-										"sink": {
-											"type": "BlobSink"
-										},
-										"enableStaging": false,
-										"enableSkipIncompatibleRow": true,
-										"dataIntegrationUnits": 0
-									},
-									"inputs": [
-										{
-											"referenceName": "SourceDataset",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "SinkDataset",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"cw_items": {
-						"type": "Array",
-						"defaultValue": [
-							{
-								"source": {
-									"tableName": "[[dbo].[mktzips]"
-								},
-								"destination": {
-									"fileName": "[dbo].[mktzips].txt"
-								}
-							},
-							{
-								"source": {
-									"tableName": "[[dbo].[zcshapes]"
-								},
-								"destination": {
-									"fileName": "[dbo].[zcshapes].txt"
-								}
-							}
-						]
-					}
-				},
-				"folder": {
-					"name": "Copy Demos"
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyTaxiData')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "lgnstorage to lgndatalake",
-				"activities": [
-					{
-						"name": "Copy_zyh",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "nyctaxi//"
-							},
-							{
-								"name": "Destination",
-								"value": "raw/US/nyctaxi/"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*.*"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings",
-									"skipLineCount": 0
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"enableSkipIncompatibleRow": true
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_zyh",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_zyh",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ETL with Azure Databricks')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Run a simple ETL job using Azure Databricks, with a single pane of glass monitoring from ADF.\n\nIn the template, we check for source dataset availability. Once it is available we copy it into a blob storage for staging using a Copy activity. The same storage is accessed from Databricks clusters while processing the data (ETL). The output is stored in the same storage under 'output' folder. Various notebook properties are referenced as expressions using pipeline parameters, which lets you configure more generic and reusable pipelines. \n \nFor steps on setting up storage and databricks notebook refer https://aka.ms/databricks-instructions. ",
-				"activities": [
-					{
-						"name": "Availability flag",
-						"description": "Lookup (or Get Metadata) activity is used to get information about the source files if they are available for processing. \nIn this template, only when the '_success' flag/ file is available at source, would the downstream activities be triggered. ",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BlobSource",
-								"recursive": true
-							},
-							"dataset": {
-								"referenceName": "SourceAvailabilityBlobStore1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "file-to-blob",
-						"description": "Copy activity copies the actual files/ dataset to be processed by Databricks into a staging store. This storage should be accessible by the Azure Databricks cluster referenced in the next activity. ",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Availability flag",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BlobSource",
-								"recursive": true
-							},
-							"sink": {
-								"type": "BlobSink"
-							},
-							"enableStaging": false,
-							"dataIntegrationUnits": 0
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceFilesBlobStore1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationFilesBlobStore1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "ETL",
-						"description": "Databricks Notebook activity does the processing of the data copied in the previous step (copy activity).  Please ensure you have added the databricks notebook (<a href='https://adflabstaging1.blob.core.windows.net/share/Transformations.html' target='_blank'>https://adflabstaging1.blob.core.windows.net/share/Transformations.html</a>) in the databricks work-space and referenced it in the notebook activity in ADF.",
-						"type": "DatabricksNotebook",
-						"dependsOn": [
-							{
-								"activity": "file-to-blob",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Transformations",
-							"baseParameters": {
-								"input": {
-									"value": "@pipeline().parameters.inputPath",
-									"type": "Expression"
-								},
-								"output": {
-									"value": "@pipeline().parameters.outputPath",
-									"type": "Expression"
-								},
-								"filename": {
-									"value": "@pipeline().parameters.fileName",
-									"type": "Expression"
-								},
-								"pipelineRunId": {
-									"value": "@pipeline().RunId",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "lgndatabricks",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"parameters": {
-					"inputPath": {
-						"type": "String",
-						"defaultValue": "/staged_sink"
-					},
-					"outputPath": {
-						"type": "String",
-						"defaultValue": "/processed_sink"
-					},
-					"fileName": {
-						"type": "String",
-						"defaultValue": "Product.csv"
-					}
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		}
