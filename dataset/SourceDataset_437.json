@@ -1,0 +1,14 @@
+{
+	"name": "SourceDataset_437",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "southridge",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DocumentDbCollection",
+		"typeProperties": {
+			"collectionName": "movies"
+		}
+	}
+}
