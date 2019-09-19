@@ -8,7 +8,7 @@
 		"annotations": [],
 		"type": "DocumentDbCollection",
 		"typeProperties": {
-			"collectionName": "Container1",
+			"collectionName": "movies",
 			"format": {
 				"type": "JsonFormat",
 				"filePattern": "arrayOfObjects"
