@@ -5,6 +5,11 @@
 			"referenceName": "FRED",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"paramone": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
