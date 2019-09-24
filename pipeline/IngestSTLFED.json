@@ -6,6 +6,7 @@
 			{
 				"name": "LoadSTLPCPI",
 				"type": "Copy",
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -13,21 +14,22 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
+				"userProperties": [],
 				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
 						"storeSettings": {
-							"type": "HttpReadSetting",
+							"type": "HttpReadSettings",
 							"requestMethod": "GET"
 						},
 						"formatSettings": {
-							"type": "DelimitedTextReadSetting"
+							"type": "DelimitedTextReadSettings"
 						}
 					},
 					"sink": {
 						"type": "ParquetSink",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSetting"
+							"type": "AzureBlobStorageWriteSettings"
 						}
 					},
 					"enableStaging": false,
@@ -98,6 +100,7 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
+				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "STLFED",
@@ -107,7 +110,8 @@
 			}
 		],
 		"folder": {
-			"name": "Data Flow Demos"
-		}
+			"name": "Copy Demos/Federal Reserve"
+		},
+		"annotations": []
 	}
 }
