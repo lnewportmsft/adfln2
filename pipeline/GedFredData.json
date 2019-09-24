@@ -46,6 +46,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IterateAndCopyFredExports",
+						"type": "PipelineReference"
+					},
 					"waitOnCompletion": false,
 					"parameters": {
 						"RequestBodyUrlList": {
