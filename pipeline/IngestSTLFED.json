@@ -105,6 +105,10 @@
 					"dataflow": {
 						"referenceName": "STLFED",
 						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "DFIR",
+						"type": "IntegrationRuntimeReference"
 					}
 				}
 			}
