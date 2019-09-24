@@ -60,6 +60,9 @@
 				"type": "array"
 			}
 		},
+		"folder": {
+			"name": "Copy Demos"
+		},
 		"annotations": []
 	}
 }
