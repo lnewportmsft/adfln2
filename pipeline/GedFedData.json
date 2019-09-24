@@ -1,0 +1,84 @@
+{
+	"name": "GedFedData",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetRequestBodyUrls",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DATASET, QUERY FROM dbo.FED \nwhere [TYPE] = 'RequestBody'"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlDatabaseDataset",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "TriggerCopy",
+				"description": "Copy FRED data from lookup list, calling child copy pipeline.",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "GetRequestBodyUrls",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "GetBaseUrl",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": false,
+					"parameters": {
+						"tableList": {
+							"value": "@activity('GetRequestBodyUrls').output",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "GetBaseUrl",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select DATASET, QUERY from dbo.fed where TYPE = 'BaseUrl'"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlDatabaseDataset",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"annotations": []
+	}
+}
