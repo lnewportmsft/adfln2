@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "US/nyctaxi",
+				"folderPath": "US/nyctaxi/2016",
 				"fileSystem": "raw"
 			},
 			"columnDelimiter": ",",
@@ -19,6 +19,9 @@
 			"quoteChar": "\""
 		},
 		"schema": [
+			{
+				"type": "String"
+			},
 			{
 				"type": "String"
 			},
