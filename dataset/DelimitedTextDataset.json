@@ -1,0 +1,22 @@
+{
+	"name": "DelimitedTextDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "FRED",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "id=CSUSHPINSA&cosd=2018-06-28&coed=2018-10-01"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
