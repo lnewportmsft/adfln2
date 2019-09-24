@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "yellow_tripdata_2016-06.txt",
 				"folderPath": "US/nyctaxi/2016",
 				"fileSystem": "raw"
 			},
