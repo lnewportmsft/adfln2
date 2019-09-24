@@ -1,0 +1,53 @@
+{
+	"name": "IterateAndCopyFredExports",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyFredData",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"requestBody": {
+								"value": "@{Item.QUERY()}",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "FREDSource",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"RequestBodyUrlList": {
+				"type": "array"
+			},
+			"BaseUrl": {
+				"type": "array"
+			}
+		},
+		"annotations": []
+	}
+}
