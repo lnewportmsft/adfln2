@@ -48,8 +48,12 @@
 				"typeProperties": {
 					"waitOnCompletion": false,
 					"parameters": {
-						"tableList": {
+						"RequestBodyUrlList": {
 							"value": "@activity('GetRequestBodyUrls').output",
+							"type": "Expression"
+						},
+						"BaseUrl": {
+							"value": "@activity('GetBaseUrl').output",
 							"type": "Expression"
 						}
 					}
@@ -79,6 +83,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Copy Demos"
+		},
 		"annotations": []
 	}
 }
