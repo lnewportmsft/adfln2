@@ -89,6 +89,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "CopyAndMerge"
+		},
 		"annotations": []
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
