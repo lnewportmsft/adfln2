@@ -5,13 +5,13 @@
 			"referenceName": "MyAzureBlobLinkedService",
 			"type": "LinkedServiceReference"
 		},
+		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "SearchLog.tsv",
-				"folderPath": "SampleData/USQL",
-				"container": "mycontainer"
+				"container": "searchlog"
 			},
 			"columnDelimiter": "\t",
 			"escapeChar": "\\",
