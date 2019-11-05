@@ -5,12 +5,13 @@
 			"referenceName": "MyAzureBlobLinkedService",
 			"type": "LinkedServiceReference"
 		},
+		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "moviesDB.csv",
-				"container": "demo"
+				"fileName": "moviesdb.csv",
+				"container": "mycontainer"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
