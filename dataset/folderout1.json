@@ -1,5 +1,5 @@
 {
-	"name": "moviesDB",
+	"name": "folderout1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "MyAzureBlobLinkedService",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "moviesdb.csv",
+				"folderPath": "output/mydataflow123partfiles",
 				"container": "mycontainer"
 			},
 			"columnDelimiter": ",",
@@ -18,31 +18,6 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "movie",
-				"type": "String"
-			},
-			{
-				"name": "title",
-				"type": "String"
-			},
-			{
-				"name": "genres",
-				"type": "String"
-			},
-			{
-				"name": "year",
-				"type": "String"
-			},
-			{
-				"name": "Rating",
-				"type": "String"
-			},
-			{
-				"name": "Rotton Tomato",
-				"type": "String"
-			}
-		]
+		"schema": []
 	}
 }
