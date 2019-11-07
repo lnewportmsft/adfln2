@@ -19,7 +19,7 @@
 				}
 			},
 			{
-				"name": "FilterExample",
+				"name": "MyForEach",
 				"type": "ForEach",
 				"dependsOn": [
 					{
