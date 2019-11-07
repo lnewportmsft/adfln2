@@ -4,27 +4,27 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory Name",
+			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
 		"integrationRuntime_DFIR": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "DFIR"
 		},
 		"integrationRuntime_integrationRuntime1": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "integrationRuntime1"
 		},
-		"integrationRuntime_integrationRuntime2": {
+		"integrationRuntime_integrationRuntime3": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
-			"defaultValue": "integrationRuntime2"
+			"metadata": "Integration runtime name",
+			"defaultValue": "integrationRuntime3"
 		},
 		"integrationRuntime_lgnssisir": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "lgnssisir"
 		},
 		"AzureSqlDWLinkedService_connectionString": {
@@ -58,6 +58,10 @@
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
+		"linkedService1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedService1'"
 		},
 		"lndb_connectionString": {
 			"type": "secureString",
@@ -131,6 +135,10 @@
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
 		},
+		"FRED_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
+		},
 		"LGNP50_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "D:\\adfpickup"
@@ -199,7 +207,7 @@
 		},
 		"containerSasToken": {
 			"type": "string",
-			"metadata": "Sas Token to storage account containing linked ARM templates"
+			"metadata": "Sas token to storage account containing linked ARM templates"
 		}
 	},
 	"variables": {
@@ -226,8 +234,8 @@
 					"integrationRuntime_integrationRuntime1": {
 						"value": "[parameters('integrationRuntime_integrationRuntime1')]"
 					},
-					"integrationRuntime_integrationRuntime2": {
-						"value": "[parameters('integrationRuntime_integrationRuntime2')]"
+					"integrationRuntime_integrationRuntime3": {
+						"value": "[parameters('integrationRuntime_integrationRuntime3')]"
 					},
 					"integrationRuntime_lgnssisir": {
 						"value": "[parameters('integrationRuntime_lgnssisir')]"
@@ -250,6 +258,9 @@
 					"lgnstorage_connectionString": {
 						"value": "[parameters('lgnstorage_connectionString')]"
 					},
+					"linkedService1_connectionString": {
+						"value": "[parameters('linkedService1_connectionString')]"
+					},
 					"lndb_connectionString": {
 						"value": "[parameters('lndb_connectionString')]"
 					},
@@ -258,6 +269,9 @@
 					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
+					},
+					"FRED_properties_typeProperties_url": {
+						"value": "[parameters('FRED_properties_typeProperties_url')]"
 					},
 					"NOAAFTPServer_properties_typeProperties_host": {
 						"value": "[parameters('NOAAFTPServer_properties_typeProperties_host')]"
@@ -288,9 +302,6 @@
 					},
 					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
-					},
-					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -310,23 +321,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
+					},
 					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
 					},
 					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SinkDataset_properties_typeProperties_fileName": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
-					},
-					"SinkDataset_properties_typeProperties_folderPath": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
-					},
-					"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -347,6 +349,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SinkDataset_properties_typeProperties_fileName": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
+					},
+					"SinkDataset_properties_typeProperties_folderPath": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
+					},
+					"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
@@ -391,18 +405,6 @@
 					},
 					"LGNP50_properties_typeProperties_userId": {
 						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
-					},
-					"ADFPickup_properties_typeProperties_fileName": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
-					},
-					"ADFPickup_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -424,6 +426,38 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"ADFPickup_properties_typeProperties_fileName": {
+						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
+					},
+					"ADFPickup_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
+					},
+					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_3')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_5",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_5.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
 					"trigger1_properties_pipeline_parameters_FolderPath_Source": {
 						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]"
 					},
@@ -439,7 +473,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_3')]"
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_4')]"
 			]
 		}
 	]

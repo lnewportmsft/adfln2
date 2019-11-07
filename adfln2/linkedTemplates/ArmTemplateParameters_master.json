@@ -11,8 +11,8 @@
 		"integrationRuntime_integrationRuntime1": {
 			"value": "integrationRuntime1"
 		},
-		"integrationRuntime_integrationRuntime2": {
-			"value": "integrationRuntime2"
+		"integrationRuntime_integrationRuntime3": {
+			"value": "integrationRuntime3"
 		},
 		"integrationRuntime_lgnssisir": {
 			"value": "lgnssisir"
@@ -39,6 +39,9 @@
 			"value": ""
 		},
 		"lgnstorage_connectionString": {
+			"value": ""
+		},
+		"linkedService1_connectionString": {
 			"value": ""
 		},
 		"lndb_connectionString": {
@@ -94,6 +97,9 @@
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"value": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"FRED_properties_typeProperties_url": {
+			"value": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
 		},
 		"LGNP50_properties_typeProperties_host": {
 			"value": "D:\\adfpickup"

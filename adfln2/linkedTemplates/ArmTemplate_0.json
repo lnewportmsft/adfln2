@@ -4,27 +4,27 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory Name",
+			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
 		"integrationRuntime_DFIR": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "DFIR"
 		},
 		"integrationRuntime_integrationRuntime1": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "integrationRuntime1"
 		},
-		"integrationRuntime_integrationRuntime2": {
+		"integrationRuntime_integrationRuntime3": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
-			"defaultValue": "integrationRuntime2"
+			"metadata": "Integration runtime name",
+			"defaultValue": "integrationRuntime3"
 		},
 		"integrationRuntime_lgnssisir": {
 			"type": "string",
-			"metadata": "Integration Runtime Name",
+			"metadata": "Integration runtime name",
 			"defaultValue": "lgnssisir"
 		},
 		"AzureSqlDWLinkedService_connectionString": {
@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
 		},
+		"linkedService1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedService1'"
+		},
 		"lndb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lndb'"
@@ -62,6 +66,10 @@
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
+		},
+		"FRED_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
 		},
 		"NOAAFTPServer_properties_typeProperties_host": {
 			"type": "string",
@@ -100,10 +108,6 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
-		},
-		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
 		}
 	},
 	"variables": {
@@ -146,6 +150,21 @@
 				"type": "RestService",
 				"typeProperties": {
 					"url": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FRED')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('FRED_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
 				}
@@ -260,6 +279,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/linkedService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('linkedService1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/lnakv')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -341,7 +373,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime2'))]",
+			"name": "[concat(parameters('factoryName'), '/', parameters('integrationRuntime_integrationRuntime3'))]",
 			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -390,140 +422,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ScheduleAzure-SSISIntegrationRuntime')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Start Azure-SSIS IR",
-						"description": "Call REST API to start Azure-SSIS IR.",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/start?api-version=2018-06-01",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"message": "Start my IR"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://management.azure.com"
-							}
-						}
-					},
-					{
-						"name": "Execute SSIS Package",
-						"description": "Run a SSIS package by Execute SSIS Package Activity.",
-						"type": "ExecuteSSISPackage",
-						"dependsOn": [
-							{
-								"activity": "Start Azure-SSIS IR",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"packageLocation": {
-								"packagePath": "Foldername/Packages/Package.dtsx",
-								"type": "SSISDB"
-							},
-							"connectVia": {
-								"referenceName": "lgnssisir",
-								"type": "IntegrationRuntimeReference"
-							},
-							"loggingLevel": "Basic",
-							"projectConnectionManagers": {},
-							"packageConnectionManagers": {}
-						}
-					},
-					{
-						"name": "Stop Azure-SSIS IR",
-						"description": "Call REST API to stop Azure-SSIS IR.",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "Execute SSIS Package",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://management.azure.com/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourcegroups/lndb/providers/Microsoft.DataFactory/factories/adfln2/integrationRuntimes/lgnssisir/stop?api-version=2018-06-01",
-							"method": "POST",
-							"headers": {},
-							"body": {
-								"message": "Stop my IR"
-							},
-							"authentication": {
-								"type": "MSI",
-								"resource": "https://management.azure.com"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/', parameters('integrationRuntime_lgnssisir'))]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureBlobFSDataDestinationStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data destination store.  ",
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"FolderPath": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"folderPath": {
-						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
-			]
 		}
 	]
 }
