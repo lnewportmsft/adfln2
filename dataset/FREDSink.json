@@ -1,0 +1,20 @@
+{
+	"name": "FREDSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgndatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

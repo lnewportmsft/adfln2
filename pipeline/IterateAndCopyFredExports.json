@@ -39,11 +39,34 @@
 										"type": "DelimitedTextReadSettings"
 									}
 								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "FREDSource",
+									"type": "DatasetReference",
+									"parameters": {
+										"paramone": {
+											"value": "@pipeline().parameters.BaseUrl",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "FREDSink",
 									"type": "DatasetReference"
 								}
 							]
