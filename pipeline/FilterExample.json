@@ -1,5 +1,5 @@
 {
-	"name": "PipelineName",
+	"name": "FilterExample",
 	"properties": {
 		"activities": [
 			{
