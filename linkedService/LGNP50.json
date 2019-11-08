@@ -7,7 +7,7 @@
 		"typeProperties": {
 			"host": "D:\\adfpickup",
 			"userId": "adfpickup",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1NDllY2Q3NS02ODZjLTQyNjAtYTZiMS0yODVmZTI1ZTg4YzMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI0NDJhZGYxNC0xYTAyLTQxMzgtYWU0Zi00Yzk1MmEyNTY4NTUiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "integrationRuntime1",
