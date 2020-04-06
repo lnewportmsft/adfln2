@@ -7,26 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
-		"integrationRuntime_DFIR": {
-			"type": "string",
-			"metadata": "Integration runtime name",
-			"defaultValue": "DFIR"
-		},
-		"integrationRuntime_integrationRuntime1": {
-			"type": "string",
-			"metadata": "Integration runtime name",
-			"defaultValue": "integrationRuntime1"
-		},
-		"integrationRuntime_integrationRuntime3": {
-			"type": "string",
-			"metadata": "Integration runtime name",
-			"defaultValue": "integrationRuntime3"
-		},
-		"integrationRuntime_lgnssisir": {
-			"type": "string",
-			"metadata": "Integration runtime name",
-			"defaultValue": "lgnssisir"
-		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
@@ -227,18 +207,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"integrationRuntime_DFIR": {
-						"value": "[parameters('integrationRuntime_DFIR')]"
-					},
-					"integrationRuntime_integrationRuntime1": {
-						"value": "[parameters('integrationRuntime_integrationRuntime1')]"
-					},
-					"integrationRuntime_integrationRuntime3": {
-						"value": "[parameters('integrationRuntime_integrationRuntime3')]"
-					},
-					"integrationRuntime_lgnssisir": {
-						"value": "[parameters('integrationRuntime_lgnssisir')]"
 					},
 					"AzureSqlDWLinkedService_connectionString": {
 						"value": "[parameters('AzureSqlDWLinkedService_connectionString')]"

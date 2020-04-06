@@ -5,18 +5,6 @@
 		"factoryName": {
 			"value": "adfln2"
 		},
-		"integrationRuntime_DFIR": {
-			"value": "DFIR"
-		},
-		"integrationRuntime_integrationRuntime1": {
-			"value": "integrationRuntime1"
-		},
-		"integrationRuntime_integrationRuntime3": {
-			"value": "integrationRuntime3"
-		},
-		"integrationRuntime_lgnssisir": {
-			"value": "lgnssisir"
-		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},
