@@ -1,0 +1,22 @@
+{
+	"name": "CSVSampleDataMergeSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgndatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "out",
+				"fileSystem": "sample-data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
