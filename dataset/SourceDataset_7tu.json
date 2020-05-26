@@ -1,0 +1,53 @@
+{
+	"name": "SourceDataset_7tu",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesOrderID",
+				"type": "int"
+			},
+			{
+				"name": "SalesOrderDetailID",
+				"type": "int"
+			},
+			{
+				"name": "OrderQty",
+				"type": "smallint"
+			},
+			{
+				"name": "ProductID",
+				"type": "int"
+			},
+			{
+				"name": "UnitPrice",
+				"type": "money"
+			},
+			{
+				"name": "UnitPriceDiscount",
+				"type": "money"
+			},
+			{
+				"name": "LineTotal",
+				"type": "decimal"
+			},
+			{
+				"name": "rowguid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "datetime"
+			}
+		],
+		"typeProperties": {
+			"schema": "SalesLT",
+			"table": "SalesOrderDetail"
+		}
+	}
+}
