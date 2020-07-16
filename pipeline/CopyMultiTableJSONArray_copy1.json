@@ -1,0 +1,120 @@
+{
+	"name": "CopyMultiTableJSONArray_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEachTableInArray",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.cw_items",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "CopyFromSQLDBtoBlob",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{item().source.tableName}"
+								},
+								{
+									"name": "Destination",
+									"value": "raw/@{item().destination.fileName}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource"
+								},
+								"sink": {
+									"type": "BlobSink"
+								},
+								"enableStaging": false,
+								"enableSkipIncompatibleRow": true,
+								"dataIntegrationUnits": 0
+							},
+							"inputs": [
+								{
+									"referenceName": "SourceDataset",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SinkDataset",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "    DECLARE @SQLscript nVARCHAR(1000) =\n'CREATE CLUSTERED COLUMNSTORE INDEX &&& ON @@@ WITH (DROP_EXISTING = ON,COMPRESSION_DELAY = 0)'\n\ndeclare @tables table (\n    rowId int identity(1,1),\n    name nvarchar(max)\n);\n\ninsert      @tables\nselect      schema_name(schema_id) + '.' + name \nfrom        sys.tables\nwhere       type_desc = 'user_table'\n\ndeclare @rowId int = 1;\ndeclare @table nvarchar(max);\ndeclare @sql nvarchar(max);\n\nwhile @rowId <= (select max(rowId) from @tables) begin\n    select @table = name from @tables where rowId = @rowId;\n    SET @SQLscript = REPLACE(REPLACE(@SQLscript, '@@@',@table) ,'&&&','cci_' + SUBSTRING(REPLACE(@table,'].[','_'),CHARINDEX('.',REPLACE(@table,'].[','_'))+1,LEN(REPLACE(@table,'].[','_'))))\n BEGIN TRY \n  EXEC  sp_executeSql @SQLscript; \n  END TRY \n  BEGIN CATCH \n  PRINT @SQLscript\n  END CATCH \n\n    SET @SQLscript = 'CREATE CLUSTERED COLUMNSTORE INDEX &&& ON @@@ WITH (DROP_EXISTING = OFF,COMPRESSION_DELAY = 0)'\n    set @rowId += 1;\nend",
+						"queryTimeout": "02:00:00"
+					},
+					"dataset": {
+						"referenceName": "AzureSqlDatabaseDataset",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"cw_items": {
+				"type": "Array",
+				"defaultValue": [
+					{
+						"source": {
+							"tableName": "[dbo].[mktzips]"
+						},
+						"destination": {
+							"fileName": "[dbo].[mktzips].txt"
+						}
+					},
+					{
+						"source": {
+							"tableName": "[dbo].[zcshapes]"
+						},
+						"destination": {
+							"fileName": "[dbo].[zcshapes].txt"
+						}
+					}
+				]
+			}
+		},
+		"folder": {
+			"name": "Copy Demos"
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
