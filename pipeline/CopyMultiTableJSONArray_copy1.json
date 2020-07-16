@@ -63,7 +63,8 @@
 				}
 			},
 			{
-				"name": "Lookup1",
+				"name": "CreateCCIIndexes",
+				"description": "Convert heap targets to CCI",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
