@@ -1,5 +1,5 @@
 {
-	"name": "AzureSqlTable3",
+	"name": "FactOrderSink",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "DataMart",
@@ -7,6 +7,10 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "Order"
+		}
 	}
 }
