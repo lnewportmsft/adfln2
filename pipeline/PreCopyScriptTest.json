@@ -70,7 +70,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON [Fact].[Order]",
-						"queryTimeout": "00:00:00"
+						"queryTimeout": "02:00:00"
 					},
 					"dataset": {
 						"referenceName": "FactOrderSink",
