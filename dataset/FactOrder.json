@@ -1,0 +1,113 @@
+{
+	"name": "FactOrder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "WorldWideImportersDW",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Order Key",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "City Key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Customer Key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Stock Item Key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Order Date Key",
+				"type": "date"
+			},
+			{
+				"name": "Picked Date Key",
+				"type": "date"
+			},
+			{
+				"name": "Salesperson Key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Picker Key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "WWI Order ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "WWI Backorder ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Package",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Unit Price",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Tax Rate",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 3
+			},
+			{
+				"name": "Total Excluding Tax",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Tax Amount",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Total Including Tax",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			},
+			{
+				"name": "Lineage Key",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "Order"
+		}
+	}
+}
