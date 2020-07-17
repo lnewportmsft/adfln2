@@ -21,7 +21,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON Fact.Order",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
