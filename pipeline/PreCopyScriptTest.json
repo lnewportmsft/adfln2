@@ -21,7 +21,9 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"tableOption": "autoCreate"
+						"preCopyScript": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON Fact.Order",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
 					"translator": {
@@ -41,7 +43,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureSqlTable3",
+						"referenceName": "FactOrderSink",
 						"type": "DatasetReference"
 					}
 				]
