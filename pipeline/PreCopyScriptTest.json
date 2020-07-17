@@ -21,7 +21,6 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON [Fact].[Order]",
 						"tableOption": "autoCreate",
 						"disableMetricsCollection": false
 					},
@@ -47,6 +46,38 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "CreateCCI",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy SQL Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON [Fact].[Order]",
+						"queryTimeout": "00:00:00"
+					},
+					"dataset": {
+						"referenceName": "FactOrderSink",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
 			}
 		],
 		"annotations": []
