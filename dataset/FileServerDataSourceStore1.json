@@ -2,10 +2,6 @@
 	"name": "FileServerDataSourceStore1",
 	"properties": {
 		"description": "Connection to your data source store.  ",
-		"linkedServiceName": {
-			"referenceName": "LGNP50",
-			"type": "LinkedServiceReference"
-		},
 		"parameters": {
 			"FolderPath": {
 				"type": "String"

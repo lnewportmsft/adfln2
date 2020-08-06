@@ -1,10 +1,6 @@
 {
 	"name": "ADFPickup",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "LGNP50",
-			"type": "LinkedServiceReference"
-		},
 		"annotations": [],
 		"type": "FileShare",
 		"typeProperties": {
