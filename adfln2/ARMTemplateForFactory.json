@@ -15,9 +15,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
 		},
-		"LGNP50_password": {
+		"DataMart_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LGNP50'"
+			"metadata": "Secure string for 'connectionString' of 'DataMart'"
 		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
@@ -26,6 +26,10 @@
 		"SqlServer1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
+		"WorldWideImportersDW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'WorldWideImportersDW'"
 		},
 		"lgndatabricks_accessToken": {
 			"type": "secureString",
@@ -51,14 +55,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'southridge'"
 		},
-		"ADFPickup_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"ADFPickup_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": ""
-		},
 		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().FolderPath"
@@ -70,14 +66,6 @@
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sinkdata/staged_sink"
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"type": "string",
@@ -119,14 +107,6 @@
 			"type": "string",
 			"defaultValue": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
 		},
-		"LGNP50_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "D:\\adfpickup"
-		},
-		"LGNP50_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "adfpickup"
-		},
 		"NOAAFTPServer_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "ftp://ftp.ncdc.noaa.gov/"
@@ -150,22 +130,6 @@
 		"sourceBlob_LS_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
-			"type": "string",
-			"defaultValue": "d:\\adfpickup"
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
-			"type": "string",
-			"defaultValue": "/raw"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_From": {
-			"type": "string",
-			"defaultValue": "@trigger().outputs.windowStartTime"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_To": {
-			"type": "string",
-			"defaultValue": "@trigger().outputs.windowEndTime"
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
@@ -206,7 +170,8 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "AzureSqlSource"
+								"type": "AzureSqlSource",
+								"partitionOption": "None"
 							},
 							"sink": {
 								"type": "AzureSqlSink"
@@ -293,60 +258,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyBinaryOnPremToBlob')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "CopyJPGtoBlob",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "FileSystemSource",
-								"recursive": true
-							},
-							"sink": {
-								"type": "BlobSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ADFPickup",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "adfdropoff",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Copy Demos"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ADFPickup')]",
-				"[concat(variables('factoryId'), '/datasets/adfdropoff')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/CopyMultiTableJSONArray')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -387,7 +298,8 @@
 									],
 									"typeProperties": {
 										"source": {
-											"type": "SqlSource"
+											"type": "SqlSource",
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "BlobSink"
@@ -449,16 +361,78 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyNewFilesByLastModifiedDate1')]",
+			"name": "[concat(parameters('factoryName'), '/CopyMultiTableJSONArray_copy1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Copy new and changed files only by using LastModifiedDate",
 				"activities": [
 					{
-						"name": "CopyNewFiles",
-						"description": "Copy new and changed files only by using LastModifiedDate",
-						"type": "Copy",
+						"name": "ForEachTableInArray",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "CopyFromSQLDBtoBlob",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{item().source.tableName}"
+										},
+										{
+											"name": "Destination",
+											"value": "raw/@{item().destination.fileName}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "BlobSink"
+										},
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": true,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SinkDataset",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "CreateCCIIndexes",
+						"description": "Convert heap targets to CCI",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -470,71 +444,116 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "FileSystemSource",
-								"recursive": true
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "    DECLARE @SQLscript nVARCHAR(1000) =\n'CREATE CLUSTERED COLUMNSTORE INDEX &&& ON @@@ WITH (DROP_EXISTING = ON,COMPRESSION_DELAY = 0)'\n\ndeclare @tables table (\n    rowId int identity(1,1),\n    name nvarchar(max)\n);\n\ninsert      @tables\nselect      schema_name(schema_id) + '.' + name \nfrom        sys.tables\nwhere       type_desc = 'user_table'\n\ndeclare @rowId int = 1;\ndeclare @table nvarchar(max);\ndeclare @sql nvarchar(max);\n\nwhile @rowId <= (select max(rowId) from @tables) begin\n    select @table = name from @tables where rowId = @rowId;\n    SET @SQLscript = REPLACE(REPLACE(@SQLscript, '@@@',@table) ,'&&&','cci_' + SUBSTRING(REPLACE(@table,'].[','_'),CHARINDEX('.',REPLACE(@table,'].[','_'))+1,LEN(REPLACE(@table,'].[','_'))))\n BEGIN TRY \n  EXEC  sp_executeSql @SQLscript; \n  END TRY \n  BEGIN CATCH \n  PRINT @SQLscript\n  END CATCH \n\n    SET @SQLscript = 'CREATE CLUSTERED COLUMNSTORE INDEX &&& ON @@@ WITH (DROP_EXISTING = OFF,COMPRESSION_DELAY = 0)'\n    set @rowId += 1;\nend",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
-							"sink": {
-								"type": "AzureBlobFSSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "FileServerDataSourceStore1",
+							"dataset": {
+								"referenceName": "AzureSqlDatabaseDataset",
 								"type": "DatasetReference",
-								"parameters": {
-									"FolderPath": {
-										"value": "@pipeline().parameters.FolderPath_Source",
-										"type": "Expression"
-									},
-									"LastModified_From": {
-										"value": "@pipeline().parameters.LastModified_From",
-										"type": "Expression"
-									},
-									"LastModified_To": {
-										"value": "@pipeline().parameters.LastModified_To",
-										"type": "Expression"
-									}
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"tableName": "[[dbo].[mktzips]"
+								},
+								"destination": {
+									"fileName": "[dbo].[mktzips].txt"
 								}
-							}
-						],
-						"outputs": [
+							},
 							{
-								"referenceName": "AzureBlobFSDataDestinationStore1",
-								"type": "DatasetReference",
-								"parameters": {
-									"FolderPath": {
-										"value": "@pipeline().parameters.FolderPath_Destination",
-										"type": "Expression"
-									}
+								"source": {
+									"tableName": "[[dbo].[zcshapes]"
+								},
+								"destination": {
+									"fileName": "[dbo].[zcshapes].txt"
 								}
 							}
 						]
 					}
-				],
-				"parameters": {
-					"FolderPath_Source": {
-						"type": "String",
-						"defaultValue": "/<myfolder>/<sub_folder>/"
-					},
-					"FolderPath_Destination": {
-						"type": "String",
-						"defaultValue": "/<myfolder>/<sub_folder>/"
-					},
-					"LastModified_From": {
-						"type": "String",
-						"defaultValue": "2019-02-01T00:00:00Z"
-					},
-					"LastModified_To": {
-						"type": "String",
-						"defaultValue": "2019-03-01T00:00:00Z"
-					}
+				},
+				"folder": {
+					"name": "Copy Demos"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/FileServerDataSourceStore1')]",
-				"[concat(variables('factoryId'), '/datasets/AzureBlobFSDataDestinationStore1')]"
+				"[concat(variables('factoryId'), '/datasets/AzureSqlDatabaseDataset')]",
+				"[concat(variables('factoryId'), '/datasets/SourceDataset')]",
+				"[concat(variables('factoryId'), '/datasets/SinkDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_7tu')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_7tu",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "SalesLT.SalesOrderDetail"
+							},
+							{
+								"name": "Destination",
+								"value": "raw/US/{year}/{month}/{day}/"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_7tu",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_7tu",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SourceDataset_7tu')]",
+				"[concat(variables('factoryId'), '/datasets/DestinationDataset_7tu')]"
 			]
 		},
 		{
@@ -1009,7 +1028,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT DATASET, QUERY FROM dbo.FED \nwhere [TYPE] = 'RequestBody'"
+								"sqlReaderQuery": "SELECT DATASET, QUERY FROM dbo.FED \nwhere [TYPE] = 'RequestBody'",
+								"partitionOption": "None"
 							},
 							"dataset": {
 								"referenceName": "AzureSqlDatabaseDataset",
@@ -1071,7 +1091,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select DATASET, QUERY from dbo.fed where TYPE = 'BaseUrl'"
+								"sqlReaderQuery": "select DATASET, QUERY from dbo.fed where TYPE = 'BaseUrl'",
+								"partitionOption": "None"
 							},
 							"dataset": {
 								"referenceName": "AzureSqlDatabaseDataset",
@@ -1113,7 +1134,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'SalesLT' and TABLE_NAME <> 'ProductModel'"
+								"sqlReaderQuery": "SELECT TABLE_SCHEMA, TABLE_NAME FROM information_schema.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_SCHEMA = 'SalesLT' and TABLE_NAME <> 'ProductModel'",
+								"partitionOption": "None"
 							},
 							"dataset": {
 								"referenceName": "AzureSqlDatabaseDataset",
@@ -1186,7 +1208,8 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "SqlSource"
+								"type": "SqlSource",
+								"partitionOption": "None"
 							},
 							"dataset": {
 								"referenceName": "WatermarkDataset",
@@ -1218,7 +1241,8 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderQuery": "select MAX(LastModifytime) as NewWatermarkvalue from data_source_table"
+								"sqlReaderQuery": "select MAX(LastModifytime) as NewWatermarkvalue from data_source_table",
+								"partitionOption": "None"
 							},
 							"dataset": {
 								"referenceName": "SourceDataset",
@@ -1258,7 +1282,8 @@
 								"sqlReaderQuery": {
 									"value": "select * from data_source_table where LastModifytime > '@{activity('LookupOldWaterMarkActivity').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}'",
 									"type": "Expression"
-								}
+								},
+								"partitionOption": "None"
 							},
 							"sink": {
 								"type": "DelimitedTextSink",
@@ -1636,7 +1661,8 @@
 											"sqlReaderQuery": {
 												"value": "SELECT * FROM [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]",
 												"type": "Expression"
-											}
+											},
+											"partitionOption": "None"
 										},
 										"sink": {
 											"type": "DelimitedTextSink",
@@ -1694,6 +1720,73 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MergeCSVSampleData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Merge CSV Sample Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "CSVSampleData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSVSampleDataMergeSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CSVSampleData')]",
+				"[concat(variables('factoryId'), '/datasets/CSVSampleDataMergeSink')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/OrchestrateDataLoad')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1743,6 +1836,102 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/PrepareGlobalTempTable')]",
 				"[concat(variables('factoryId'), '/pipelines/CopyAndMerge')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PreCopyScriptTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy SQL Table",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "FactOrder",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "FactOrderSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "CreateCCI",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Copy SQL Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON [Fact].[Order]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "FactOrderSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/FactOrder')]",
+				"[concat(variables('factoryId'), '/datasets/FactOrderSink')]"
 			]
 		},
 		{
@@ -1937,26 +2126,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/SearchLog1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADFPickup')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LGNP50",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "FileShare",
-				"typeProperties": {
-					"fileName": "[parameters('ADFPickup_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LGNP50')]"
 			]
 		},
 		{
@@ -2187,6 +2356,62 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/CSVSampleData')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "*.csv",
+						"folderPath": "in",
+						"fileSystem": "sample-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CSVSampleDataMergeSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "out",
+						"fileSystem": "sample-data"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CurrencyDatasetCAD1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2339,6 +2564,31 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/lndb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_7tu')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "US/{year}/{month}/{day}",
+						"fileSystem": "raw"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
 			]
 		},
 		{
@@ -2631,51 +2881,142 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/FileServerDataSourceStore1')]",
+			"name": "[concat(parameters('factoryName'), '/FactOrder')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "Connection to your data source store.  ",
 				"linkedServiceName": {
-					"referenceName": "LGNP50",
+					"referenceName": "WorldWideImportersDW",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"FolderPath": {
-						"type": "String"
-					},
-					"LastModified_From": {
-						"type": "String"
-					},
-					"LastModified_To": {
-						"type": "String"
-					}
-				},
 				"annotations": [],
-				"type": "FileShare",
-				"typeProperties": {
-					"fileName": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]",
-					"folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Order Key",
+						"type": "bigint",
+						"precision": 19
 					},
-					"modifiedDatetimeStart": {
-						"value": "@dataset().LastModified_From",
-						"type": "Expression"
+					{
+						"name": "City Key",
+						"type": "int",
+						"precision": 10
 					},
-					"modifiedDatetimeEnd": {
-						"value": "@dataset().LastModified_To",
-						"type": "Expression"
+					{
+						"name": "Customer Key",
+						"type": "int",
+						"precision": 10
 					},
-					"key": "*",
-					"bucketName": {
-						"value": "@dataset().FolderPath",
-						"type": "Expression"
+					{
+						"name": "Stock Item Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Order Date Key",
+						"type": "date"
+					},
+					{
+						"name": "Picked Date Key",
+						"type": "date"
+					},
+					{
+						"name": "Salesperson Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Picker Key",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WWI Order ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WWI Backorder ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Package",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Unit Price",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Tax Rate",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 3
+					},
+					{
+						"name": "Total Excluding Tax",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Tax Amount",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Total Including Tax",
+						"type": "decimal",
+						"precision": 18,
+						"scale": 2
+					},
+					{
+						"name": "Lineage Key",
+						"type": "int",
+						"precision": 10
 					}
+				],
+				"typeProperties": {
+					"schema": "Fact",
+					"table": "Order"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LGNP50')]"
+				"[concat(variables('factoryId'), '/linkedServices/WorldWideImportersDW')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FactOrderSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "DataMart",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "Fact",
+					"table": "Order"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/DataMart')]"
 			]
 		},
 		{
@@ -2886,6 +3227,64 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/southridge')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_7tu')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "SalesOrderID",
+						"type": "int"
+					},
+					{
+						"name": "SalesOrderDetailID",
+						"type": "int"
+					},
+					{
+						"name": "OrderQty",
+						"type": "smallint"
+					},
+					{
+						"name": "ProductID",
+						"type": "int"
+					},
+					{
+						"name": "UnitPrice",
+						"type": "money"
+					},
+					{
+						"name": "UnitPriceDiscount",
+						"type": "money"
+					},
+					{
+						"name": "LineTotal",
+						"type": "decimal"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime"
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "SalesOrderDetail"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseLinkedService')]"
 			]
 		},
 		{
@@ -3909,6 +4308,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DataMart')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('DataMart_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DroughtMonitorAPI')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3938,30 +4350,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LGNP50')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('LGNP50_properties_typeProperties_host')]",
-					"userId": "[parameters('LGNP50_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LGNP50_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntime1",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntime1')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/MyAzureBlobLinkedService')]",
@@ -4037,6 +4425,19 @@
 				"type": "AzureKeyVault",
 				"typeProperties": {
 					"baseUrl": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WorldWideImportersDW')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('WorldWideImportersDW_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -4182,42 +4583,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/IncrementalCopyPipeline')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "CopyNewFilesByLastModifiedDate1",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"FolderPath_Source": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]",
-						"FolderPath_Destination": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Destination')]",
-						"LastModified_From": "[parameters('trigger1_properties_pipeline_parameters_LastModified_From')]",
-						"LastModified_To": "[parameters('trigger1_properties_pipeline_parameters_LastModified_To')]"
-					}
-				},
-				"type": "TumblingWindowTrigger",
-				"typeProperties": {
-					"frequency": "Minute",
-					"interval": 15,
-					"startTime": "2019-08-27T17:47:00.000Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 50,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/CopyNewFilesByLastModifiedDate1')]"
 			]
 		},
 		{
@@ -4579,7 +4944,7 @@
 							"name": "AggregateByPaymentType"
 						}
 					],
-					"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData\nsource(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare\nTripData, TripFare join(hack_license == { hack_license}\n\t&& TripData@medallion == TripFare@medallion\n\t&& vendor_id == { vendor_id}\n\t&& pickup_datetime == { pickup_datetime},\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinMatchedData\nJoinMatchedData aggregate(groupBy(vendor_id),\n\tpassenger_count = round(sum(passenger_count), 2),\n\t\ttrip_time_in_secs = round(sum(trip_time_in_secs)/60, 2),\n\t\ttrip_distance = round(sum(trip_distance), 2),\n\t\tTotalTripFare = round(sum({ total_amount}), 2)) ~> AggregateVendorStats\nJoinMatchedData aggregate(groupBy(DayOfTheWeek = dayOfWeek(toDate(pickup_datetime,'yyyy-mm-dd hh:mm:ss'))),\n\ttrip_distance = round(avg(trip_distance), 2),\n\t\tpassenger_count = round(avg(passenger_count), 2),\n\t\ttrip_time_in_secs = round(avg(trip_time_in_secs)/60, 2),\n\t\taverage_fare = round(avg({ total_amount}), 2)) ~> AggregateDayStats\nTripFare aggregate(groupBy({ payment_type}),\n\teach(match(type=='double'), concat($$, '_total') = round(sum ($$)))) ~> AggregateByPaymentType\nAggregateVendorStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> VendorStatsSink\nAggregateDayStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> DayStatsSink\nAggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> TotalPaymentByPaymentType"
+					"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripData\nsource(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> TripFare\nTripData, TripFare join(hack_license == { hack_license}\n\t&& TripData@medallion == TripFare@medallion\n\t&& vendor_id == { vendor_id}\n\t&& pickup_datetime == { pickup_datetime},\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinMatchedData\nJoinMatchedData aggregate(groupBy(vendor_id),\n\tpassenger_count = round(sum(passenger_count), 2),\n\t\ttrip_time_in_secs = round(sum(trip_time_in_secs)/60, 2),\n\t\ttrip_distance = round(sum(trip_distance), 2),\n\t\tTotalTripFare = round(sum({ total_amount}), 2)) ~> AggregateVendorStats\nJoinMatchedData aggregate(groupBy(DayOfTheWeek = dayOfWeek(toDate(pickup_datetime,'yyyy-mm-dd hh:mm:ss'))),\n\ttrip_distance = round(avg(trip_distance), 2),\n\t\tpassenger_count = round(avg(passenger_count), 2),\n\t\ttrip_time_in_secs = round(avg(trip_time_in_secs)/60, 2),\n\t\taverage_fare = round(avg({ total_amount}), 2)) ~> AggregateDayStats\nTripFare aggregate(groupBy({ payment_type}),\n\teach(match(type=='double'), concat($$, '_total') = round(sum ($$)))) ~> AggregateByPaymentType\nAggregateVendorStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> VendorStatsSink\nAggregateDayStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> DayStatsSink\nAggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> TotalPaymentByPaymentType"
 				}
 			},
 			"dependsOn": [
@@ -4675,135 +5040,12 @@
 							"name": "CheckForDupes"
 						}
 					],
-					"script": "source(output(\n\t\t{Emp ID} as integer,\n\t\t{Name Prefix} as string,\n\t\t{First Name} as string,\n\t\t{Middle Initial} as string,\n\t\t{Last Name} as string,\n\t\tGender as string,\n\t\t{E Mail} as string,\n\t\t{Father's Name} as string,\n\t\t{Mother's Name} as string,\n\t\t{Mother's Maiden Name} as string,\n\t\t{Date of Birth} as date,\n\t\t{Time of Birth} as string,\n\t\t{Age in Yrs.} as double,\n\t\t{Weight in Kgs.} as integer,\n\t\t{Date of Joining} as date,\n\t\t{Quarter of Joining} as string,\n\t\t{Half of Joining} as string,\n\t\t{Year of Joining} as short,\n\t\t{Month of Joining} as short,\n\t\t{Month Name of Joining} as string,\n\t\t{Short Month} as string,\n\t\t{Day of Joining} as short,\n\t\t{DOW of Joining} as string,\n\t\t{Short DOW} as string,\n\t\t{Age in Company (Years)} as double,\n\t\tSalary as integer,\n\t\t{Last % Hike} as string,\n\t\tSSN as string,\n\t\t{Phone No. } as string,\n\t\t{Place Name} as string,\n\t\tCounty as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tZip as integer,\n\t\tRegion as string,\n\t\t{User Name} as string,\n\t\tPassword as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> sourceName\nMapNames derive(SoundexValue = soundex(fullname)) ~> FuzzyMatch\nOrig1 aggregate(groupBy(SoundexValue),\n\tsoundexmatch = sum(1)) ~> groupSoundex\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> Orig1\ngroupSoundex, soundexBranch join(groupSoundex@SoundexValue == soundexBranch@SoundexValue,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> soundexJoin\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> soundexBranch\nsoundexJoin aggregate(groupBy(phone,\n\t\tsoundexBranch@SoundexValue),\n\tphonematch = sum(1),\n\t\tacctnum_agg = last(acctnum)) ~> groupPhone\nsoundexJoin select(mapColumn(\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue = soundexBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> phoneBranch\ngroupPhone, phoneBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'none')~> phoneJoin\nphoneJoin aggregate(groupBy(zip,\n\t\tphoneBranch@SoundexValue),\n\tzipcount = sum(1),\n\t\tacctnum_agg = last(acctnum_agg)) ~> groupZip\nphoneJoin select(mapColumn(\n\t\tphonematch,\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone = phoneBranch@phone,\n\t\tzip,\n\t\tSoundexValue = phoneBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> zipBranch\ngroupZip, zipBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'none')~> zipJoin\nzipJoin derive(soundexweight = 50,\n\t\tzipweight = 25,\n\t\tphoneweight = 25,\n\t\tsoundexbool = iif (soundexmatch > 1, 1, 0),\n\t\tzipbool = iif (zipcount > 1, 1, 0),\n\t\tphonebool = iif (phonematch > 1, 1, 0)) ~> setConstants\nsetConstants derive(matchscore = (soundexbool * 50) + (zipbool * 25) + (phonebool * 25)) ~> matchScore\nmatchScore select(mapColumn(\n\t\tphone,\n\t\tacctnum,\n\t\tfullname,\n\t\tzip = zipBranch@zip,\n\t\tmatchscore\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> finalResult\nCreateFullName select(mapColumn(\n\t\tphone = {Phone No. },\n\t\tzip = Zip,\n\t\tfullname,\n\t\tacctnum = {Emp ID}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> MapNames\nsourceName derive(fullname = {First Name} + ' ' + {Last Name}) ~> CreateFullName\nfinalResult split(matchscore > 50,\n\tdisjoint: false) ~> CheckForDupes@(Duplicates, NotDupe)\nCheckForDupes@Duplicates sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['dupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkDupes\nCheckForDupes@NotDupe sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['nodupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkNoDupes"
+					"script": "source(output(\n\t\t{Emp ID} as integer,\n\t\t{Name Prefix} as string,\n\t\t{First Name} as string,\n\t\t{Middle Initial} as string,\n\t\t{Last Name} as string,\n\t\tGender as string,\n\t\t{E Mail} as string,\n\t\t{Father's Name} as string,\n\t\t{Mother's Name} as string,\n\t\t{Mother's Maiden Name} as string,\n\t\t{Date of Birth} as date,\n\t\t{Time of Birth} as string,\n\t\t{Age in Yrs.} as double,\n\t\t{Weight in Kgs.} as integer,\n\t\t{Date of Joining} as date,\n\t\t{Quarter of Joining} as string,\n\t\t{Half of Joining} as string,\n\t\t{Year of Joining} as short,\n\t\t{Month of Joining} as short,\n\t\t{Month Name of Joining} as string,\n\t\t{Short Month} as string,\n\t\t{Day of Joining} as short,\n\t\t{DOW of Joining} as string,\n\t\t{Short DOW} as string,\n\t\t{Age in Company (Years)} as double,\n\t\tSalary as integer,\n\t\t{Last % Hike} as string,\n\t\tSSN as string,\n\t\t{Phone No. } as string,\n\t\t{Place Name} as string,\n\t\tCounty as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tZip as integer,\n\t\tRegion as string,\n\t\t{User Name} as string,\n\t\tPassword as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> sourceName\nMapNames derive(SoundexValue = soundex(fullname)) ~> FuzzyMatch\nOrig1 aggregate(groupBy(SoundexValue),\n\tsoundexmatch = sum(1)) ~> groupSoundex\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> Orig1\ngroupSoundex, soundexBranch join(groupSoundex@SoundexValue == soundexBranch@SoundexValue,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> soundexJoin\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> soundexBranch\nsoundexJoin aggregate(groupBy(phone,\n\t\tsoundexBranch@SoundexValue),\n\tphonematch = sum(1),\n\t\tacctnum_agg = last(acctnum)) ~> groupPhone\nsoundexJoin select(mapColumn(\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue = soundexBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> phoneBranch\ngroupPhone, phoneBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'auto')~> phoneJoin\nphoneJoin aggregate(groupBy(zip,\n\t\tphoneBranch@SoundexValue),\n\tzipcount = sum(1),\n\t\tacctnum_agg = last(acctnum_agg)) ~> groupZip\nphoneJoin select(mapColumn(\n\t\tphonematch,\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone = phoneBranch@phone,\n\t\tzip,\n\t\tSoundexValue = phoneBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> zipBranch\ngroupZip, zipBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'auto')~> zipJoin\nzipJoin derive(soundexweight = 50,\n\t\tzipweight = 25,\n\t\tphoneweight = 25,\n\t\tsoundexbool = iif (soundexmatch > 1, 1, 0),\n\t\tzipbool = iif (zipcount > 1, 1, 0),\n\t\tphonebool = iif (phonematch > 1, 1, 0)) ~> setConstants\nsetConstants derive(matchscore = (soundexbool * 50) + (zipbool * 25) + (phonebool * 25)) ~> matchScore\nmatchScore select(mapColumn(\n\t\tphone,\n\t\tacctnum,\n\t\tfullname,\n\t\tzip = zipBranch@zip,\n\t\tmatchscore\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> finalResult\nCreateFullName select(mapColumn(\n\t\tphone = {Phone No. },\n\t\tzip = Zip,\n\t\tfullname,\n\t\tacctnum = {Emp ID}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> MapNames\nsourceName derive(fullname = {First Name} + ' ' + {Last Name}) ~> CreateFullName\nfinalResult split(matchscore > 50,\n\tdisjoint: false) ~> CheckForDupes@(Duplicates, NotDupe)\nCheckForDupes@Duplicates sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['dupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkDupes\nCheckForDupes@NotDupe sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['nodupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkNoDupes"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/names1001')]",
 				"[concat(variables('factoryId'), '/datasets/dupefolder1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CSVSampleData')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "*.csv",
-						"folderPath": "in",
-						"fileSystem": "sample-data"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CSVSampleDataMergeSink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "out",
-						"fileSystem": "sample-data"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MergeCSVSampleData')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Merge CSV Sample Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"wildcardFileName": "*"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "MergeFiles"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "CSVSampleData",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "CSVSampleDataMergeSink",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/CSVSampleData')]",
-				"[concat(variables('factoryId'), '/datasets/CSVSampleDataMergeSink')]"
 			]
 		}
 	]

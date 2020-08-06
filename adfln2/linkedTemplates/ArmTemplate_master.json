@@ -15,9 +15,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseLinkedService'"
 		},
-		"LGNP50_password": {
+		"DataMart_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LGNP50'"
+			"metadata": "Secure string for 'connectionString' of 'DataMart'"
 		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
@@ -26,6 +26,10 @@
 		"SqlServer1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
+		},
+		"WorldWideImportersDW_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'WorldWideImportersDW'"
 		},
 		"lgndatabricks_accessToken": {
 			"type": "secureString",
@@ -51,14 +55,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'southridge'"
 		},
-		"ADFPickup_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"ADFPickup_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": ""
-		},
 		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().FolderPath"
@@ -70,14 +66,6 @@
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "sinkdata/staged_sink"
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"type": "string",
@@ -119,14 +107,6 @@
 			"type": "string",
 			"defaultValue": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
 		},
-		"LGNP50_properties_typeProperties_host": {
-			"type": "string",
-			"defaultValue": "D:\\adfpickup"
-		},
-		"LGNP50_properties_typeProperties_userId": {
-			"type": "string",
-			"defaultValue": "adfpickup"
-		},
 		"NOAAFTPServer_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "ftp://ftp.ncdc.noaa.gov/"
@@ -150,22 +130,6 @@
 		"sourceBlob_LS_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
-			"type": "string",
-			"defaultValue": "d:\\adfpickup"
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
-			"type": "string",
-			"defaultValue": "/raw"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_From": {
-			"type": "string",
-			"defaultValue": "@trigger().outputs.windowStartTime"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_To": {
-			"type": "string",
-			"defaultValue": "@trigger().outputs.windowEndTime"
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
@@ -214,8 +178,14 @@
 					"AzureSqlDatabaseLinkedService_connectionString": {
 						"value": "[parameters('AzureSqlDatabaseLinkedService_connectionString')]"
 					},
+					"DataMart_connectionString": {
+						"value": "[parameters('DataMart_connectionString')]"
+					},
 					"MyAzureBlobLinkedService_connectionString": {
 						"value": "[parameters('MyAzureBlobLinkedService_connectionString')]"
+					},
+					"WorldWideImportersDW_connectionString": {
+						"value": "[parameters('WorldWideImportersDW_connectionString')]"
 					},
 					"lgndatabricks_accessToken": {
 						"value": "[parameters('lgndatabricks_accessToken')]"
@@ -258,18 +228,6 @@
 					},
 					"sourceBlob_LS_sasUri": {
 						"value": "[parameters('sourceBlob_LS_sasUri')]"
-					},
-					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
-						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
-					},
-					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
-						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]"
-					},
-					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
-						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
-					},
-					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
-						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
 					}
 				}
 			},
@@ -289,14 +247,20 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
+					},
+					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]"
+					},
+					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					},
+					"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
+						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken')]"
+					},
 					"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -318,6 +282,12 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
+					},
 					"SinkDataset_properties_typeProperties_fileName": {
 						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
 					},
@@ -335,12 +305,6 @@
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"adfdropoff_properties_typeProperties_fileName": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
-					},
-					"adfdropoff_properties_typeProperties_folderPath": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -362,17 +326,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"LGNP50_password": {
-						"value": "[parameters('LGNP50_password')]"
+					"adfdropoff_properties_typeProperties_fileName": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
 					},
-					"SqlServer1_connectionString": {
-						"value": "[parameters('SqlServer1_connectionString')]"
-					},
-					"LGNP50_properties_typeProperties_host": {
-						"value": "[parameters('LGNP50_properties_typeProperties_host')]"
-					},
-					"LGNP50_properties_typeProperties_userId": {
-						"value": "[parameters('LGNP50_properties_typeProperties_userId')]"
+					"adfdropoff_properties_typeProperties_folderPath": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -394,17 +352,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"ADFPickup_properties_typeProperties_fileName": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_fileName')]"
-					},
-					"ADFPickup_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADFPickup_properties_typeProperties_folderPath')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_fileName')]"
-					},
-					"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('FileServerDataSourceStore1_properties_typeProperties_folderPath')]"
+					"SqlServer1_connectionString": {
+						"value": "[parameters('SqlServer1_connectionString')]"
 					}
 				}
 			},
@@ -425,18 +374,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"trigger1_properties_pipeline_parameters_FolderPath_Source": {
-						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Source')]"
-					},
-					"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
-						"value": "[parameters('trigger1_properties_pipeline_parameters_FolderPath_Destination')]"
-					},
-					"trigger1_properties_pipeline_parameters_LastModified_From": {
-						"value": "[parameters('trigger1_properties_pipeline_parameters_LastModified_From')]"
-					},
-					"trigger1_properties_pipeline_parameters_LastModified_To": {
-						"value": "[parameters('trigger1_properties_pipeline_parameters_LastModified_To')]"
 					}
 				}
 			},

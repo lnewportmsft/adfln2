@@ -11,13 +11,16 @@
 		"AzureSqlDatabaseLinkedService_connectionString": {
 			"value": ""
 		},
-		"LGNP50_password": {
+		"DataMart_connectionString": {
 			"value": ""
 		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
 		"SqlServer1_connectionString": {
+			"value": ""
+		},
+		"WorldWideImportersDW_connectionString": {
 			"value": ""
 		},
 		"lgndatabricks_accessToken": {
@@ -38,12 +41,6 @@
 		"southridge_connectionString": {
 			"value": ""
 		},
-		"ADFPickup_properties_typeProperties_fileName": {
-			"value": ""
-		},
-		"ADFPickup_properties_typeProperties_folderPath": {
-			"value": ""
-		},
 		"AzureBlobFSDataDestinationStore1_properties_typeProperties_folderPath": {
 			"value": "@dataset().FolderPath"
 		},
@@ -52,12 +49,6 @@
 		},
 		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 			"value": "sinkdata/staged_sink"
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_fileName": {
-			"value": ""
-		},
-		"FileServerDataSourceStore1_properties_typeProperties_folderPath": {
-			"value": "@dataset().FolderPath"
 		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
@@ -89,12 +80,6 @@
 		"FRED_properties_typeProperties_url": {
 			"value": "https://fred.stlouisfed.org/graph/fredgraph.csv?"
 		},
-		"LGNP50_properties_typeProperties_host": {
-			"value": "D:\\adfpickup"
-		},
-		"LGNP50_properties_typeProperties_userId": {
-			"value": "adfpickup"
-		},
 		"NOAAFTPServer_properties_typeProperties_host": {
 			"value": "ftp://ftp.ncdc.noaa.gov/"
 		},
@@ -112,18 +97,6 @@
 		},
 		"sourceBlob_LS_sasUri": {
 			"value": ""
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Source": {
-			"value": "d:\\adfpickup"
-		},
-		"trigger1_properties_pipeline_parameters_FolderPath_Destination": {
-			"value": "/raw"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_From": {
-			"value": "@trigger().outputs.windowStartTime"
-		},
-		"trigger1_properties_pipeline_parameters_LastModified_To": {
-			"value": "@trigger().outputs.windowEndTime"
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "lnewport.database.windows.net"
