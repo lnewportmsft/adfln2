@@ -12,13 +12,21 @@
 					"name": "AzureBlobDB2Export"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlDatabaseDataset",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "DerivedColumn1"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
