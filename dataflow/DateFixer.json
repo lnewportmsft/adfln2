@@ -1,0 +1,20 @@
+{
+	"name": "DateFixer",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureBlobDB2Export",
+						"type": "DatasetReference"
+					},
+					"name": "AzureBlobDB2Export"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> AzureBlobDB2Export"
+		}
+	}
+}
