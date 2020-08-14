@@ -17,7 +17,19 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DateFixer_copy1",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"OutputFileName": "'APPOINTMENT_ZONE.DAT'"
+						},
+						"datasetParameters": {
+							"AzureBlobDB2Source": {
+								"filename": "test",
+								"container": "APPOINTMENT_ZONE.DAT"
+							},
+							"AzureBlobDB2DateFixed": {
+								"container": "testdb2fixed"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
