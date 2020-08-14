@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DateFixer_copy1",
+				"name": "DB2DateFixer",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
