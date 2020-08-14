@@ -6,19 +6,27 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "AzureBlobDB2Export",
+						"referenceName": "AzureBlobDB2Source",
 						"type": "DatasetReference"
 					},
-					"name": "AzureBlobDB2Export"
+					"name": "AzureBlobDB2Source"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureBlobDB2Sink",
+						"type": "DatasetReference"
+					},
+					"name": "AzureBlobDB2DateFixed"
+				}
+			],
 			"transformations": [
 				{
-					"name": "DerivedColumn1"
+					"name": "Db2ToSQLDateFormat"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive(each(match(type == 'string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> DerivedColumn1"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nAzureBlobDB2Source derive(each(match(type == 'string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AzureBlobDB2DateFixed"
 		}
 	}
 }

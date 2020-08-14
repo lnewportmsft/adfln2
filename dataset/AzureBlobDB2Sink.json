@@ -1,15 +1,15 @@
 {
-	"name": "AzureBlobDB2Source",
+	"name": "AzureBlobDB2Sink",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lgnstorage",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"filename": {
+			"container": {
 				"type": "string"
 			},
-			"container": {
+			"filename": {
 				"type": "string"
 			}
 		},
@@ -17,15 +17,7 @@
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().filename",
-					"type": "Expression"
-				},
-				"container": {
-					"value": "@dataset().container",
-					"type": "Expression"
-				}
+				"type": "AzureBlobStorageLocation"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

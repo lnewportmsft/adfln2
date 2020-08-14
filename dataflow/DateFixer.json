@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "AzureBlobDB2Export",
+						"referenceName": "AzureBlobDB2Source",
 						"type": "DatasetReference"
 					},
 					"name": "AzureBlobDB2Export"
