@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DateFixer_copy1",
+						"referenceName": "DB2DateFixer",
 						"type": "DataFlowReference",
 						"parameters": {
 							"OutputFileName": "'APPOINTMENT_ZONE.DAT'"
