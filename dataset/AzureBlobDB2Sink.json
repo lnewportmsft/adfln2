@@ -8,9 +8,6 @@
 		"parameters": {
 			"container": {
 				"type": "string"
-			},
-			"filename": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
