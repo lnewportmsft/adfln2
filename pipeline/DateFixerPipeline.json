@@ -23,8 +23,8 @@
 						},
 						"datasetParameters": {
 							"AzureBlobDB2Source": {
-								"filename": "test",
-								"container": "APPOINTMENT_ZONE.DAT"
+								"filename": "APPOINTMENT_ZONE.DAT",
+								"container": "test"
 							},
 							"AzureBlobDB2DateFixed": {
 								"container": "testdb2fixed"
