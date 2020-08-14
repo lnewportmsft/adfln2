@@ -8,14 +8,16 @@
 		"parameters": {
 			"filename": {
 				"type": "string"
+			},
+			"filepath": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"container": "test"
+				"type": "AzureBlobStorageLocation"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

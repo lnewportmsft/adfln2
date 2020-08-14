@@ -18,7 +18,7 @@
 					"name": "DerivedColumn1"
 				}
 			],
-			"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive(each(match(regexMatch(stream, '(\\\\d+).(\\\\d+).(\\\\d+)')), $$ + 'fixed' = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> DerivedColumn1"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive(each(match(type == 'string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> DerivedColumn1"
 		}
 	}
 }
