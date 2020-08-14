@@ -1384,7 +1384,7 @@
 							"name": "Db2ToSQLDateFormat"
 						}
 					],
-					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> AzureBlobDB2DateFixed"
+					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
 				}
 			},
 			"dependsOn": []
