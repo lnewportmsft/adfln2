@@ -1,5 +1,5 @@
 {
-	"name": "DateFixer_copy1",
+	"name": "DB2DateFixer",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
