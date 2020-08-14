@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
+		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "data/source"
+		},
 		"adfdropoff_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -20,6 +28,123 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_zyh')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgnstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "nyctaxi"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "vendor_name",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Pickup_DateTime",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Dropoff_DateTime",
+						"type": "String"
+					},
+					{
+						"name": "Passenger_Count",
+						"type": "String"
+					},
+					{
+						"name": "Trip_Distance",
+						"type": "String"
+					},
+					{
+						"name": "Start_Lon",
+						"type": "String"
+					},
+					{
+						"name": "Start_Lat",
+						"type": "String"
+					},
+					{
+						"name": "Rate_Code",
+						"type": "String"
+					},
+					{
+						"name": "store_and_forward",
+						"type": "String"
+					},
+					{
+						"name": "End_Lon",
+						"type": "String"
+					},
+					{
+						"name": "End_Lat",
+						"type": "String"
+					},
+					{
+						"name": "Payment_Type",
+						"type": "String"
+					},
+					{
+						"name": "Fare_Amt",
+						"type": "String"
+					},
+					{
+						"name": "surcharge",
+						"type": "String"
+					},
+					{
+						"name": "mta_tax",
+						"type": "String"
+					},
+					{
+						"name": "Tip_Amt",
+						"type": "String"
+					},
+					{
+						"name": "Tolls_Amt",
+						"type": "String"
+					},
+					{
+						"name": "Total_Amt",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your source files in Azure Blob Store.",
+				"linkedServiceName": {
+					"referenceName": "sourceBlob_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
+					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SpatialSink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -739,86 +864,6 @@
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/searchLog1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "SearchLog.tsv",
-						"container": "searchlog"
-					},
-					"columnDelimiter": "\t",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "_c0",
-						"type": "String"
-					},
-					{
-						"name": "_c1",
-						"type": "String"
-					},
-					{
-						"name": "_c2",
-						"type": "String"
-					},
-					{
-						"name": "_c3",
-						"type": "String"
-					},
-					{
-						"name": "_c4",
-						"type": "String"
-					},
-					{
-						"name": "_c5",
-						"type": "String"
-					},
-					{
-						"name": "_c6",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "MyAzureBlobLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "trip_data_1.csv",
-						"container": "demo"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": []

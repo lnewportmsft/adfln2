@@ -30,20 +30,58 @@
 		"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "data/source"
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "data/source"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedTextDatasetFromFred')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "FRED",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "id=CSUSHPINSA&cosd=2018-06-28&coed=2018-10-01"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_437')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lndb",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DocumentDbCollection",
+				"typeProperties": {
+					"collectionName": "movies",
+					"format": {
+						"type": "JsonFormat",
+						"filePattern": "arrayOfObjects"
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DestinationDataset_7tu')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -725,123 +763,6 @@
 				"typeProperties": {
 					"schema": "SalesLT",
 					"table": "SalesOrderDetail"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_zyh')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgnstorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "nyctaxi"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "vendor_name",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Pickup_DateTime",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Dropoff_DateTime",
-						"type": "String"
-					},
-					{
-						"name": "Passenger_Count",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Distance",
-						"type": "String"
-					},
-					{
-						"name": "Start_Lon",
-						"type": "String"
-					},
-					{
-						"name": "Start_Lat",
-						"type": "String"
-					},
-					{
-						"name": "Rate_Code",
-						"type": "String"
-					},
-					{
-						"name": "store_and_forward",
-						"type": "String"
-					},
-					{
-						"name": "End_Lon",
-						"type": "String"
-					},
-					{
-						"name": "End_Lat",
-						"type": "String"
-					},
-					{
-						"name": "Payment_Type",
-						"type": "String"
-					},
-					{
-						"name": "Fare_Amt",
-						"type": "String"
-					},
-					{
-						"name": "surcharge",
-						"type": "String"
-					},
-					{
-						"name": "mta_tax",
-						"type": "String"
-					},
-					{
-						"name": "Tip_Amt",
-						"type": "String"
-					},
-					{
-						"name": "Tolls_Amt",
-						"type": "String"
-					},
-					{
-						"name": "Total_Amt",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your source files in Azure Blob Store.",
-				"linkedServiceName": {
-					"referenceName": "sourceBlob_LS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 				}
 			},
 			"dependsOn": []
