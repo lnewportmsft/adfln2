@@ -26,7 +26,7 @@
 					"name": "DerivedColumn1"
 				}
 			],
-			"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[''],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+			"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['APPOINTMENT_ZONE.DAT'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 		}
 	}
 }
