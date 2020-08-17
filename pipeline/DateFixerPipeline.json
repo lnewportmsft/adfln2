@@ -19,11 +19,11 @@
 						"referenceName": "DB2DateFixer",
 						"type": "DataFlowReference",
 						"parameters": {
-							"OutputFileName": "'APPOINTMENT_ZONE.DAT'"
+							"OutputFileName": "'SYSTEM_SIGN_ON.DAT'"
 						},
 						"datasetParameters": {
 							"AzureBlobDB2Source": {
-								"filename": "APPOINTMENT_ZONE.DAT",
+								"filename": "SYSTEM_SIGN_ON.DAT",
 								"container": "test"
 							},
 							"AzureBlobDB2DateFixed": {
