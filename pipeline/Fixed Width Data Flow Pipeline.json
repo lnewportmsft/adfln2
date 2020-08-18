@@ -1,5 +1,5 @@
 {
-	"name": "Fixed Width Data Flow Pipeline1",
+	"name": "Fixed Width Data Flow Pipeline",
 	"properties": {
 		"description": "This is an example of creating a data flow to process fixed-width text files",
 		"activities": [
@@ -28,6 +28,10 @@
 							"Field6": "'46,12'",
 							"Field7": "'58,1'"
 						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
 					}
 				}
 			}
