@@ -688,7 +688,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "DateFixer_copy1",
+						"name": "DB2DateFixer",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [],
 						"policy": {
@@ -704,11 +704,11 @@
 								"referenceName": "DB2DateFixer",
 								"type": "DataFlowReference",
 								"parameters": {
-									"OutputFileName": "'APPOINTMENT_ZONE.DAT'"
+									"OutputFileName": "'SYSTEM_SIGN_ON.DAT'"
 								},
 								"datasetParameters": {
 									"AzureBlobDB2Source": {
-										"filename": "APPOINTMENT_ZONE.DAT",
+										"filename": "SYSTEM_SIGN_ON.DAT",
 										"container": "test"
 									},
 									"AzureBlobDB2DateFixed": {
@@ -1162,6 +1162,91 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSqlDatabaseDataset')]",
 				"[concat(variables('factoryId'), '/pipelines/IterateAndCopyFredExports')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GetDB2FileListAndClean')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetDB2ExportFileList",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "AzureBlobDB2Source",
+								"type": "DatasetReference",
+								"parameters": {
+									"filename": "*.DAT",
+									"container": "test"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetDB2ExportFileList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetDB2ExportFileList').output",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "ExecuteDateFixerPipeline",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "DateFixerPipeline",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "FXF"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureBlobDB2Source')]",
+				"[concat(variables('factoryId'), '/pipelines/DateFixerPipeline')]"
 			]
 		},
 		{
@@ -4874,9 +4959,12 @@
 					"transformations": [
 						{
 							"name": "Db2ToSQLDateFormat"
+						},
+						{
+							"name": "Db2ToSQLTimestamp"
 						}
 					],
-					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
+					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
 				}
 			},
 			"dependsOn": [
