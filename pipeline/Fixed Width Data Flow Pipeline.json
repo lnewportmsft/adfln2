@@ -17,7 +17,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Fixed Width1",
+						"referenceName": "FixedWidth",
 						"type": "DataFlowReference",
 						"parameters": {
 							"Field1": "'1,7'",
