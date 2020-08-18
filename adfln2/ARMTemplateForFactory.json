@@ -493,70 +493,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/CopyPipeline_7tu')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_7tu",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "SalesLT.SalesOrderDetail"
-							},
-							{
-								"name": "Destination",
-								"value": "raw/US/{year}/{month}/{day}/"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"enableSkipIncompatibleRow": true
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_7tu",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_7tu",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_7tu')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_7tu')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/CopyTaxiData')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -654,7 +590,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Currency Converter1",
+								"referenceName": "CurrencyConverter",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -678,7 +614,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Currency Converter1')]"
+				"[concat(variables('factoryId'), '/dataflows/CurrencyConverter')]"
 			]
 		},
 		{
@@ -753,7 +689,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "dedupeProb21",
+								"referenceName": "dedupeProb",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -776,7 +712,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dedupeProb21')]"
+				"[concat(variables('factoryId'), '/dataflows/dedupeProb')]"
 			]
 		},
 		{
@@ -1009,7 +945,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Fixed Width Data Flow Pipeline1')]",
+			"name": "[concat(parameters('factoryName'), '/Fixed Width Data Flow Pipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1029,7 +965,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Fixed Width1",
+								"referenceName": "FixedWidth",
 								"type": "DataFlowReference",
 								"parameters": {
 									"Field1": "'1,7'",
@@ -1056,7 +992,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/Fixed Width1')]"
+				"[concat(variables('factoryId'), '/dataflows/FixedWidth')]"
 			]
 		},
 		{
@@ -2240,7 +2176,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "SearchLog1",
+								"referenceName": "SearchLog",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -2262,7 +2198,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/SearchLog1')]"
+				"[concat(variables('factoryId'), '/dataflows/SearchLog')]"
 			]
 		},
 		{
@@ -2541,6 +2477,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Binary1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CADOutput1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2723,6 +2680,31 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
@@ -4868,7 +4850,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Currency Converter1')]",
+			"name": "[concat(parameters('factoryName'), '/CurrencyConverter')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -5011,7 +4993,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Fixed Width1')]",
+			"name": "[concat(parameters('factoryName'), '/FixedWidth')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -5050,7 +5032,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MovieDemo1')]",
+			"name": "[concat(parameters('factoryName'), '/MovieDemo')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -5126,7 +5108,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SearchLog1')]",
+			"name": "[concat(parameters('factoryName'), '/SearchLog')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -5176,7 +5158,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TaxiDemo1')]",
+			"name": "[concat(parameters('factoryName'), '/TaxiDemo')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -5247,7 +5229,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dedupeProb21')]",
+			"name": "[concat(parameters('factoryName'), '/dedupeProb')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
