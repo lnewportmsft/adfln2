@@ -27,9 +27,15 @@
 				},
 				{
 					"name": "Db2ToSQLTimestamp"
+				},
+				{
+					"name": "DB224TimeStamp"
+				},
+				{
+					"name": "DB224Time"
 				}
 			],
-			"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
+			"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
 		}
 	}
 }
