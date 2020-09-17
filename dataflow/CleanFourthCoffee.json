@@ -1,6 +1,9 @@
 {
 	"name": "CleanFourthCoffee",
 	"properties": {
+		"folder": {
+			"name": "OpenHack"
+		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
