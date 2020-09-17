@@ -1,0 +1,51 @@
+{
+	"name": "CleanFourthCoffee",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "FourthCoffeeMovies"
+				},
+				{
+					"name": "FourthCoffeeMovieActors"
+				},
+				{
+					"name": "FourthCoffeeOnlineMovieMappings"
+				},
+				{
+					"name": "FourthCoffeeActors"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "Join2"
+				},
+				{
+					"name": "Join3"
+				},
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "DerivedColumn2"
+				},
+				{
+					"name": "Select2"
+				}
+			],
+			"script": "source(output(\n\t\tMovieID as string,\n\t\tMovieTitle as string,\n\t\tCategory as string,\n\t\tRating as string,\n\t\tRunTimeMin as short,\n\t\tReleaseDate as date 'MM-dd-yyyy'\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> FourthCoffeeMovies\nsource(output(\n\t\tMovieActorID as string,\n\t\tMovieID as string,\n\t\tActorID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> FourthCoffeeMovieActors\nsource(output(\n\t\tMovieID as string,\n\t\tOnlineMovieID as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> FourthCoffeeOnlineMovieMappings\nsource(output(\n\t\tActorID as string,\n\t\tActorName as string,\n\t\tGender as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> FourthCoffeeActors\nFourthCoffeeMovies, FourthCoffeeOnlineMovieMappings join(FourthCoffeeMovies@MovieID == FourthCoffeeOnlineMovieMappings@MovieID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join1\nJoin1, FourthCoffeeMovieActors join(FourthCoffeeMovies@MovieID == FourthCoffeeMovieActors@MovieID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join2\nJoin2, FourthCoffeeActors join(FourthCoffeeMovieActors@ActorID == FourthCoffeeActors@ActorID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> Join3\nJoin3 derive(SourceSystemID = 2,\n\t\tGlobalMovieID = concat('2', FourthCoffeeMovies@MovieID)) ~> DerivedColumn1\nDerivedColumn1 select(mapColumn(\n\t\tSourceSystemID,\n\t\tGlobalMovieID,\n\t\tMovieId = FourthCoffeeMovies@MovieID,\n\t\tOnlineMovieId = OnlineMovieID,\n\t\tActorid = MovieActorID,\n\t\tActorName,\n\t\tGender,\n\t\tMovieTitle,\n\t\tCategory,\n\t\tRating,\n\t\tRunTimeMin,\n\t\tReleaseDate\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 derive(GlobalMovieID = lower(GlobalMovieID),\n\t\tMovieId = lower(MovieId),\n\t\tOnlineMovieId = lower(OnlineMovieId),\n\t\tActorId = lower(Actorid)) ~> DerivedColumn2\nDerivedColumn2 select(mapColumn(\n\t\tSourceSystemID,\n\t\tGlobalMovieID,\n\t\tMovieId,\n\t\tOnlineMovieId,\n\t\tActorId = DerivedColumn2@ActorId,\n\t\tActorName,\n\t\tGender,\n\t\tMovieTitle,\n\t\tCategory,\n\t\tRating,\n\t\tRunTimeMin,\n\t\tReleaseDate\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select2\nSelect2 sink(partitionFileNames:['CleanFourthCoffee.parquet'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}
