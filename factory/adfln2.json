@@ -1,0 +1,12 @@
+{
+	"name": "adfln2",
+	"properties": {
+		"globalParameters": {
+			"schema": {
+				"type": "string",
+				"value": "dbo"
+			}
+		}
+	},
+	"location": "eastus2"
+}
