@@ -913,6 +913,14 @@
 								}
 							},
 							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "lgndatalake",
+									"type": "LinkedServiceReference"
+								},
+								"path": "dropzone"
+							},
 							"dataIntegrationUnits": 0
 						},
 						"inputs": [
@@ -1397,7 +1405,7 @@
 							"description": "Split the data on state to create 2 streams"
 						}
 					],
-					"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
+					"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
 				}
 			},
 			"dependsOn": []
@@ -1433,9 +1441,15 @@
 						},
 						{
 							"name": "Db2ToSQLTimestamp"
+						},
+						{
+							"name": "DB224TimeStamp"
+						},
+						{
+							"name": "DB224Time"
 						}
 					],
-					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
+					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
 				}
 			},
 			"dependsOn": []
@@ -1470,7 +1484,7 @@
 							"name": "DerivedColumn1"
 						}
 					],
-					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['APPOINTMENT_ZONE.DAT'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['APPOINTMENT_ZONE.DAT'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
 				}
 			},
 			"dependsOn": []
@@ -1506,7 +1520,7 @@
 							"name": "MapFields"
 						}
 					],
-					"script": "parameters{\n\tField1 as string ('1,7'),\n\tField2 as string ('8,8'),\n\tField3 as string ('15,10'),\n\tField4 as string ('25,11'),\n\tField5 as string ('36,10'),\n\tField6 as string ('46,12'),\n\tField7 as string ('58,1')\n}\nsource(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> fixedsource1\nfixedsource1 derive(Field1 = substring(Column_1,toInteger(split($Field1,',')[1]),toInteger(split($Field1,',')[2])),\n\t\tField2 = substring(Column_1,toInteger(split($Field2,',')[1]),toInteger(split($Field2,',')[2])),\n\t\tField3 = substring(Column_1,toInteger(split($Field3,',')[1]),toInteger(split($Field3,',')[2])),\n\t\tField4 = substring(Column_1,toInteger(split($Field4,',')[1]),toInteger(split($Field4,',')[2])),\n\t\tField5 = substring(Column_1,toInteger(split($Field5,',')[1]),toInteger(split($Field5,',')[2])),\n\t\tField6 = substring(Column_1,toInteger(split($Field6,',')[1]),toInteger(split($Field6,',')[2])),\n\t\tField7 = substring(Column_1,toInteger(split($Field7,',')[1]),toInteger(split($Field7,',')[2])),\n\tpartitionBy('roundRobin', 2)) ~> MapFields\nMapFields sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['mysinglefile.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+					"script": "parameters{\n\tField1 as string ('1,7'),\n\tField2 as string ('8,8'),\n\tField3 as string ('15,10'),\n\tField4 as string ('25,11'),\n\tField5 as string ('36,10'),\n\tField6 as string ('46,12'),\n\tField7 as string ('58,1')\n}\nsource(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> fixedsource1\nfixedsource1 derive(Field1 = substring(Column_1,toInteger(split($Field1,',')[1]),toInteger(split($Field1,',')[2])),\n\t\tField2 = substring(Column_1,toInteger(split($Field2,',')[1]),toInteger(split($Field2,',')[2])),\n\t\tField3 = substring(Column_1,toInteger(split($Field3,',')[1]),toInteger(split($Field3,',')[2])),\n\t\tField4 = substring(Column_1,toInteger(split($Field4,',')[1]),toInteger(split($Field4,',')[2])),\n\t\tField5 = substring(Column_1,toInteger(split($Field5,',')[1]),toInteger(split($Field5,',')[2])),\n\t\tField6 = substring(Column_1,toInteger(split($Field6,',')[1]),toInteger(split($Field6,',')[2])),\n\t\tField7 = substring(Column_1,toInteger(split($Field7,',')[1]),toInteger(split($Field7,',')[2])),\n\tpartitionBy('roundRobin', 2)) ~> MapFields\nMapFields sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['mysinglefile.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1)) ~> sink1"
 				}
 			},
 			"dependsOn": []
