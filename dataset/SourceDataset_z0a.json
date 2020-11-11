@@ -1,0 +1,19 @@
+{
+	"name": "SourceDataset_z0a",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgndatalake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json",
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {}
+	}
+}
