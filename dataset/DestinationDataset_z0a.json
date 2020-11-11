@@ -1,0 +1,16 @@
+{
+	"name": "DestinationDataset_z0a",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdventureWorks",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "jsontest"
+		}
+	}
+}
