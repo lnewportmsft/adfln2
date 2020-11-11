@@ -5,29 +5,13 @@
 			"referenceName": "lgndatalake",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"folder": {
-				"type": "string",
-				"defaultValue": "raw"
-			},
-			"filename": {
-				"type": "string",
-				"defaultValue": "hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json"
-			}
-		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().filename",
-					"type": "Expression"
-				},
-				"folderPath": {
-					"value": "@dataset().folder",
-					"type": "Expression"
-				}
+				"fileName": "hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json",
+				"fileSystem": "raw"
 			}
 		},
 		"schema": {
