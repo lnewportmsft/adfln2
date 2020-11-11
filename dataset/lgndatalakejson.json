@@ -1,0 +1,978 @@
+{
+	"name": "lgndatalakejson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgndatalake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"folder": {
+				"type": "string",
+				"defaultValue": "raw"
+			},
+			"filename": {
+				"type": "string",
+				"defaultValue": "hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().folder",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"@odata.context": {
+					"type": "string"
+				},
+				"value": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"@odata.type": {
+								"type": "string"
+							},
+							"@odata.id": {
+								"type": "string"
+							},
+							"@odata.editLink": {
+								"type": "string"
+							},
+							"Id": {
+								"type": "string"
+							},
+							"DateCreated": {
+								"type": "string"
+							},
+							"DateModified": {
+								"type": "string"
+							},
+							"Deleted": {
+								"type": "boolean"
+							},
+							"DateaTimeOccur": {
+								"type": "string"
+							},
+							"Description": {
+								"type": "string"
+							},
+							"ExactLocIncid": {
+								"type": "string"
+							},
+							"IncidentNo": {
+								"type": "integer"
+							},
+							"TimofOccurrence": {
+								"type": "string"
+							},
+							"AdditionSummary": {
+								"type": "null"
+							},
+							"Clients": {
+								"type": "null"
+							},
+							"ClosingRemarks": {
+								"type": "null"
+							},
+							"CompanyNameR": {
+								"type": "null"
+							},
+							"CompanyPhone": {
+								"type": "null"
+							},
+							"CostofIncident": {
+								"type": "null"
+							},
+							"County": {
+								"type": "null"
+							},
+							"DateClosed": {
+								"type": "string"
+							},
+							"DateReptoEmp": {
+								"type": "string"
+							},
+							"DateReviewed": {
+								"type": "null"
+							},
+							"DateSentInvest": {
+								"type": "null"
+							},
+							"DatInvestigated": {
+								"type": "null"
+							},
+							"detailsinvesbel": {
+								"type": "null"
+							},
+							"EHSCoorComm": {
+								"type": "null"
+							},
+							"EHSCoorComments": {
+								"type": "null"
+							},
+							"EmpFeedback": {
+								"type": "null"
+							},
+							"ExternalID": {
+								"type": "null"
+							},
+							"FieldforMyTasks": {
+								"type": "string"
+							},
+							"FirstSentFinApp": {
+								"type": "null"
+							},
+							"HelperYesNo": {
+								"type": "boolean"
+							},
+							"Ifcontractor": {
+								"type": "null"
+							},
+							"Immactorrecres": {
+								"type": "null"
+							},
+							"ImmCorrActTaken": {
+								"type": "null"
+							},
+							"ImportRecNo": {
+								"type": "null"
+							},
+							"IncidentHelper": {
+								"type": "null"
+							},
+							"IncidentValid": {
+								"type": "null"
+							},
+							"InjPartWho": {
+								"type": "null"
+							},
+							"InjurePartyText": {
+								"type": "null"
+							},
+							"InvestCompleted": {
+								"type": "null"
+							},
+							"InvestigResults": {
+								"type": "null"
+							},
+							"InvestReq": {
+								"type": "null"
+							},
+							"InvestTeam": {
+								"type": "null"
+							},
+							"InvolinIncident": {
+								"type": "null"
+							},
+							"LastSentFinApp": {
+								"type": "null"
+							},
+							"MIPastDraftStg": {
+								"type": "boolean"
+							},
+							"NearMiss": {
+								"type": "boolean"
+							},
+							"ProcSafetyInci": {
+								"type": "null"
+							},
+							"ProjectListing": {
+								"type": "string"
+							},
+							"ProjectTask": {
+								"type": "null"
+							},
+							"Range": {
+								"type": "null"
+							},
+							"RCAAppComm": {
+								"type": "null"
+							},
+							"RCAApprovDate": {
+								"type": "null"
+							},
+							"ReporToWithText": {
+								"type": "string"
+							},
+							"RootCause": {
+								"type": "null"
+							},
+							"Section": {
+								"type": "null"
+							},
+							"SecurityNotifie": {
+								"type": "null"
+							},
+							"SuspectedCause": {
+								"type": "null"
+							},
+							"TargClosingDate": {
+								"type": "null"
+							},
+							"TargetDate": {
+								"type": "null"
+							},
+							"TIIInvRequired": {
+								"type": "null"
+							},
+							"TimofOccNew": {
+								"type": "null"
+							},
+							"Township": {
+								"type": "null"
+							},
+							"Witnessesadetai": {
+								"type": "null"
+							},
+							"WitnessFName": {
+								"type": "null"
+							},
+							"WitnessLName": {
+								"type": "null"
+							},
+							"WitnessPhone": {
+								"type": "null"
+							},
+							"wullowseverity": {
+								"type": "null"
+							},
+							"CreatedBy": {
+								"type": "null"
+							},
+							"EmployeeName": {
+								"type": "null"
+							},
+							"Location": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"Address1": {
+										"type": "null"
+									},
+									"Address2": {
+										"type": "null"
+									},
+									"Area": {
+										"type": "null"
+									},
+									"City": {
+										"type": "null"
+									},
+									"County": {
+										"type": "null"
+									},
+									"Description": {
+										"type": "string"
+									},
+									"District": {
+										"type": "null"
+									},
+									"Fax": {
+										"type": "null"
+									},
+									"License": {
+										"type": "string"
+									},
+									"LocationCode": {
+										"type": "string"
+									},
+									"Name": {
+										"type": "string"
+									},
+									"Path": {
+										"type": "string"
+									},
+									"Phone": {
+										"type": "null"
+									},
+									"PostalCode": {
+										"type": "null"
+									},
+									"State": {
+										"type": "null"
+									},
+									"UserLicenseCode": {
+										"type": "string"
+									}
+								}
+							},
+							"ModifiedBy": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"IsSystem": {
+										"type": "boolean"
+									},
+									"Name": {
+										"type": "string"
+									},
+									"City": {
+										"type": "null"
+									},
+									"Company": {
+										"type": "string"
+									},
+									"ContractExpiry": {
+										"type": "null"
+									},
+									"ContractorName": {
+										"type": "null"
+									},
+									"ContractorNotes": {
+										"type": "null"
+									},
+									"DateHired": {
+										"type": "string"
+									},
+									"DateOfBirth": {
+										"type": "null"
+									},
+									"Email": {
+										"type": "string"
+									},
+									"EmergencyContact": {
+										"type": "null"
+									},
+									"EmergencyPhone": {
+										"type": "null"
+									},
+									"FirstName": {
+										"type": "string"
+									},
+									"FullName": {
+										"type": "string"
+									},
+									"Gender": {
+										"type": "null"
+									},
+									"HomeAddress": {
+										"type": "null"
+									},
+									"HourlyWage": {
+										"type": "null"
+									},
+									"InsuranceExpiry": {
+										"type": "null"
+									},
+									"IsContracted": {
+										"type": "boolean"
+									},
+									"IsSupervisor": {
+										"type": "boolean"
+									},
+									"IsSystemEmployee": {
+										"type": "boolean"
+									},
+									"JobCode": {
+										"type": "string"
+									},
+									"LastName": {
+										"type": "string"
+									},
+									"MiddleName": {
+										"type": "string"
+									},
+									"Notes": {
+										"type": "null"
+									},
+									"Number": {
+										"type": "string"
+									},
+									"Phone": {
+										"type": "string"
+									},
+									"Position": {
+										"type": "string"
+									},
+									"Prefix": {
+										"type": "null"
+									},
+									"Responsibility": {
+										"type": "null"
+									},
+									"SocialSecurity": {
+										"type": "null"
+									},
+									"State": {
+										"type": "null"
+									},
+									"Suffix": {
+										"type": "null"
+									},
+									"WorkStatus": {
+										"type": "null"
+									},
+									"ZipCode": {
+										"type": "null"
+									}
+								}
+							},
+							"Supervisor": {
+								"type": "null"
+							},
+							"Workflow": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"DateNotRequired": {
+										"type": "null"
+									},
+									"DueDate": {
+										"type": "null"
+									},
+									"DueDateType": {
+										"type": "string"
+									},
+									"EntityId": {
+										"type": "string"
+									},
+									"EntityName": {
+										"type": "string"
+									},
+									"IsVirtual": {
+										"type": "boolean"
+									},
+									"LocationId": {
+										"type": "string"
+									},
+									"ObjectId": {
+										"type": "string"
+									},
+									"WorkflowStatus": {
+										"type": "string"
+									}
+								}
+							},
+							"AccidentCountry": {
+								"type": "null"
+							},
+							"ActualSeverity": {
+								"type": "null"
+							},
+							"BehavioQuestion": {
+								"type": "null"
+							},
+							"BehaviorSection": {
+								"type": "null"
+							},
+							"Brand": {
+								"type": "null"
+							},
+							"Business": {
+								"type": "null"
+							},
+							"Category": {
+								"type": "null"
+							},
+							"ClosedBy": {
+								"type": "null"
+							},
+							"currentuserhelp": {
+								"type": "null"
+							},
+							"DepartmeManager": {
+								"type": "null"
+							},
+							"Department": {
+								"type": "null"
+							},
+							"Discoverer": {
+								"type": "null"
+							},
+							"EClassification": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Value": {
+										"type": "string"
+									},
+									"Index": {
+										"type": "integer"
+									},
+									"Caption": {
+										"type": "string"
+									}
+								}
+							},
+							"EHSCoordinator": {
+								"type": "null"
+							},
+							"EmployeeType": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Value": {
+										"type": "string"
+									},
+									"Index": {
+										"type": "integer"
+									},
+									"Caption": {
+										"type": "string"
+									}
+								}
+							},
+							"Environment": {
+								"type": "null"
+							},
+							"FinalApprover": {
+								"type": "null"
+							},
+							"IncidenOccurred": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Value": {
+										"type": "string"
+									},
+									"Index": {
+										"type": "null"
+									},
+									"Caption": {
+										"type": "string"
+									}
+								}
+							},
+							"InjPartOther": {
+								"type": "null"
+							},
+							"InjPartSubcon": {
+								"type": "null"
+							},
+							"InvestiAssigned": {
+								"type": "null"
+							},
+							"InvestigatedBy": {
+								"type": "null"
+							},
+							"OfficeLocation": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"Address1": {
+										"type": "null"
+									},
+									"Address2": {
+										"type": "null"
+									},
+									"Area": {
+										"type": "null"
+									},
+									"City": {
+										"type": "null"
+									},
+									"County": {
+										"type": "null"
+									},
+									"Description": {
+										"type": "string"
+									},
+									"District": {
+										"type": "null"
+									},
+									"Fax": {
+										"type": "null"
+									},
+									"License": {
+										"type": "string"
+									},
+									"LocationCode": {
+										"type": "string"
+									},
+									"Name": {
+										"type": "string"
+									},
+									"Path": {
+										"type": "string"
+									},
+									"Phone": {
+										"type": "null"
+									},
+									"PostalCode": {
+										"type": "null"
+									},
+									"State": {
+										"type": "null"
+									},
+									"UserLicenseCode": {
+										"type": "string"
+									}
+								}
+							},
+							"OfficePractice": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"PracticeID": {
+										"type": "string"
+									},
+									"PracticeName": {
+										"type": "string"
+									},
+									"RecordNo": {
+										"type": "integer"
+									}
+								}
+							},
+							"People": {
+								"type": "null"
+							},
+							"PotentaSeverity": {
+								"type": "null"
+							},
+							"PRInvestigation": {
+								"type": "null"
+							},
+							"ProjDirectoryv4": {
+								"type": "null"
+							},
+							"ProjectNumber": {
+								"type": "null"
+							},
+							"ProjectNumberv4": {
+								"type": "null"
+							},
+							"Property": {
+								"type": "null"
+							},
+							"Quality": {
+								"type": "null"
+							},
+							"RCAApproverNAme": {
+								"type": "null"
+							},
+							"ReforAssignment": {
+								"type": "null"
+							},
+							"ReportedBy": {
+								"type": "null"
+							},
+							"ReportedTo": {
+								"type": "null"
+							},
+							"ReportType": {
+								"type": "null"
+							},
+							"ReviewedBy": {
+								"type": "null"
+							},
+							"SafeAcciLocType": {
+								"type": "null"
+							},
+							"Shift": {
+								"type": "null"
+							},
+							"State": {
+								"type": "null"
+							},
+							"TimeZone": {
+								"type": "object",
+								"properties": {
+									"@odata.type": {
+										"type": "string"
+									},
+									"@odata.id": {
+										"type": "string"
+									},
+									"@odata.editLink": {
+										"type": "string"
+									},
+									"Id": {
+										"type": "string"
+									},
+									"Deleted": {
+										"type": "boolean"
+									},
+									"DateCreated": {
+										"type": "string"
+									},
+									"DateModified": {
+										"type": "string"
+									},
+									"Value": {
+										"type": "string"
+									},
+									"Index": {
+										"type": "integer"
+									},
+									"Caption": {
+										"type": "string"
+									}
+								}
+							},
+							"CorrectiActions": {
+								"type": "array"
+							},
+							"IncidentTypes": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"@odata.type": {
+											"type": "string"
+										},
+										"@odata.id": {
+											"type": "string"
+										},
+										"@odata.editLink": {
+											"type": "string"
+										},
+										"Id": {
+											"type": "string"
+										},
+										"Deleted": {
+											"type": "boolean"
+										},
+										"DateCreated": {
+											"type": "string"
+										},
+										"DateModified": {
+											"type": "string"
+										},
+										"Value": {
+											"type": "string"
+										},
+										"Index": {
+											"type": "null"
+										},
+										"Caption": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"IndividInvolved": {
+								"type": "array"
+							},
+							"RoCauseAnalysis": {
+								"type": "array"
+							},
+							"RootCauseList": {
+								"type": "array"
+							},
+							"SubIncidents": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"@odata.type": {
+											"type": "string"
+										},
+										"@odata.id": {
+											"type": "string"
+										},
+										"@odata.editLink": {
+											"type": "string"
+										},
+										"Id": {
+											"type": "string"
+										},
+										"DateCreated": {
+											"type": "string"
+										},
+										"DateModified": {
+											"type": "string"
+										},
+										"Deleted": {
+											"type": "boolean"
+										},
+										"HelperPastD": {
+											"type": "boolean"
+										},
+										"IncidenRecordNo": {
+											"type": "integer"
+										},
+										"InjurePartyName": {
+											"type": "string"
+										},
+										"InjuryType": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"ILX.Attachments@odata.context": {
+								"type": "string"
+							},
+							"ILX.Attachments": {
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
