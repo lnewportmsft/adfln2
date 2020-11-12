@@ -1,0 +1,31 @@
+{
+	"name": "AzureSqlDatabaseDataset_New2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseLinkedService",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DATE",
+				"type": "date"
+			},
+			{
+				"name": "STLPCPI_20171116",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STLPCPI_20181115",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"tableName": "dummyName"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
