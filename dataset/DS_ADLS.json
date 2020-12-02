@@ -5,13 +5,18 @@
 			"referenceName": "lgndatalake",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"filename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@{item().TableName}",
+					"value": "@dataset().filename",
 					"type": "Expression"
 				},
 				"folderPath": "AdventureWorks",
