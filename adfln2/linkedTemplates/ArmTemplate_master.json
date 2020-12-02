@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
+		"AdventureWorks_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AdventureWorks'"
+		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDWLinkedService'"
@@ -172,6 +176,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"AdventureWorks_connectionString": {
+						"value": "[parameters('AdventureWorks_connectionString')]"
+					},
 					"AzureSqlDWLinkedService_connectionString": {
 						"value": "[parameters('AzureSqlDWLinkedService_connectionString')]"
 					},
@@ -287,18 +294,6 @@
 					},
 					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SinkDataset_properties_typeProperties_fileName": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
-					},
-					"SinkDataset_properties_typeProperties_folderPath": {
-						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
-					},
-					"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -319,6 +314,18 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SinkDataset_properties_typeProperties_fileName": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
+					},
+					"SinkDataset_properties_typeProperties_folderPath": {
+						"value": "[parameters('SinkDataset_properties_typeProperties_folderPath')]"
+					},
+					"SourceAvailabilityBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
@@ -379,6 +386,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_4')]"
+			]
+		},
+		{
+			"name": "adfln2_ArmTemplate_6",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_6.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_5')]"
 			]
 		}
 	]

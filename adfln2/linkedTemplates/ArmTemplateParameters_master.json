@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adfln2"
 		},
+		"AdventureWorks_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},

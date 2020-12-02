@@ -13,6 +13,337 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/MergeCSVSampleData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Merge CSV Sample Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "MergeFiles"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "CSVSampleData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSVSampleDataMergeSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PreCopyScriptTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy SQL Table",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "FactOrder",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "FactOrderSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "CreateCCI",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Copy SQL Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "CREATE CLUSTERED COLUMNSTORE INDEX cci_FactOrder ON [Fact].[Order]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "FactOrderSink",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CurrencyConverter')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Sample demo data flow to convert currencies",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CurrencyDatasetUSD1",
+								"type": "DatasetReference"
+							},
+							"name": "USDCurrency"
+						},
+						{
+							"dataset": {
+								"referenceName": "CurrencyDatasetCAD1",
+								"type": "DatasetReference"
+							},
+							"name": "CADSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "USDOutput1",
+								"type": "DatasetReference"
+							},
+							"name": "USDSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "CADOutput1",
+								"type": "DatasetReference"
+							},
+							"name": "CADSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Union",
+							"description": "The Union combines 2 streams together"
+						},
+						{
+							"name": "NewCurrencyColumn",
+							"description": "Create a new calculated column from currency rate"
+						},
+						{
+							"name": "ConditionalSplit1",
+							"description": "Split the data on state to create 2 streams"
+						}
+					],
+					"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DB2DateFixer')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Source",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2Source"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Sink",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2DateFixed"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Db2ToSQLDateFormat"
+						},
+						{
+							"name": "Db2ToSQLTimestamp"
+						},
+						{
+							"name": "DB224TimeStamp"
+						},
+						{
+							"name": "DB224Time"
+						}
+					],
+					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Source\nDB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true) ~> AzureBlobDB2DateFixed"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DateFixer')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Source",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2Export"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Sink",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tinferDriftedColumnTypes: true) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['APPOINTMENT_ZONE.DAT'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FixedWidth')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Each parameter in this data flow is defined as 'start position', 'offset' as in '1,7'.",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "fixedwidth1",
+								"type": "DatasetReference"
+							},
+							"name": "fixedsource1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "folderout1",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapFields"
+						}
+					],
+					"script": "parameters{\n\tField1 as string ('1,7'),\n\tField2 as string ('8,8'),\n\tField3 as string ('15,10'),\n\tField4 as string ('25,11'),\n\tField5 as string ('36,10'),\n\tField6 as string ('46,12'),\n\tField7 as string ('58,1')\n}\nsource(output(\n\t\tColumn_1 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> fixedsource1\nfixedsource1 derive(Field1 = substring(Column_1,toInteger(split($Field1,',')[1]),toInteger(split($Field1,',')[2])),\n\t\tField2 = substring(Column_1,toInteger(split($Field2,',')[1]),toInteger(split($Field2,',')[2])),\n\t\tField3 = substring(Column_1,toInteger(split($Field3,',')[1]),toInteger(split($Field3,',')[2])),\n\t\tField4 = substring(Column_1,toInteger(split($Field4,',')[1]),toInteger(split($Field4,',')[2])),\n\t\tField5 = substring(Column_1,toInteger(split($Field5,',')[1]),toInteger(split($Field5,',')[2])),\n\t\tField6 = substring(Column_1,toInteger(split($Field6,',')[1]),toInteger(split($Field6,',')[2])),\n\t\tField7 = substring(Column_1,toInteger(split($Field7,',')[1]),toInteger(split($Field7,',')[2])),\n\tpartitionBy('roundRobin', 2)) ~> MapFields\nMapFields sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['mysinglefile.csv'],\n\ttruncate: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MovieDemo')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -318,7 +649,8 @@
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -327,7 +659,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CurrencyConverter')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DateFixerPipeline')]",
@@ -368,7 +702,8 @@
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -377,7 +712,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DB2DateFixer')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Dedupe Pipeline')]",
@@ -412,7 +749,8 @@
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -466,13 +804,16 @@
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/FixedWidth')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/GedFredData')]",
@@ -763,7 +1104,8 @@
 							"integrationRuntime": {
 								"referenceName": "DFIR",
 								"type": "IntegrationRuntimeReference"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -858,7 +1200,8 @@
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
-							}
+							},
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -869,118 +1212,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/SearchLog')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Daily')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "IncrementalCopyPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-05-30T01:00:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GetDB2FileListAndClean')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GetDB2ExportFileList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "AzureBlobDB2Source",
-								"type": "DatasetReference",
-								"parameters": {
-									"filename": "*.DAT",
-									"container": "test"
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "GetDB2ExportFileList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('GetDB2ExportFileList').output",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "ExecuteDateFixerPipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "DateFixerPipeline",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"folder": {
-					"name": "FXF"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/DateFixerPipeline')]"
 			]
 		}
 	]
