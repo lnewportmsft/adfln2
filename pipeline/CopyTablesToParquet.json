@@ -29,7 +29,7 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "Copy-Each-Table",
 				"type": "ForEach",
 				"dependsOn": [
 					{
