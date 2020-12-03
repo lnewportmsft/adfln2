@@ -20,7 +20,7 @@
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@AdventureWorks/@{formatDateTime(utcnow(),'yyyy')}/@{formatDateTime(utcnow(),'MM')}/@{formatDateTime(utcnow(),'dd')}",
+					"value": "AdventureWorks/@{formatDateTime(utcnow(),'yyyy')}/@{formatDateTime(utcnow(),'MM')}/@{formatDateTime(utcnow(),'dd')}",
 					"type": "Expression"
 				},
 				"fileSystem": "raw"
