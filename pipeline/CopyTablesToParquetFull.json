@@ -1,5 +1,5 @@
 {
-	"name": "CopyTablesToParquet",
+	"name": "CopyTablesToParquetFull",
 	"properties": {
 		"activities": [
 			{
@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT * FROM DataFactoryMeta WHERE active = 1",
+						"sqlReaderQuery": "SELECT * FROM dbo.DataFactoryMeta WHERE active = 1",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
