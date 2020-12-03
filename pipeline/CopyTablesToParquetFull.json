@@ -95,7 +95,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_ADLS",
+									"referenceName": "AzureDataLakeParquet",
 									"type": "DatasetReference",
 									"parameters": {
 										"filename": {
