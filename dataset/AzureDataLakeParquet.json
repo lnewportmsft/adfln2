@@ -1,5 +1,5 @@
 {
-	"name": "DS_ADLS",
+	"name": "AzureDataLakeParquet",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "lgndatalake",
