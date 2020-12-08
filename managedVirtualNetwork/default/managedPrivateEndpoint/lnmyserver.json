@@ -1,0 +1,7 @@
+{
+	"name": "lnmyserver",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourceGroups/lnprivatelink/providers/Microsoft.Sql/servers/lnmyserver",
+		"groupId": "sqlServer"
+	}
+}
