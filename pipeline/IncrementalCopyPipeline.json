@@ -167,7 +167,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@activity('IncrementalCopyActivity').output.RowsCopied > 0",
+						"value": "@greater(activity('IncrementalCopyActivity').output.RowsCopied, 0)",
 						"type": "Expression"
 					},
 					"ifTrueActivities": [
