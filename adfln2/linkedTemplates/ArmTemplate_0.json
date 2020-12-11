@@ -336,12 +336,12 @@
 				"annotations": [],
 				"type": "AzureDatabricks",
 				"typeProperties": {
-					"domain": "https://eastus2.azuredatabricks.net",
+					"domain": "https://adb-1972999359245866.6.azuredatabricks.net",
 					"accessToken": {
 						"type": "SecureString",
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
-					"existingClusterId": "0430-194140-psalm148"
+					"existingClusterId": "1207-215830-awry3"
 				}
 			},
 			"dependsOn": []

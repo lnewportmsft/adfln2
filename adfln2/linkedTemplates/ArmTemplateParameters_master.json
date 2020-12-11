@@ -41,6 +41,9 @@
 		"lndb_connectionString": {
 			"value": ""
 		},
+		"lnmyserver_connectionString": {
+			"value": ""
+		},
 		"southridge_connectionString": {
 			"value": ""
 		},
@@ -112,6 +115,12 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"value": ""
+		},
+		"lnmyserver_properties_privateLinkResourceId": {
+			"value": "/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourceGroups/lnprivatelink/providers/Microsoft.Sql/servers/lnmyserver"
+		},
+		"lnmyserver_properties_groupId": {
+			"value": "sqlServer"
 		},
 		"containerUri": {
 			"value": ""

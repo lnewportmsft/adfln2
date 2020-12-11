@@ -55,6 +55,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lndb'"
 		},
+		"lnmyserver_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lnmyserver'"
+		},
 		"southridge_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'southridge'"
@@ -148,6 +152,14 @@
 		},
 		"lgnssisir_properties_typeProperties_ssisProperties_customSetupScriptProperties_sasToken": {
 			"type": "secureString"
+		},
+		"lnmyserver_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/65c04546-fce4-4b3c-be44-dac0e5324e24/resourceGroups/lnprivatelink/providers/Microsoft.Sql/servers/lnmyserver"
+		},
+		"lnmyserver_properties_groupId": {
+			"type": "string",
+			"defaultValue": "sqlServer"
 		},
 		"containerUri": {
 			"type": "string",
@@ -361,6 +373,12 @@
 					},
 					"SqlServer1_connectionString": {
 						"value": "[parameters('SqlServer1_connectionString')]"
+					},
+					"lnmyserver_properties_privateLinkResourceId": {
+						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"
+					},
+					"lnmyserver_properties_groupId": {
+						"value": "[parameters('lnmyserver_properties_groupId')]"
 					}
 				}
 			},
@@ -381,6 +399,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"lnmyserver_connectionString": {
+						"value": "[parameters('lnmyserver_connectionString')]"
 					}
 				}
 			},
