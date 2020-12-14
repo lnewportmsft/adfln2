@@ -47,8 +47,104 @@
 					},
 					"activities": [
 						{
-							"name": "Copy-Table",
-							"type": "Copy",
+							"name": "RowcountGreaterThanOne",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "RowCount",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('RowCount').output.count",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Error",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "error",
+											"value": {
+												"value": "1234",
+												"type": "Expression"
+											}
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy-Table",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "SELECT * FROM @{item().TableName}",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "AzureSqlGeneric",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "AzureDataLakeParquet",
+												"type": "DatasetReference",
+												"parameters": {
+													"filename": {
+														"value": "@{item().TableName}",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "RowCount",
+							"type": "Lookup",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "7.00:00:00",
@@ -61,55 +157,26 @@
 							"typeProperties": {
 								"source": {
 									"type": "AzureSqlSource",
-									"sqlReaderQuery": {
-										"value": "SELECT * FROM @{item().TableName}",
-										"type": "Expression"
-									},
+									"sqlReaderQuery": "SELECT TOP 10 [PersonID]\n      ,[Name]\n      ,[LastModifytime]\n  FROM [dbo].[data_source_table]\n  ORDER BY LastModifytime DESC",
 									"queryTimeout": "02:00:00",
 									"partitionOption": "None"
 								},
-								"sink": {
-									"type": "ParquetSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "ParquetWriteSettings"
-									}
-								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
-								}
-							},
-							"inputs": [
-								{
-									"referenceName": "AzureSqlGeneric",
+								"dataset": {
+									"referenceName": "AzureSqlDatabaseDataset",
 									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "AzureDataLakeParquet",
-									"type": "DatasetReference",
-									"parameters": {
-										"filename": {
-											"value": "@{item().TableName}",
-											"type": "Expression"
-										}
-									}
-								}
-							]
+								},
+								"firstRowOnly": false
+							}
 						}
 					]
 				}
 			}
 		],
+		"variables": {
+			"error": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "EHI"
 		},
