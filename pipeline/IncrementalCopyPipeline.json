@@ -178,7 +178,10 @@
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "error",
-								"value": "1234"
+								"value": {
+									"value": "1234",
+									"type": "Expression"
+								}
 							}
 						}
 					],
