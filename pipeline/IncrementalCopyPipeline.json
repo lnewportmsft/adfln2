@@ -170,6 +170,18 @@
 						"value": "@greater(activity('IncrementalCopyActivity').output.RowsCopied, 0)",
 						"type": "Expression"
 					},
+					"ifFalseActivities": [
+						{
+							"name": "Error",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "error",
+								"value": "1234"
+							}
+						}
+					],
 					"ifTrueActivities": [
 						{
 							"name": "StoredProceduretoWriteWatermarkActivity_copy1",
@@ -211,6 +223,11 @@
 				}
 			}
 		],
+		"variables": {
+			"error": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Copy Demos"
 		},
