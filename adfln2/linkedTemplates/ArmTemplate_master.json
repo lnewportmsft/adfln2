@@ -27,10 +27,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
 		},
-		"SqlServer1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SqlServer1'"
-		},
 		"WorldWideImportersDW_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'WorldWideImportersDW'"
@@ -370,9 +366,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"SqlServer1_connectionString": {
-						"value": "[parameters('SqlServer1_connectionString')]"
 					},
 					"lnmyserver_properties_privateLinkResourceId": {
 						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"

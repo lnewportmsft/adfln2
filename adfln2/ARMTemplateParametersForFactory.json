@@ -20,9 +20,6 @@
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
-		"SqlServer1_connectionString": {
-			"value": ""
-		},
 		"WorldWideImportersDW_connectionString": {
 			"value": ""
 		},
