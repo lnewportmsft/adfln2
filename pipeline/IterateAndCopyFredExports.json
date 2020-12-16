@@ -57,7 +57,7 @@
 									"referenceName": "FREDSource",
 									"type": "DatasetReference",
 									"parameters": {
-										"paramone": {
+										"relativeurl": {
 											"value": "@pipeline().parameters.BaseUrl",
 											"type": "Expression"
 										}
