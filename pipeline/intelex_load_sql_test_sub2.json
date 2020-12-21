@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Get Data Map",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -97,6 +97,26 @@
 					},
 					"firstRowOnly": true
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Data Map",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "DataMap",
+					"value": {
+						"value": "@{json(activity('Get Data Map').output.firstRow.LoadDataMap)}",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -107,6 +127,11 @@
 			"FileName": {
 				"type": "string",
 				"defaultValue": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+			}
+		},
+		"variables": {
+			"DataMap": {
+				"type": "String"
 			}
 		},
 		"folder": {
