@@ -83,7 +83,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'DimProduct'",
+						"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'Audits_AssessmentObject'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
