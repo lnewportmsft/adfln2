@@ -46,11 +46,8 @@
 						"referenceName": "intelex_datalake_prod_json",
 						"type": "DatasetReference",
 						"parameters": {
-							"FolderName": "data",
-							"FIleName": {
-								"value": "@string(pipeline().parameters.FileName)",
-								"type": "Expression"
-							}
+							"FolderName": "intelex",
+							"FIleName": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
 						}
 					}
 				],
