@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Get Data Map",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -83,7 +83,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'Audits_AssessmentObject'",
+						"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'DimProduct'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -96,26 +96,6 @@
 						}
 					},
 					"firstRowOnly": true
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Get Data Map",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "DataMap",
-					"value": {
-						"value": "@{json(activity('Get Data Map').output.firstRow.LoadDataMap)}",
-						"type": "Expression"
-					}
 				}
 			}
 		],
