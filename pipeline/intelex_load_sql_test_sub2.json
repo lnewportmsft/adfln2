@@ -1,0 +1,119 @@
+{
+	"name": "intelex_load_sql_test_sub2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Data Map",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"value": "@json(activity('Get Data Map').output.firstRow.LoadDataMap)",
+						"type": "Expression"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "intelex_datalake_prod_json",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderName": "data",
+							"FIleName": {
+								"value": "@string(pipeline().parameters.FileName)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "sql_corasqlanalyticneus01",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": {
+								"value": "@concat('intelexstage_',string(pipeline().parameters.ObjectName))",
+								"type": "Expression"
+							},
+							"SchemaName": "dbo"
+						}
+					}
+				]
+			},
+			{
+				"name": "Get Data Map",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'Audits_AssessmentObject'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "sql_corasqlanalyticneus01",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "_intelex_object",
+							"SchemaName": "dbo"
+						}
+					},
+					"firstRowOnly": true
+				}
+			}
+		],
+		"parameters": {
+			"ObjectName": {
+				"type": "string",
+				"defaultValue": "Audits_AssessmentObject"
+			},
+			"FileName": {
+				"type": "string",
+				"defaultValue": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+			}
+		},
+		"folder": {
+			"name": "PROD/INTELEX - LOAD SQL - RELOAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-12-14T19:20:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
