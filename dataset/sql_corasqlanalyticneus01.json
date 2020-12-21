@@ -1,0 +1,122 @@
+{
+	"name": "sql_corasqlanalyticneus01",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "link_azure_sql_corasqlanalyticneus01",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TableName": {
+				"type": "string",
+				"defaultValue": "TableName"
+			},
+			"SchemaName": {
+				"type": "string",
+				"defaultValue": "SchemaName"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SrcRootURI",
+				"type": "varchar"
+			},
+			{
+				"name": "SrcObjectName",
+				"type": "varchar"
+			},
+			{
+				"name": "DatalakeFolder",
+				"type": "varchar"
+			},
+			{
+				"name": "DatalakeFileName",
+				"type": "varchar"
+			},
+			{
+				"name": "DestDbName",
+				"type": "varchar"
+			},
+			{
+				"name": "DestSchemaName",
+				"type": "varchar"
+			},
+			{
+				"name": "DestTableName",
+				"type": "varchar"
+			},
+			{
+				"name": "SrcRowCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DestRowCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DatalakeLoadStatus",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StageLoadStatus",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MaxLoadDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DatalakeLoad_Start",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DatalakeLoad_End",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "StageLoad_Start",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "StageLoad_End",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RowIsCurrent",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
