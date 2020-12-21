@@ -20,15 +20,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().FileName",
-					"type": "Expression"
-				},
-				"folderPath": {
-					"value": "@dataset().FolderName",
-					"type": "Expression"
-				},
-				"container": "intelex/prod"
+				"fileName": "Audits_AssessmentObject_2020-10-01_2020-10-31.json",
+				"container": "intelex"
 			}
 		},
 		"schema": {}
