@@ -1,0 +1,11 @@
+{
+	"name": "LNDWPRE",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDW",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=lnewport.database.windows.net;Initial Catalog=lndw"
+		}
+	}
+}
