@@ -23,6 +23,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DataMart'"
 		},
+		"LNDWPRE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'"
+		},
+		"LinkStage_coradlanalyticneus01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkStage_coradlanalyticneus01'"
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -42,6 +50,10 @@
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
+		"link_azure_sql_corasqlanalyticneus01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
 		},
 		"linkedService1_connectionString": {
 			"type": "secureString",
@@ -196,6 +208,12 @@
 					"DataMart_connectionString": {
 						"value": "[parameters('DataMart_connectionString')]"
 					},
+					"LNDWPRE_connectionString": {
+						"value": "[parameters('LNDWPRE_connectionString')]"
+					},
+					"LinkStage_coradlanalyticneus01_connectionString": {
+						"value": "[parameters('LinkStage_coradlanalyticneus01_connectionString')]"
+					},
 					"MyAzureBlobLinkedService_connectionString": {
 						"value": "[parameters('MyAzureBlobLinkedService_connectionString')]"
 					},
@@ -211,14 +229,11 @@
 					"lgnstorage_connectionString": {
 						"value": "[parameters('lgnstorage_connectionString')]"
 					},
+					"link_azure_sql_corasqlanalyticneus01_connectionString": {
+						"value": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
+					},
 					"linkedService1_connectionString": {
 						"value": "[parameters('linkedService1_connectionString')]"
-					},
-					"lndb_connectionString": {
-						"value": "[parameters('lndb_connectionString')]"
-					},
-					"southridge_connectionString": {
-						"value": "[parameters('southridge_connectionString')]"
 					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
@@ -240,9 +255,6 @@
 					},
 					"lnakv_properties_typeProperties_baseUrl": {
 						"value": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
-					},
-					"sourceBlob_LS_sasUri": {
-						"value": "[parameters('sourceBlob_LS_sasUri')]"
 					}
 				}
 			},
@@ -261,6 +273,15 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"lndb_connectionString": {
+						"value": "[parameters('lndb_connectionString')]"
+					},
+					"southridge_connectionString": {
+						"value": "[parameters('southridge_connectionString')]"
+					},
+					"sourceBlob_LS_sasUri": {
+						"value": "[parameters('sourceBlob_LS_sasUri')]"
 					},
 					"lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 						"value": "[parameters('lgnssisir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
@@ -340,12 +361,6 @@
 					},
 					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"adfdropoff_properties_typeProperties_fileName": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
-					},
-					"adfdropoff_properties_typeProperties_folderPath": {
-						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -367,11 +382,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"lnmyserver_properties_privateLinkResourceId": {
-						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"
+					"adfdropoff_properties_typeProperties_fileName": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
 					},
-					"lnmyserver_properties_groupId": {
-						"value": "[parameters('lnmyserver_properties_groupId')]"
+					"adfdropoff_properties_typeProperties_folderPath": {
+						"value": "[parameters('adfdropoff_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -395,6 +410,12 @@
 					},
 					"lnmyserver_connectionString": {
 						"value": "[parameters('lnmyserver_connectionString')]"
+					},
+					"lnmyserver_properties_privateLinkResourceId": {
+						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"
+					},
+					"lnmyserver_properties_groupId": {
+						"value": "[parameters('lnmyserver_properties_groupId')]"
 					}
 				}
 			},

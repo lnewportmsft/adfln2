@@ -17,6 +17,12 @@
 		"DataMart_connectionString": {
 			"value": ""
 		},
+		"LNDWPRE_connectionString": {
+			"value": ""
+		},
+		"LinkStage_coradlanalyticneus01_connectionString": {
+			"value": ""
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"value": ""
 		},
@@ -30,6 +36,9 @@
 			"value": ""
 		},
 		"lgnstorage_connectionString": {
+			"value": ""
+		},
+		"link_azure_sql_corasqlanalyticneus01_connectionString": {
 			"value": ""
 		},
 		"linkedService1_connectionString": {

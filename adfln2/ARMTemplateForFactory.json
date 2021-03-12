@@ -23,6 +23,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'DataMart'"
 		},
+		"LNDWPRE_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'"
+		},
+		"LinkStage_coradlanalyticneus01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LinkStage_coradlanalyticneus01'"
+		},
 		"MyAzureBlobLinkedService_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MyAzureBlobLinkedService'"
@@ -42,6 +50,10 @@
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
+		},
+		"link_azure_sql_corasqlanalyticneus01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
 		},
 		"linkedService1_connectionString": {
 			"type": "secureString",
@@ -812,14 +824,12 @@
 								}
 							},
 							"sink": {
-								"type": "DelimitedTextSink",
+								"type": "ParquetSink",
 								"storeSettings": {
 									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
+									"type": "ParquetWriteSettings"
 								}
 							},
 							"enableStaging": false,
@@ -834,7 +844,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DestinationDataset_zyh",
+								"referenceName": "Parquet1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -845,7 +855,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SourceDataset_zyh')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_zyh')]"
+				"[concat(variables('factoryId'), '/datasets/Parquet1')]"
 			]
 		},
 		{
@@ -1468,6 +1478,110 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/GetFredCSV')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "DATE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DATE",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "A792RC0Q052SBEA",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "A792RC0Q052SBEA",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "FREDSource",
+								"type": "DatasetReference",
+								"parameters": {
+									"relativeurl": "fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=A792RC0Q052SBEA&scale=left&cosd=1947-01-01&coed=2020-07-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Quarterly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2020-12-16&revision_date=2020-12-16&nd=1947-01-01"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CSVSampleData",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Copy Demos/Federal Reserve"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/FREDSource')]",
+				"[concat(variables('factoryId'), '/datasets/CSVSampleData')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/GetTableListAndTriggerCopyData')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1987,7 +2101,7 @@
 											"referenceName": "FREDSource",
 											"type": "DatasetReference",
 											"parameters": {
-												"paramone": {
+												"relativeurl": {
 													"value": "@pipeline().parameters.BaseUrl",
 													"type": "Expression"
 												}
@@ -2526,6 +2640,302 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/SearchLog')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/intelex_load_sql_test_sub2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Data Map",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"value": "@json(activity('Get Data Map').output.firstRow.LoadDataMap)",
+								"type": "Expression"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "intelex_datalake_prod_json",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderName": "intelex",
+									"FIleName": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sql_corasqlanalyticneus01",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": {
+										"value": "@concat('intelexstage_',string(pipeline().parameters.ObjectName))",
+										"type": "Expression"
+									},
+									"SchemaName": "dbo"
+								}
+							}
+						]
+					},
+					{
+						"name": "Get Data Map",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'Audits_AssessmentObject'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sql_corasqlanalyticneus01",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "_intelex_object",
+									"SchemaName": "dbo"
+								}
+							},
+							"firstRowOnly": true
+						}
+					}
+				],
+				"parameters": {
+					"ObjectName": {
+						"type": "string",
+						"defaultValue": "Audits_AssessmentObject"
+					},
+					"FileName": {
+						"type": "string",
+						"defaultValue": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+					}
+				},
+				"variables": {
+					"DataMap": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "PROD/INTELEX - LOAD SQL - RELOAD"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-12-14T19:20:07Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/intelex_datalake_prod_json')]",
+				"[concat(variables('factoryId'), '/datasets/sql_corasqlanalyticneus01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ANGRYFactResellerSales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LNDWPRE",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "ProductKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OrderDateKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DueDateKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ShipDateKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ResellerKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EmployeeKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PromotionKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CurrencyKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SalesTerritoryKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SalesOrderNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesOrderLineNumber",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "RevisionNumber",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "OrderQuantity",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "UnitPrice",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "ExtendedAmount",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "UnitPriceDiscountPct",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "DiscountAmount",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ProductStandardCost",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TotalProductCost",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "SalesAmount",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "TaxAmt",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "Freight",
+						"type": "money",
+						"precision": 19,
+						"scale": 4
+					},
+					{
+						"name": "CarrierTrackingNumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerPONumber",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OrderDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DueDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ShipDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "ANGRY",
+					"table": "FactResellerSales"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LNDWPRE')]"
 			]
 		},
 		{
@@ -3277,7 +3687,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "US/nyctaxi",
+						"folderPath": "US/nyctaxi2",
 						"fileSystem": "raw"
 					},
 					"columnDelimiter": ",",
@@ -3531,15 +3941,20 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"paramone": {
-						"type": "string"
+					"relativeurl": {
+						"type": "string",
+						"defaultValue": "bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1168&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=A792RC0Q052SBEA&scale=left&cosd=1947-01-01&coed=2020-07-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Quarterly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2020-12-16&revision_date=2020-12-16&nd=1947-01-01"
 					}
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "HttpServerLocation"
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@dataset().relativeurl",
+							"type": "Expression"
+						}
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -3711,6 +4126,31 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/STLFEDMOIL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Parquet1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "lgndatalake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "US/nyctaxi2",
+						"fileSystem": "raw"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/lgndatalake')]"
 			]
 		},
 		{
@@ -4411,6 +4851,40 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/MyAzureBlobLinkedService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/intelex_datalake_prod_json')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkStage_coradlanalyticneus01",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string",
+						"defaultValue": "FolderName"
+					},
+					"FIleName": {
+						"type": "string",
+						"defaultValue": "FIleName"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Audits_AssessmentObject_2020-10-01_2020-10-31.json",
+						"container": "intelex"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkStage_coradlanalyticneus01')]"
 			]
 		},
 		{
@@ -5889,6 +6363,132 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sql_corasqlanalyticneus01')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "link_azure_sql_corasqlanalyticneus01",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string",
+						"defaultValue": "TableName"
+					},
+					"SchemaName": {
+						"type": "string",
+						"defaultValue": "SchemaName"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SrcRootURI",
+						"type": "varchar"
+					},
+					{
+						"name": "SrcObjectName",
+						"type": "varchar"
+					},
+					{
+						"name": "DatalakeFolder",
+						"type": "varchar"
+					},
+					{
+						"name": "DatalakeFileName",
+						"type": "varchar"
+					},
+					{
+						"name": "DestDbName",
+						"type": "varchar"
+					},
+					{
+						"name": "DestSchemaName",
+						"type": "varchar"
+					},
+					{
+						"name": "DestTableName",
+						"type": "varchar"
+					},
+					{
+						"name": "SrcRowCount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DestRowCount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DatalakeLoadStatus",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StageLoadStatus",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "MaxLoadDateTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DatalakeLoad_Start",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DatalakeLoad_End",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "StageLoad_Start",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "StageLoad_End",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RowIsCurrent",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/link_azure_sql_corasqlanalyticneus01')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/taxi_trip_data_input1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -6028,6 +6628,32 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LNDWPRE')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('LNDWPRE_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkStage_coradlanalyticneus01')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LinkStage_coradlanalyticneus01_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/MyAzureBlobLinkedService')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -6143,6 +6769,19 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('lgnstorage_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/link_azure_sql_corasqlanalyticneus01')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
 				}
 			},
 			"dependsOn": []
