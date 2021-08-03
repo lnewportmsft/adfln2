@@ -6,12 +6,294 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
+		},
+		"lnmyserver_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lnmyserver'"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/intelex_load_sql_test_sub2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Data Map",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"value": "@json(activity('Get Data Map').output.firstRow.LoadDataMap)",
+								"type": "Expression"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "intelex_datalake_prod_json",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderName": "intelex",
+									"FIleName": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sql_corasqlanalyticneus01",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": {
+										"value": "@concat('intelexstage_',string(pipeline().parameters.ObjectName))",
+										"type": "Expression"
+									},
+									"SchemaName": "dbo"
+								}
+							}
+						]
+					},
+					{
+						"name": "Get Data Map",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT LoadDataMap\nFROM dbo._intelex_object\nWHERE ObjectName = 'Audits_AssessmentObject'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sql_corasqlanalyticneus01",
+								"type": "DatasetReference",
+								"parameters": {
+									"TableName": "_intelex_object",
+									"SchemaName": "dbo"
+								}
+							},
+							"firstRowOnly": true
+						}
+					}
+				],
+				"parameters": {
+					"ObjectName": {
+						"type": "string",
+						"defaultValue": "Audits_AssessmentObject"
+					},
+					"FileName": {
+						"type": "string",
+						"defaultValue": "Audits_AssessmentObject_2020-10-01_2020-10-31.json"
+					}
+				},
+				"variables": {
+					"DataMap": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "PROD/INTELEX - LOAD SQL - RELOAD"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-12-14T19:20:07Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lnmyserver')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('lnmyserver_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AzureManagedVnet",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CurrencyConverter')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Sample demo data flow to convert currencies",
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CurrencyDatasetUSD1",
+								"type": "DatasetReference"
+							},
+							"name": "USDCurrency"
+						},
+						{
+							"dataset": {
+								"referenceName": "CurrencyDatasetCAD1",
+								"type": "DatasetReference"
+							},
+							"name": "CADSource"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "USDOutput1",
+								"type": "DatasetReference"
+							},
+							"name": "USDSink"
+						},
+						{
+							"dataset": {
+								"referenceName": "CADOutput1",
+								"type": "DatasetReference"
+							},
+							"name": "CADSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Union",
+							"description": "The Union combines 2 streams together"
+						},
+						{
+							"name": "NewCurrencyColumn",
+							"description": "Create a new calculated column from currency rate"
+						},
+						{
+							"name": "ConditionalSplit1",
+							"description": "Split the data on state to create 2 streams"
+						}
+					],
+					"script": "source(output(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string,\n\t\tColumn_4 as string\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> USDCurrency\nsource(output(\n\t\tPreviousConversionRate as double,\n\t\tCountry as string,\n\t\tDateTime1 as string,\n\t\tCurrentConversionRate as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CADSource\nUSDCurrency, CADSource union(byName: true)~> Union\nUnion derive(NewCurrencyRate = round(CurrentConversionRate*1.25)) ~> NewCurrencyColumn\nNewCurrencyColumn split(Country == 'USD',\n\tCountry == 'CAD',\n\tdisjoint: false) ~> ConditionalSplit1@(USD, CAD)\nConditionalSplit1@USD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> USDSink\nConditionalSplit1@CAD sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> CADSink"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DB2DateFixer')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Source",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2Source"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Sink",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2DateFixed"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Db2ToSQLDateFormat"
+						},
+						{
+							"name": "Db2ToSQLTimestamp"
+						},
+						{
+							"name": "DB224TimeStamp"
+						},
+						{
+							"name": "DB224Time"
+						}
+					],
+					"script": "parameters{\n\tOutputFileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false) ~> AzureBlobDB2Source\nDB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat\nDB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp\nAzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp\nDb2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time\nDb2ToSQLDateFormat sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[($OutputFileName)],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tquoteAll: true,\n\tpartitionBy('hash', 1)) ~> AzureBlobDB2DateFixed"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DateFixer')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Source",
+								"type": "DatasetReference"
+							},
+							"name": "AzureBlobDB2Export"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureBlobDB2Sink",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "DerivedColumn1"
+						}
+					],
+					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as integer,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as date,\n\t\t{_col5_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tignoreNoFilesFound: false) ~> AzureBlobDB2Export\nAzureBlobDB2Export derive({_col5_} = regexReplace({_col5_}, '(\\\\d+).(\\\\d+).(\\\\d+)', '$1:$2:$3')) ~> DerivedColumn1\nDerivedColumn1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['APPOINTMENT_ZONE.DAT'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/FixedWidth')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
@@ -160,7 +442,7 @@
 							"name": "DurationFilter"
 						}
 					],
-					"script": "source(output(\n\t\t{_col0_} as integer,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as integer,\n\t\t{_col5_} as string,\n\t\t{_col6_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> searchLog\nDateFilter aggregate(groupBy(region),\n\ttotalduration = sum(duration)) ~> totalDurationByRegion\nsearchLog select(mapColumn(\n\t\tuserid = {_col0_},\n\t\tstart = {_col1_},\n\t\tregion = {_col2_},\n\t\tquery = {_col3_},\n\t\tduration = {_col4_},\n\t\turls = {_col5_},\n\t\tclickedurls = {_col6_}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> RenameColumns\nConvertDate filter(newdate > toDate('2012-02-06','yyyy-MM-dd')) ~> DateFilter\nRenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate\ntotalDurationByRegion filter(totalduration > 200) ~> DurationFilter\nDurationFilter sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: false) ~> sinkIntoDW"
+					"script": "source(output(\n\t\t{_col0_} as integer,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as integer,\n\t\t{_col5_} as string,\n\t\t{_col6_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> searchLog\nDateFilter aggregate(groupBy(region),\n\ttotalduration = sum(duration)) ~> totalDurationByRegion\nsearchLog select(mapColumn(\n\t\tuserid = {_col0_},\n\t\tstart = {_col1_},\n\t\tregion = {_col2_},\n\t\tquery = {_col3_},\n\t\tduration = {_col4_},\n\t\turls = {_col5_},\n\t\tclickedurls = {_col6_}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> RenameColumns\nConvertDate filter(newdate > toDate('2012-02-06','yyyy-MM-dd')) ~> DateFilter\nRenameColumns derive(newdate = toDate(left(start,instr(start,' ')-1),'MM/dd/yyyy')) ~> ConvertDate\ntotalDurationByRegion filter(totalduration > 200) ~> DurationFilter\nDurationFilter sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: false,\n\terrorHandlingOption: 'stopOnFirstError') ~> sinkIntoDW"
 				}
 			},
 			"dependsOn": []
@@ -364,7 +646,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/CurrencyConverter')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DateFixerPipeline')]",
@@ -415,7 +699,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DB2DateFixer')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Dedupe Pipeline')]",
@@ -913,118 +1199,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/SearchLog')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Daily')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "IncrementalCopyPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-05-30T01:00:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GetDB2FileListAndClean')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GetDB2ExportFileList",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "AzureBlobDB2Source",
-								"type": "DatasetReference",
-								"parameters": {
-									"filename": "*.DAT",
-									"container": "test"
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "GetDB2ExportFileList",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('GetDB2ExportFileList').output",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "ExecuteDateFixerPipeline",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "DateFixerPipeline",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"folder": {
-					"name": "FXF"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/DateFixerPipeline')]"
 			]
 		}
 	]

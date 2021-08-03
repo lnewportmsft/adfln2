@@ -38,6 +38,9 @@
 		"lgnstorage_connectionString": {
 			"value": ""
 		},
+		"lgnstorageloans_connectionString": {
+			"value": ""
+		},
 		"link_azure_sql_corasqlanalyticneus01_connectionString": {
 			"value": ""
 		},

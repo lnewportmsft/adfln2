@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
 		},
+		"lgnstorageloans_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lgnstorageloans'"
+		},
 		"link_azure_sql_corasqlanalyticneus01_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
@@ -229,6 +233,9 @@
 					"lgnstorage_connectionString": {
 						"value": "[parameters('lgnstorage_connectionString')]"
 					},
+					"lgnstorageloans_connectionString": {
+						"value": "[parameters('lgnstorageloans_connectionString')]"
+					},
 					"link_azure_sql_corasqlanalyticneus01_connectionString": {
 						"value": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
 					},
@@ -252,9 +259,6 @@
 					},
 					"lgndatalake_properties_typeProperties_url": {
 						"value": "[parameters('lgndatalake_properties_typeProperties_url')]"
-					},
-					"lnakv_properties_typeProperties_baseUrl": {
-						"value": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
 					}
 				}
 			},
@@ -279,6 +283,9 @@
 					},
 					"southridge_connectionString": {
 						"value": "[parameters('southridge_connectionString')]"
+					},
+					"lnakv_properties_typeProperties_baseUrl": {
+						"value": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
 					},
 					"sourceBlob_LS_sasUri": {
 						"value": "[parameters('sourceBlob_LS_sasUri')]"
@@ -408,9 +415,6 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"lnmyserver_connectionString": {
-						"value": "[parameters('lnmyserver_connectionString')]"
-					},
 					"lnmyserver_properties_privateLinkResourceId": {
 						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"
 					},
@@ -436,11 +440,34 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"lnmyserver_connectionString": {
+						"value": "[parameters('lnmyserver_connectionString')]"
 					}
 				}
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_5')]"
+			]
+		},
+		{
+			"name": "adfln2_ArmTemplate_7",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_7.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_6')]"
 			]
 		}
 	]

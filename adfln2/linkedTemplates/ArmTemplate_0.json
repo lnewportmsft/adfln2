@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
 		},
+		"lgnstorageloans_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lgnstorageloans'"
+		},
 		"link_azure_sql_corasqlanalyticneus01_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
@@ -82,10 +86,6 @@
 		"lgndatalake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
-		},
-		"lnakv_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://lnakv.vault.azure.net/"
 		}
 	},
 	"variables": {
@@ -403,6 +403,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/lgnstorageloans')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('lgnstorageloans_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/link_azure_sql_corasqlanalyticneus01')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -424,19 +437,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('linkedService1_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/lnakv')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []

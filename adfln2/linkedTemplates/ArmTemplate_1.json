@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'southridge'"
 		},
+		"lnakv_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://lnakv.vault.azure.net/"
+		},
 		"sourceBlob_LS_sasUri": {
 			"type": "secureString",
 			"metadata": "Secure string for 'sasUri' of 'sourceBlob_LS'"
@@ -42,6 +46,19 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/lnakv')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('lnakv_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/lndb')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -145,9 +162,7 @@
 			"name": "[concat(parameters('factoryName'), '/default')]",
 			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
 			"apiVersion": "2018-06-01",
-			"properties": {
-				"preventDataExfiltration": false
-			},
+			"properties": {},
 			"dependsOn": []
 		},
 		{
@@ -726,39 +741,6 @@
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
-				"typeProperties": {
-					"tableName": "dummyName"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset_New2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "DATE",
-						"type": "date"
-					},
-					{
-						"name": "STLPCPI_20171116",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "STLPCPI_20181115",
-						"type": "int",
-						"precision": 10
-					}
-				],
 				"typeProperties": {
 					"tableName": "dummyName"
 				}
