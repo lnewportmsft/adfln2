@@ -1,0 +1,162 @@
+{
+	"name": "SourceDataset_y74",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgnstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Accounts",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "CSU South Consumption Plays.xlsx",
+				"container": "data"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "TPID",
+				"type": "String"
+			},
+			{
+				"name": "AccountName",
+				"type": "String"
+			},
+			{
+				"name": "Industry",
+				"type": "String"
+			},
+			{
+				"name": "Vertical",
+				"type": "String"
+			},
+			{
+				"name": "VerticalCategory",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "State",
+				"type": "String"
+			},
+			{
+				"name": "SegmentGroup",
+				"type": "String"
+			},
+			{
+				"name": "SubSegment",
+				"type": "String"
+			},
+			{
+				"name": "Segment",
+				"type": "String"
+			},
+			{
+				"name": "SalesGroup",
+				"type": "String"
+			},
+			{
+				"name": "SalesUnit",
+				"type": "String"
+			},
+			{
+				"name": "ATUGroup",
+				"type": "String"
+			},
+			{
+				"name": "ATU",
+				"type": "String"
+			},
+			{
+				"name": "ATU FY21",
+				"type": "String"
+			},
+			{
+				"name": "Sales Territory",
+				"type": "String"
+			},
+			{
+				"name": "Sales Territory FY21",
+				"type": "String"
+			},
+			{
+				"name": "ATUM",
+				"type": "String"
+			},
+			{
+				"name": "ATUM FY21",
+				"type": "String"
+			},
+			{
+				"name": "AE",
+				"type": "String"
+			},
+			{
+				"name": "AE FY21",
+				"type": "String"
+			},
+			{
+				"name": "AE Change FY22",
+				"type": "String"
+			},
+			{
+				"name": "Infra SSP",
+				"type": "String"
+			},
+			{
+				"name": "Infra SSP FY21",
+				"type": "String"
+			},
+			{
+				"name": "Infra Change FY22",
+				"type": "String"
+			},
+			{
+				"name": "D&AI SSP",
+				"type": "String"
+			},
+			{
+				"name": "D&AI SSP FY21",
+				"type": "String"
+			},
+			{
+				"name": "DAI Change FY22",
+				"type": "String"
+			},
+			{
+				"name": "App Dev",
+				"type": "String"
+			},
+			{
+				"name": "App Dev FY21",
+				"type": "String"
+			},
+			{
+				"name": "App Dev Change FY22",
+				"type": "String"
+			},
+			{
+				"name": "SAP SSP",
+				"type": "String"
+			},
+			{
+				"name": "Hunter",
+				"type": "String"
+			},
+			{
+				"name": "Hunter FY21",
+				"type": "String"
+			},
+			{
+				"name": "App Dev Change FY222",
+				"type": "String"
+			}
+		]
+	}
+}
