@@ -1,0 +1,74 @@
+{
+	"name": "SourceDataset_vxm",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgnstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Plays",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "CSU South Consumption Plays.xlsx",
+				"container": "data"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "CP Name",
+				"type": "String"
+			},
+			{
+				"name": "TPID",
+				"type": "String"
+			},
+			{
+				"name": "Top Parent",
+				"type": "String"
+			},
+			{
+				"name": "STB Mid Segment",
+				"type": "String"
+			},
+			{
+				"name": "Area",
+				"type": "String"
+			},
+			{
+				"name": "Industry",
+				"type": "String"
+			},
+			{
+				"name": "EOU",
+				"type": "String"
+			},
+			{
+				"name": "M2",
+				"type": "String"
+			},
+			{
+				"name": "Potential ACR$",
+				"type": "String"
+			},
+			{
+				"name": "M1 Assigned",
+				"type": "String"
+			},
+			{
+				"name": "CSA Assigned",
+				"type": "String"
+			},
+			{
+				"name": "Status (Accept/Reject)",
+				"type": "String"
+			},
+			{
+				"name": "Comment/Reason if Rejected",
+				"type": "String"
+			}
+		]
+	}
+}

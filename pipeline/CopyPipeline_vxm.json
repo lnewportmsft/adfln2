@@ -1,0 +1,208 @@
+{
+	"name": "CopyPipeline_vxm",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_vxm",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "data//CSU South Consumption Plays.xlsx"
+					},
+					{
+						"name": "Destination",
+						"value": "dbo.csuplays"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"validateDataConsistency": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CP Name",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CP Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TPID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TPID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Top Parent",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Top Parent",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STB Mid Segment",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "STB Mid Segment",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Area",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Area",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Industry",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Industry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EOU",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EOU",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "M2",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "M2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Potential ACR$",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Potential ACR"
+								}
+							},
+							{
+								"source": {
+									"name": "M1 Assigned",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "M1 Assigned",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CSA Assigned",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CSA Assigned",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Status (Accept/Reject)",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Status"
+								}
+							},
+							{
+								"source": {
+									"name": "Comment/Reason if Rejected",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Comment"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_vxm",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_vxm",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
