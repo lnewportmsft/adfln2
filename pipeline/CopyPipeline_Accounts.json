@@ -1,0 +1,453 @@
+{
+	"name": "CopyPipeline_Accounts",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_y74",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "data//CSU South Consumption Plays.xlsx"
+					},
+					{
+						"name": "Destination",
+						"value": "dbo.csuaccounts"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false,
+					"validateDataConsistency": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "TPID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TPID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AccountName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AccountName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Industry",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Industry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Vertical",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Vertical",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VerticalCategory",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "VerticalCategory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "City",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "State",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SegmentGroup",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SegmentGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SubSegment",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SubSegment",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Segment",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Segment",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesGroup",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SalesGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesUnit",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SalesUnit",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ATUGroup",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ATUGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ATU",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ATU",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ATU FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ATU FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Sales Territory",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Sales Territory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Sales Territory FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Sales Territory FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ATUM",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ATUM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ATUM FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ATUM FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AE",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AE FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AE FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AE Change FY22",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AE Change FY22",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Infra SSP",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Infra SSP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Infra SSP FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Infra SSP FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Infra Change FY22",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Infra Change FY22",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "D&AI SSP",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "D&AI SSP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "D&AI SSP FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "D&AI SSP FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DAI Change FY22",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DAI Change FY22",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "App Dev",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "App Dev",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "App Dev FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "App Dev FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "App Dev Change FY22",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "App Dev Change FY22",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SAP SSP",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SAP SSP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Hunter",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Hunter",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Hunter FY21",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Hunter FY21",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "App Dev Change FY222",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "App Dev Change FY222",
+									"type": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_y74",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_y74",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

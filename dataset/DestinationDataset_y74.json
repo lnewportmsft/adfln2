@@ -1,0 +1,16 @@
+{
+	"name": "DestinationDataset_y74",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AdventureWorks",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "csuaccounts"
+		}
+	}
+}
