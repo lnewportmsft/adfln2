@@ -8,9 +8,10 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
+			"sheetName": "Accounts",
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "CSU South Consumption Plays Local List.xlsx",
+				"fileName": "CSU South Consumption Plays.xlsx",
 				"container": "data"
 			},
 			"firstRowAsHeader": true
