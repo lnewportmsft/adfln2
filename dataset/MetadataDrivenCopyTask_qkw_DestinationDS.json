@@ -1,0 +1,50 @@
+{
+	"name": "MetadataDrivenCopyTask_qkw_DestinationDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgnstorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"cw_compressionCodec": {
+				"type": "String"
+			},
+			"cw_fileName": {
+				"type": "Object"
+			},
+			"cw_folderPath": {
+				"type": "String"
+			},
+			"cw_container": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "MetadataDrivenCopyTask_qkw_20211027"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().cw_fileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().cw_folderPath",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().cw_container",
+					"type": "Expression"
+				}
+			},
+			"compressionCodec": {
+				"value": "@dataset().cw_compressionCodec",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
