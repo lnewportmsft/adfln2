@@ -8,6 +8,9 @@
 		"AdventureWorks_connectionString": {
 			"value": ""
 		},
+		"AzureSQLCSUSouth_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDWLinkedService_connectionString": {
 			"value": ""
 		},
