@@ -17,7 +17,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT DATASET, QUERY FROM dbo.FED \nwhere [TYPE] = 'RequestBody'"
+						"sqlReaderQuery": "SELECT DATASET, QUERY FROM dbo.FED \nwhere [TYPE] = 'RequestBody'",
+						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "AzureSqlDatabaseDataset",
@@ -78,7 +79,8 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "select DATASET, QUERY from dbo.fed where TYPE = 'BaseUrl'"
+						"sqlReaderQuery": "select DATASET, QUERY from dbo.fed where TYPE = 'BaseUrl'",
+						"partitionOption": "None"
 					},
 					"dataset": {
 						"referenceName": "AzureSqlDatabaseDataset",
@@ -88,7 +90,7 @@
 			}
 		],
 		"folder": {
-			"name": "Copy Demos/Federal Reserve"
+			"name": "Copy Demos/Federal Reserve Open Datasets"
 		},
 		"annotations": []
 	}
