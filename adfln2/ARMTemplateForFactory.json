@@ -1485,7 +1485,7 @@
 					}
 				},
 				"folder": {
-					"name": "EHI"
+					"name": "Car"
 				},
 				"annotations": []
 			},
@@ -1676,7 +1676,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "FXF"
+					"name": "Shipping"
 				},
 				"annotations": []
 			},
@@ -2217,7 +2217,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "FXF"
+					"name": "Shipping"
 				},
 				"annotations": []
 			},
@@ -9466,6 +9466,47 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DB2DateFixerFlowlet')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Flowlet",
+				"typeProperties": {
+					"sources": [],
+					"sinks": [],
+					"transformations": [
+						{
+							"name": "Db2ToSQLDateFormat"
+						},
+						{
+							"name": "Db2ToSQLTimestamp"
+						},
+						{
+							"name": "DB224TimeStamp"
+						},
+						{
+							"name": "DB224Time"
+						},
+						{
+							"name": "AzureBlobDB2Source"
+						},
+						{
+							"name": "AzureBlobDB2DateFixed"
+						}
+					],
+					"scriptLines": [
+						"input(order: 0) ~> AzureBlobDB2Source",
+						"DB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat",
+						"DB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp",
+						"AzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp",
+						"Db2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time",
+						"Db2ToSQLDateFormat output() ~> AzureBlobDB2DateFixed"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DateFixer')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -9610,7 +9651,28 @@
 							"name": "ConverToInts"
 						}
 					],
-					"script": "source(output(\n\t\tDATE as string,\n\t\tSTLPCPI_20171116 as string,\n\t\tSTLPCPI_20181115 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> STLPCPI\nSTLPCPI derive(DATE = toDate(DATE),\n\t\tSTLPCPI_20171116 = toInteger(STLPCPI_20171116),\n\t\tSTLPCPI_20181115 = toInteger(STLPCPI_20181115)) ~> ConverToInts\nConverToInts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\terrorHandlingOption: 'stopOnFirstError') ~> sink1"
+					"scriptLines": [
+						"source(output(",
+						"          DATE as string,",
+						"          STLPCPI_20171116 as string,",
+						"          STLPCPI_20181115 as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'parquet') ~> STLPCPI",
+						"STLPCPI derive(DATE = toDate(DATE),",
+						"          STLPCPI_20171116 = toInteger(STLPCPI_20171116),",
+						"          STLPCPI_20181115 = toInteger(STLPCPI_20181115)) ~> ConverToInts",
+						"ConverToInts sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
 				}
 			},
 			"dependsOn": [

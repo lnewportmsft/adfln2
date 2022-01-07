@@ -176,6 +176,47 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DB2DateFixerFlowlet')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Flowlet",
+				"typeProperties": {
+					"sources": [],
+					"sinks": [],
+					"transformations": [
+						{
+							"name": "Db2ToSQLDateFormat"
+						},
+						{
+							"name": "Db2ToSQLTimestamp"
+						},
+						{
+							"name": "DB224TimeStamp"
+						},
+						{
+							"name": "DB224Time"
+						},
+						{
+							"name": "AzureBlobDB2Source"
+						},
+						{
+							"name": "AzureBlobDB2DateFixed"
+						}
+					],
+					"scriptLines": [
+						"input(order: 0) ~> AzureBlobDB2Source",
+						"DB224Time derive(each(match(type=='string'), $$ = regexReplace($$, `(\\d+)\\.(\\d+)\\.(\\d+)`, '$1:$2:$3'))) ~> Db2ToSQLDateFormat",
+						"DB224TimeStamp derive(each(match(type=='string'), $$ = regexReplace($$, `(\\-)(\\d+)\\.(\\d+)\\.(\\d+)`, ' $2:$3:$4'))) ~> Db2ToSQLTimestamp",
+						"AzureBlobDB2Source derive(each(match(type=='string'), $$ = regexReplace($$, `(\\\\d+\\\\-\\\\d+\\\\-\\\\d+)\\\\-24\\\\.00\\\\.00\\\\.000000`, '$1 23:59:59:999999'))) ~> DB224TimeStamp",
+						"Db2ToSQLTimestamp derive(each(match(type=='string'), $$ = regexReplace($$, `(24\\\\.00\\\\.00`, '23:59:59.999999'))) ~> DB224Time",
+						"Db2ToSQLDateFormat output() ~> AzureBlobDB2DateFixed"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/default')]",
 			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
 			"apiVersion": "2018-06-01",
@@ -735,23 +776,6 @@
 				"schema": [],
 				"typeProperties": {
 					"tableName": "templatedemodata"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseDataset')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabaseLinkedService",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"typeProperties": {
-					"tableName": "dummyName"
 				}
 			},
 			"dependsOn": []
