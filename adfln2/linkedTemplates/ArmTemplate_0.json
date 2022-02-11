@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
-		"AdventureWorks_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AdventureWorks'"
-		},
 		"AzureSQLCSUSouth_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQLCSUSouth'"
@@ -62,6 +58,10 @@
 		"link_azure_sql_corasqlanalyticneus01_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
+		},
+		"linkedService1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'linkedService1'"
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -174,19 +174,6 @@
 					}
 				},
 				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AdventureWorks')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AdventureWorks_connectionString')]"
-				}
 			},
 			"dependsOn": []
 		},
@@ -441,6 +428,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/linkedService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('linkedService1_connectionString')]"
 				}
 			},
 			"dependsOn": []

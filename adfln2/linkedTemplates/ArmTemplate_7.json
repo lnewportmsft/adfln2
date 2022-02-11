@@ -13,157 +13,2296 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/TaxiDemo')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/CopyAdventureWorksLTSchema')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "taxi_trip_data_input1",
-								"type": "DatasetReference"
+				"activities": [
+					{
+						"name": "ForEach_ttc",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.cw_items",
+								"type": "Expression"
 							},
-							"name": "TripData"
-						},
-						{
-							"dataset": {
-								"referenceName": "taxi_trip_fare_input1",
-								"type": "DatasetReference"
-							},
-							"name": "TripFare"
+							"activities": [
+								{
+									"name": "Copy_ttc",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "SalesLT.@{item().source.table}"
+										},
+										{
+											"name": "Destination",
+											"value": "SalesLT.@{item().destination.table}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"tableOption": "autoCreate"
+										},
+										"enableStaging": false,
+										"validateDataConsistency": false,
+										"translator": {
+											"value": "@item().copyActivity.translator",
+											"type": "Expression"
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SourceDataset_ttc",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().source.table"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DestinationDataset_ttc",
+											"type": "DatasetReference",
+											"parameters": {
+												"cw_table": "@item().destination.table"
+											}
+										}
+									]
+								}
+							]
 						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoVendorStatsSink1",
-								"type": "DatasetReference"
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"cw_items": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"source": {
+									"table": "Address"
+								},
+								"destination": {
+									"table": "Address"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "AddressID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "AddressID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressLine1",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "AddressLine1",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressLine2",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "AddressLine2",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "City",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "City",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "StateProvince",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "StateProvince",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CountryRegion",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "CountryRegion",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "PostalCode",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "PostalCode",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
 							},
-							"name": "VendorStatsSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoDayStatsSink1",
-								"type": "DatasetReference"
+							{
+								"source": {
+									"table": "Customer"
+								},
+								"destination": {
+									"table": "Customer"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "PasswordHash",
+													"type": "String",
+													"physicalType": "varchar"
+												},
+												"sink": {
+													"name": "PasswordHash",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "PasswordSalt",
+													"type": "String",
+													"physicalType": "varchar"
+												},
+												"sink": {
+													"name": "PasswordSalt",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "LastName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "LastName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Suffix",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Suffix",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CompanyName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "CompanyName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesPerson",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "SalesPerson",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "EmailAddress",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "EmailAddress",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Phone",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Phone",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "CustomerID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "NameStyle",
+													"type": "Boolean",
+													"physicalType": "bit"
+												},
+												"sink": {
+													"name": "NameStyle",
+													"type": "Boolean"
+												}
+											},
+											{
+												"source": {
+													"name": "Title",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Title",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "FirstName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "FirstName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "MiddleName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "MiddleName",
+													"type": "String"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
 							},
-							"name": "DayStatsSink"
-						},
-						{
-							"dataset": {
-								"referenceName": "TaxiDemoTotalByPaymentType1",
-								"type": "DatasetReference"
+							{
+								"source": {
+									"table": "CustomerAddress"
+								},
+								"destination": {
+									"table": "CustomerAddress"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "CustomerID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "CustomerID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "AddressID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "AddressType",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "AddressType",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
 							},
-							"name": "TotalPaymentByPaymentType"
-						}
-					],
-					"transformations": [
-						{
-							"name": "JoinMatchedData"
-						},
-						{
-							"name": "AggregateVendorStats"
-						},
-						{
-							"name": "AggregateDayStats"
-						},
-						{
-							"name": "AggregateByPaymentType"
-						}
-					],
-					"script": "source(output(\n\t\tmedallion as string,\n\t\thack_license as string,\n\t\tvendor_id as string,\n\t\trate_code as string,\n\t\tstore_and_fwd_flag as string,\n\t\tpickup_datetime as string,\n\t\tdropoff_datetime as string,\n\t\tpassenger_count as short,\n\t\ttrip_time_in_secs as long,\n\t\ttrip_distance as double,\n\t\tpickup_longitude as double,\n\t\tpickup_latitude as double,\n\t\tdropoff_longitude as double,\n\t\tdropoff_latitude as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> TripData\nsource(output(\n\t\tmedallion as string,\n\t\t{ hack_license} as string,\n\t\t{ vendor_id} as string,\n\t\t{ pickup_datetime} as string,\n\t\t{ payment_type} as string,\n\t\t{ fare_amount} as double,\n\t\t{ surcharge} as double,\n\t\t{ mta_tax} as double,\n\t\t{ tip_amount} as double,\n\t\t{ tolls_amount} as double,\n\t\t{ total_amount} as double\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> TripFare\nTripData, TripFare join(hack_license == { hack_license}\n\t&& TripData@medallion == TripFare@medallion\n\t&& vendor_id == { vendor_id}\n\t&& pickup_datetime == { pickup_datetime},\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinMatchedData\nJoinMatchedData aggregate(groupBy(vendor_id),\n\tpassenger_count = round(sum(passenger_count), 2),\n\t\ttrip_time_in_secs = round(sum(trip_time_in_secs)/60, 2),\n\t\ttrip_distance = round(sum(trip_distance), 2),\n\t\tTotalTripFare = round(sum({ total_amount}), 2)) ~> AggregateVendorStats\nJoinMatchedData aggregate(groupBy(DayOfTheWeek = dayOfWeek(toDate(pickup_datetime,'yyyy-mm-dd hh:mm:ss'))),\n\ttrip_distance = round(avg(trip_distance), 2),\n\t\tpassenger_count = round(avg(passenger_count), 2),\n\t\ttrip_time_in_secs = round(avg(trip_time_in_secs)/60, 2),\n\t\taverage_fare = round(avg({ total_amount}), 2)) ~> AggregateDayStats\nTripFare aggregate(groupBy({ payment_type}),\n\teach(match(type=='double'), concat($$, '_total') = round(sum ($$)))) ~> AggregateByPaymentType\nAggregateVendorStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> VendorStatsSink\nAggregateDayStats sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> DayStatsSink\nAggregateByPaymentType sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> TotalPaymentByPaymentType"
-				}
+							{
+								"source": {
+									"table": "Product"
+								},
+								"destination": {
+									"table": "Product"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "ProductID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Name",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Name",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductNumber",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "ProductNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Color",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Color",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "StandardCost",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "StandardCost",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "ListPrice",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "ListPrice",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "DiscontinuedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "DiscontinuedDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "ThumbNailPhoto",
+													"type": "Byte[]",
+													"physicalType": "varbinary"
+												},
+												"sink": {
+													"name": "ThumbNailPhoto",
+													"type": "Byte[]"
+												}
+											},
+											{
+												"source": {
+													"name": "ThumbnailPhotoFileName",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "ThumbnailPhotoFileName",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "Size",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Size",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "Weight",
+													"type": "Decimal",
+													"physicalType": "decimal"
+												},
+												"sink": {
+													"name": "Weight",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductCategoryID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductCategoryID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductModelID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductModelID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SellStartDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "SellStartDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "SellEndDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "SellEndDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "ProductCategory"
+								},
+								"destination": {
+									"table": "ProductCategory"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "ProductCategoryID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductCategoryID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ParentProductCategoryID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ParentProductCategoryID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Name",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Name",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "ProductDescription"
+								},
+								"destination": {
+									"table": "ProductDescription"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "ProductDescriptionID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductDescriptionID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Description",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Description",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "ProductModel"
+								},
+								"destination": {
+									"table": "ProductModel"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "ProductModelID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductModelID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Name",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Name",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CatalogDescription",
+													"type": "String",
+													"physicalType": "xml"
+												},
+												"sink": {
+													"name": "CatalogDescription",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "ProductModelProductDescription"
+								},
+								"destination": {
+									"table": "ProductModelProductDescription"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "ProductModelID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductModelID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductDescriptionID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductDescriptionID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "Culture",
+													"type": "String",
+													"physicalType": "nchar"
+												},
+												"sink": {
+													"name": "Culture",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "SalesOrderDetail"
+								},
+								"destination": {
+									"table": "SalesOrderDetail"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "LineTotal",
+													"type": "Decimal",
+													"physicalType": "numeric"
+												},
+												"sink": {
+													"name": "LineTotal",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SalesOrderID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderDetailID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SalesOrderDetailID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "OrderQty",
+													"type": "Int16",
+													"physicalType": "smallint"
+												},
+												"sink": {
+													"name": "OrderQty",
+													"type": "Int16"
+												}
+											},
+											{
+												"source": {
+													"name": "ProductID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ProductID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitPrice",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "UnitPrice",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "UnitPriceDiscount",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "UnitPriceDiscount",
+													"type": "Decimal"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							},
+							{
+								"source": {
+									"table": "SalesOrderHeader"
+								},
+								"destination": {
+									"table": "SalesOrderHeader"
+								},
+								"copyActivity": {
+									"translator": {
+										"type": "TabularTranslator",
+										"mappings": [
+											{
+												"source": {
+													"name": "SalesOrderID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "SalesOrderID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "RevisionNumber",
+													"type": "Byte",
+													"physicalType": "tinyint"
+												},
+												"sink": {
+													"name": "RevisionNumber",
+													"type": "Byte"
+												}
+											},
+											{
+												"source": {
+													"name": "OrderDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "OrderDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "DueDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "DueDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "ShipDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ShipDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "Status",
+													"type": "Byte",
+													"physicalType": "tinyint"
+												},
+												"sink": {
+													"name": "Status",
+													"type": "Byte"
+												}
+											},
+											{
+												"source": {
+													"name": "TotalDue",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "TotalDue",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "Comment",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "Comment",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "rowguid",
+													"type": "Guid",
+													"physicalType": "uniqueidentifier"
+												},
+												"sink": {
+													"name": "rowguid",
+													"type": "Guid"
+												}
+											},
+											{
+												"source": {
+													"name": "ModifiedDate",
+													"type": "DateTime",
+													"physicalType": "datetime"
+												},
+												"sink": {
+													"name": "ModifiedDate",
+													"type": "DateTime"
+												}
+											},
+											{
+												"source": {
+													"name": "BillToAddressID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "BillToAddressID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ShipMethod",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "ShipMethod",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CreditCardApprovalCode",
+													"type": "String",
+													"physicalType": "varchar"
+												},
+												"sink": {
+													"name": "CreditCardApprovalCode",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "SubTotal",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "SubTotal",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "TaxAmt",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "TaxAmt",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "Freight",
+													"type": "Decimal",
+													"physicalType": "money"
+												},
+												"sink": {
+													"name": "Freight",
+													"type": "Decimal"
+												}
+											},
+											{
+												"source": {
+													"name": "OnlineOrderFlag",
+													"type": "Boolean",
+													"physicalType": "bit"
+												},
+												"sink": {
+													"name": "OnlineOrderFlag",
+													"type": "Boolean"
+												}
+											},
+											{
+												"source": {
+													"name": "SalesOrderNumber",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "SalesOrderNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "PurchaseOrderNumber",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "PurchaseOrderNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "AccountNumber",
+													"type": "String",
+													"physicalType": "nvarchar"
+												},
+												"sink": {
+													"name": "AccountNumber",
+													"type": "String"
+												}
+											},
+											{
+												"source": {
+													"name": "CustomerID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "CustomerID",
+													"type": "Int32"
+												}
+											},
+											{
+												"source": {
+													"name": "ShipToAddressID",
+													"type": "Int32",
+													"physicalType": "int"
+												},
+												"sink": {
+													"name": "ShipToAddressID",
+													"type": "Int32"
+												}
+											}
+										],
+										"typeConversion": true,
+										"typeConversionSettings": {
+											"allowDataTruncation": true,
+											"treatBooleanAsNumber": false
+										}
+									}
+								}
+							}
+						]
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dedupeProb')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_Accounts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "names1001",
-								"type": "DatasetReference"
+				"activities": [
+					{
+						"name": "Copy_y74",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "data//CSU South Consumption Plays.xlsx"
 							},
-							"name": "sourceName"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "dupefolder1",
-								"type": "DatasetReference"
+							{
+								"name": "Destination",
+								"value": "dbo.csuaccounts"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								}
 							},
-							"name": "sinkDupes"
-						},
-						{
-							"dataset": {
-								"referenceName": "dupefolder1",
-								"type": "DatasetReference"
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate"
 							},
-							"name": "sinkNoDupes"
+							"enableStaging": false,
+							"validateDataConsistency": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "TPID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TPID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AccountName",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AccountName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Industry",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Industry",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Vertical",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Vertical",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "VerticalCategory",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "VerticalCategory",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "City",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "State",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "State",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SegmentGroup",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SegmentGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SubSegment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SubSegment",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Segment",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesGroup",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SalesGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesUnit",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SalesUnit",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ATUGroup",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ATUGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ATU",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ATU",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ATU FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ATU FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sales Territory",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Sales Territory",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Sales Territory FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Sales Territory FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ATUM",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ATUM",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ATUM FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ATUM FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AE",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AE",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AE FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AE FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "AE Change FY22",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "AE Change FY22",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Infra SSP",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Infra SSP",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Infra SSP FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Infra SSP FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Infra Change FY22",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Infra Change FY22",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "D&AI SSP",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "D&AI SSP",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "D&AI SSP FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "D&AI SSP FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DAI Change FY22",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "DAI Change FY22",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "App Dev",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "App Dev",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "App Dev FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "App Dev FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "App Dev Change FY22",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "App Dev Change FY22",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SAP SSP",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SAP SSP",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Hunter",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Hunter",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Hunter FY21",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Hunter FY21",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "App Dev Change FY222",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "App Dev Change FY222",
+											"type": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_y74",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_y74",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_plays')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_vxm",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "data//CSU South Consumption Plays.xlsx"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.csuplays"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate"
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "CP Name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CP Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TPID",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "TPID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Top Parent",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Top Parent",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "STB Mid Segment",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "STB Mid Segment",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Area",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Area",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Industry",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Industry",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "EOU",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "EOU",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "M2",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "M2",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Potential ACR$",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Potential ACR"
+										}
+									},
+									{
+										"source": {
+											"name": "M1 Assigned",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "M1 Assigned",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "CSA Assigned",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "CSA Assigned",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Status (Accept/Reject)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status"
+										}
+									},
+									{
+										"source": {
+											"name": "Comment/Reason if Rejected",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Comment"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_vxm",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_vxm",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_z0a')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_z0a",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "raw//hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.jsontest"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"tableOption": "autoCreate"
+							},
+							"enableStaging": false,
+							"validateDataConsistency": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_z0a",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_z0a",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Archive"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyTablesToParquetFull')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get-Tables",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM dbo.DataFactoryMeta WHERE active = 1",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureSqlGeneric",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
 						}
-					],
-					"transformations": [
-						{
-							"name": "FuzzyMatch"
-						},
-						{
-							"name": "groupSoundex"
-						},
-						{
-							"name": "Orig1"
-						},
-						{
-							"name": "soundexJoin"
-						},
-						{
-							"name": "soundexBranch"
-						},
-						{
-							"name": "groupPhone"
-						},
-						{
-							"name": "phoneBranch"
-						},
-						{
-							"name": "phoneJoin"
-						},
-						{
-							"name": "groupZip"
-						},
-						{
-							"name": "zipBranch"
-						},
-						{
-							"name": "zipJoin"
-						},
-						{
-							"name": "setConstants"
-						},
-						{
-							"name": "matchScore"
-						},
-						{
-							"name": "finalResult"
-						},
-						{
-							"name": "MapNames"
-						},
-						{
-							"name": "CreateFullName"
-						},
-						{
-							"name": "CheckForDupes"
+					},
+					{
+						"name": "Copy-Each-Table",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get-Tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get-Tables').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "RowcountGreaterThanOne",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "RowCount",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@activity('RowCount').output.count",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Error",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "error",
+													"value": {
+														"value": "1234",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Copy-Table",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderQuery": {
+															"value": "SELECT * FROM @{item().TableName}",
+															"type": "Expression"
+														},
+														"queryTimeout": "02:00:00",
+														"partitionOption": "None"
+													},
+													"sink": {
+														"type": "ParquetSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "ParquetWriteSettings"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "AzureSqlGeneric",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "AzureDataLakeParquet",
+														"type": "DatasetReference",
+														"parameters": {
+															"filename": {
+																"value": "@{item().TableName}",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "RowCount",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "SELECT TOP 10 [PersonID]\n      ,[Name]\n      ,[LastModifytime]\n  FROM [dbo].[data_source_table]\n  ORDER BY LastModifytime DESC",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureSqlDatabaseDataset",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"firstRowOnly": false
+									}
+								}
+							]
 						}
-					],
-					"script": "source(output(\n\t\t{Emp ID} as integer,\n\t\t{Name Prefix} as string,\n\t\t{First Name} as string,\n\t\t{Middle Initial} as string,\n\t\t{Last Name} as string,\n\t\tGender as string,\n\t\t{E Mail} as string,\n\t\t{Father's Name} as string,\n\t\t{Mother's Name} as string,\n\t\t{Mother's Maiden Name} as string,\n\t\t{Date of Birth} as date,\n\t\t{Time of Birth} as string,\n\t\t{Age in Yrs.} as double,\n\t\t{Weight in Kgs.} as integer,\n\t\t{Date of Joining} as date,\n\t\t{Quarter of Joining} as string,\n\t\t{Half of Joining} as string,\n\t\t{Year of Joining} as short,\n\t\t{Month of Joining} as short,\n\t\t{Month Name of Joining} as string,\n\t\t{Short Month} as string,\n\t\t{Day of Joining} as short,\n\t\t{DOW of Joining} as string,\n\t\t{Short DOW} as string,\n\t\t{Age in Company (Years)} as double,\n\t\tSalary as integer,\n\t\t{Last % Hike} as string,\n\t\tSSN as string,\n\t\t{Phone No. } as string,\n\t\t{Place Name} as string,\n\t\tCounty as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tZip as integer,\n\t\tRegion as string,\n\t\t{User Name} as string,\n\t\tPassword as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> sourceName\nMapNames derive(SoundexValue = soundex(fullname)) ~> FuzzyMatch\nOrig1 aggregate(groupBy(SoundexValue),\n\tsoundexmatch = sum(1)) ~> groupSoundex\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> Orig1\ngroupSoundex, soundexBranch join(groupSoundex@SoundexValue == soundexBranch@SoundexValue,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> soundexJoin\nFuzzyMatch select(mapColumn(\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> soundexBranch\nsoundexJoin aggregate(groupBy(phone,\n\t\tsoundexBranch@SoundexValue),\n\tphonematch = sum(1),\n\t\tacctnum_agg = last(acctnum)) ~> groupPhone\nsoundexJoin select(mapColumn(\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone,\n\t\tzip,\n\t\tSoundexValue = soundexBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> phoneBranch\ngroupPhone, phoneBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'auto')~> phoneJoin\nphoneJoin aggregate(groupBy(zip,\n\t\tphoneBranch@SoundexValue),\n\tzipcount = sum(1),\n\t\tacctnum_agg = last(acctnum_agg)) ~> groupZip\nphoneJoin select(mapColumn(\n\t\tphonematch,\n\t\tsoundexmatch,\n\t\tacctnum,\n\t\tfullname,\n\t\tphone = phoneBranch@phone,\n\t\tzip,\n\t\tSoundexValue = phoneBranch@SoundexValue\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> zipBranch\ngroupZip, zipBranch join(acctnum_agg == acctnum,\n\tjoinType:'right',\n\tbroadcast: 'auto')~> zipJoin\nzipJoin derive(soundexweight = 50,\n\t\tzipweight = 25,\n\t\tphoneweight = 25,\n\t\tsoundexbool = iif (soundexmatch > 1, 1, 0),\n\t\tzipbool = iif (zipcount > 1, 1, 0),\n\t\tphonebool = iif (phonematch > 1, 1, 0)) ~> setConstants\nsetConstants derive(matchscore = (soundexbool * 50) + (zipbool * 25) + (phonebool * 25)) ~> matchScore\nmatchScore select(mapColumn(\n\t\tphone,\n\t\tacctnum,\n\t\tfullname,\n\t\tzip = zipBranch@zip,\n\t\tmatchscore\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> finalResult\nCreateFullName select(mapColumn(\n\t\tphone = {Phone No. },\n\t\tzip = Zip,\n\t\tfullname,\n\t\tacctnum = {Emp ID}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> MapNames\nsourceName derive(fullname = {First Name} + ' ' + {Last Name}) ~> CreateFullName\nfinalResult split(matchscore > 50,\n\tdisjoint: false) ~> CheckForDupes@(Duplicates, NotDupe)\nCheckForDupes@Duplicates sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['dupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkDupes\nCheckForDupes@NotDupe sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['nodupes.csv'],\n\tpartitionBy('hash', 1)) ~> sinkNoDupes"
-				}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"error": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Car"
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -319,9 +2458,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dedupeProb')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Fixed Width Data Flow Pipeline')]",
@@ -477,7 +2614,7 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Copy Demos/Federal Reserve"
+					"name": "Copy Demos/Federal Reserve Open Datasets"
 				},
 				"annotations": []
 			},
@@ -684,88 +2821,482 @@
 					"cancelAfter": {}
 				},
 				"folder": {
-					"name": "Copy Demos/Federal Reserve"
+					"name": "Copy Demos/Federal Reserve Open Datasets"
 				},
 				"annotations": []
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MetadataDrivenCopyTask_qkw_MiddleLevel')]",
+			"name": "[concat(parameters('factoryName'), '/MetadataDrivenCopyTask_qkw_BottomLevel')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "This pipeline will copy one batch of objects. The objects belonging to this batch will be copied parallelly.",
+				"description": "This pipeline will copy objects from one group. The objects belonging to this group will be copied parallelly.",
 				"activities": [
 					{
-						"name": "DivideOneBatchIntoMultipleGroups",
-						"description": "Divide objects from single batch into multiple sub parallel groups to avoid reaching the output limit of lookup activity.",
+						"name": "ListObjectsFromOneGroup",
+						"description": "List objects from one group and iterate each of them to downstream activities",
 						"type": "ForEach",
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@range(0, add(div(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity),\n                    if(equals(mod(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity), 0), 0, 1)))",
+								"value": "@pipeline().parameters.ObjectsPerGroupToCopy",
 								"type": "Expression"
 							},
-							"isSequential": false,
-							"batchCount": 50,
 							"activities": [
 								{
-									"name": "GetObjectsPerGroupToCopy",
-									"description": "Get objects (tables etc.) from control table required to be copied in this group. The order of objects to be copied following the TaskId in control table (ORDER BY [TaskId] DESC).",
-									"type": "Lookup",
+									"name": "RouteJobsBasedOnLoadingBehavior",
+									"description": "Check the loading behavior for each object if it requires full load or incremental load. If it is Default or FullLoad case, do full load. If it is DeltaLoad case, do incremental load via watermark column to identify changes.",
+									"type": "Switch",
 									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
 									"userProperties": [],
 									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderQuery": {
-												"value": "WITH OrderedControlTable AS (\n                             SELECT *, ROW_NUMBER() OVER (ORDER BY [TaskId], [Id] DESC) AS RowNumber\n                             FROM @{pipeline().parameters.MainControlTableName}\n                             where TopLevelPipelineName = '@{pipeline().parameters.TopLevelPipelineName}'\n                             and TriggerName like '%@{pipeline().parameters.TriggerName}%' and CopyEnabled = 1)\n                             SELECT * FROM OrderedControlTable WHERE RowNumber BETWEEN @{add(mul(int(item()),pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity),\n                             add(mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.CurrentSequentialNumberOfBatch), 1))}\n                             AND @{min(add(mul(int(item()), pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity), add(mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.CurrentSequentialNumberOfBatch),\n                             pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity)),\n                            mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, add(pipeline().parameters.CurrentSequentialNumberOfBatch,1)), pipeline().parameters.SumOfObjectsToCopy)}",
-												"type": "Expression"
+										"on": {
+											"value": "@json(item().DataLoadingBehaviorSettings).dataLoadingBehavior",
+											"type": "Expression"
+										},
+										"cases": [
+											{
+												"value": "FullLoad",
+												"activities": [
+													{
+														"name": "FullLoadOneObject",
+														"description": "Take a full snapshot on this object and copy it to the destination",
+														"type": "Copy",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [
+															{
+																"name": "Source",
+																"value": "@{json(item().SourceObjectSettings).schema}.@{json(item().SourceObjectSettings).table}"
+															},
+															{
+																"name": "Destination",
+																"value": "@{json(item().SinkObjectSettings).container}/@{json(item().SinkObjectSettings).folderPath}/@{json(item().SinkObjectSettings).fileName}"
+															}
+														],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderQuery": {
+																	"value": "@json(item().CopySourceSettings).sqlReaderQuery",
+																	"type": "Expression"
+																},
+																"partitionOption": {
+																	"value": "@json(item().CopySourceSettings).partitionOption",
+																	"type": "Expression"
+																},
+																"partitionSettings": {
+																	"partitionColumnName": {
+																		"value": "@json(item().CopySourceSettings).partitionColumnName",
+																		"type": "Expression"
+																	},
+																	"partitionUpperBound": {
+																		"value": "@json(item().CopySourceSettings).partitionUpperBound",
+																		"type": "Expression"
+																	},
+																	"partitionLowerBound": {
+																		"value": "@json(item().CopySourceSettings).partitionLowerBound",
+																		"type": "Expression"
+																	},
+																	"partitionNames": "@json(item().CopySourceSettings).partitionNames"
+																}
+															},
+															"sink": {
+																"type": "ParquetSink",
+																"storeSettings": {
+																	"type": "AzureBlobStorageWriteSettings"
+																},
+																"formatSettings": {
+																	"type": "ParquetWriteSettings"
+																}
+															},
+															"enableStaging": false,
+															"validateDataConsistency": false,
+															"translator": {
+																"value": "@json(item().CopyActivitySettings).translator",
+																"type": "Expression"
+															}
+														},
+														"inputs": [
+															{
+																"referenceName": "MetadataDrivenCopyTask_qkw_SourceDS",
+																"type": "DatasetReference",
+																"parameters": {
+																	"cw_schema": {
+																		"value": "@json(item().SourceObjectSettings).schema",
+																		"type": "Expression"
+																	},
+																	"cw_table": {
+																		"value": "@json(item().SourceObjectSettings).table",
+																		"type": "Expression"
+																	}
+																}
+															}
+														],
+														"outputs": [
+															{
+																"referenceName": "MetadataDrivenCopyTask_qkw_DestinationDS",
+																"type": "DatasetReference",
+																"parameters": {
+																	"cw_compressionCodec": {
+																		"value": "@json(item().SinkObjectSettings).compressionCodec",
+																		"type": "Expression"
+																	},
+																	"cw_fileName": {
+																		"value": "@json(item().SinkObjectSettings).fileName",
+																		"type": "Expression"
+																	},
+																	"cw_folderPath": {
+																		"value": "@json(item().SinkObjectSettings).folderPath",
+																		"type": "Expression"
+																	},
+																	"cw_container": {
+																		"value": "@json(item().SinkObjectSettings).container",
+																		"type": "Expression"
+																	}
+																}
+															}
+														]
+													}
+												]
 											},
-											"partitionOption": "None"
-										},
-										"dataset": {
-											"referenceName": "MetadataDrivenCopyTask_qkw_ControlDS",
-											"type": "DatasetReference",
-											"parameters": {}
-										},
-										"firstRowOnly": false
-									}
-								},
-								{
-									"name": "CopyObjectsInOneGroup",
-									"description": "Execute another pipeline to copy objects from one group. The objects belonging to this group will be copied parallelly.",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "GetObjectsPerGroupToCopy",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "MetadataDrivenCopyTask_qkw_BottomLevel",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"ObjectsPerGroupToCopy": {
-												"value": "@activity('GetObjectsPerGroupToCopy').output.value",
-												"type": "Expression"
+											{
+												"value": "DeltaLoad",
+												"activities": [
+													{
+														"name": "GetMaxWatermarkValue",
+														"description": "Query the source object to get the max value from watermark column",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderQuery": {
+																	"value": "select max(@{json(item().DataLoadingBehaviorSettings).watermarkColumnName}) as CurrentMaxWaterMarkColumnValue from [@{json(item().SourceObjectSettings).schema}].[@{json(item().SourceObjectSettings).table}]",
+																	"type": "Expression"
+																},
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "MetadataDrivenCopyTask_qkw_SourceDS",
+																"type": "DatasetReference",
+																"parameters": {
+																	"cw_schema": {
+																		"value": "@json(item().SourceObjectSettings).schema",
+																		"type": "Expression"
+																	},
+																	"cw_table": {
+																		"value": "@json(item().SourceObjectSettings).table",
+																		"type": "Expression"
+																	}
+																}
+															}
+														}
+													},
+													{
+														"name": "SetWatermarkValueQuoteChar",
+														"type": "SetVariable",
+														"dependsOn": [
+															{
+																"activity": "GetMaxWatermarkValue",
+																"dependencyConditions": [
+																	"Succeeded"
+																]
+															}
+														],
+														"userProperties": [],
+														"typeProperties": {
+															"variableName": "WatermarkValueQuoteChar",
+															"value": {
+																"value": "@if(contains(json(item().DataLoadingBehaviorSettings).watermarkColumnType, 'Int'), '','''')",
+																"type": "Expression"
+															}
+														}
+													},
+													{
+														"name": "DeltaLoadOneObject",
+														"description": "Copy the changed data only from last time via comparing the value in watermark column to identify changes.",
+														"type": "Copy",
+														"dependsOn": [
+															{
+																"activity": "SetWatermarkValueQuoteChar",
+																"dependencyConditions": [
+																	"Succeeded"
+																]
+															}
+														],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [
+															{
+																"name": "Source",
+																"value": "@{json(item().SourceObjectSettings).schema}.@{json(item().SourceObjectSettings).table}"
+															},
+															{
+																"name": "Destination",
+																"value": "@{json(item().SinkObjectSettings).container}/@{json(item().SinkObjectSettings).folderPath}/@{json(item().SinkObjectSettings).fileName}"
+															}
+														],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderQuery": {
+																	"value": "select * from [@{json(item().SourceObjectSettings).schema}].[@{json(item().SourceObjectSettings).table}]\n                    where @{json(item().DataLoadingBehaviorSettings).watermarkColumnName}\n                    > @{variables('WatermarkValueQuoteChar')}@{json(item().DataLoadingBehaviorSettings).watermarkColumnStartValue}@{variables('WatermarkValueQuoteChar')}\n                    and @{json(item().DataLoadingBehaviorSettings).watermarkColumnName}\n                    <= @{variables('WatermarkValueQuoteChar')}@{activity('GetMaxWatermarkValue').output.firstRow.CurrentMaxWaterMarkColumnValue}@{variables('WatermarkValueQuoteChar')}",
+																	"type": "Expression"
+																},
+																"partitionOption": {
+																	"value": "@json(item().CopySourceSettings).partitionOption",
+																	"type": "Expression"
+																},
+																"partitionSettings": {
+																	"partitionColumnName": {
+																		"value": "@json(item().CopySourceSettings).partitionColumnName",
+																		"type": "Expression"
+																	},
+																	"partitionUpperBound": {
+																		"value": "@json(item().CopySourceSettings).partitionUpperBound",
+																		"type": "Expression"
+																	},
+																	"partitionLowerBound": {
+																		"value": "@json(item().CopySourceSettings).partitionLowerBound",
+																		"type": "Expression"
+																	},
+																	"partitionNames": "@json(item().CopySourceSettings).partitionNames"
+																}
+															},
+															"sink": {
+																"type": "ParquetSink",
+																"storeSettings": {
+																	"type": "AzureBlobStorageWriteSettings"
+																},
+																"formatSettings": {
+																	"type": "ParquetWriteSettings"
+																}
+															},
+															"enableStaging": false,
+															"validateDataConsistency": false,
+															"translator": {
+																"value": "@json(item().CopyActivitySettings).translator",
+																"type": "Expression"
+															}
+														},
+														"inputs": [
+															{
+																"referenceName": "MetadataDrivenCopyTask_qkw_SourceDS",
+																"type": "DatasetReference",
+																"parameters": {
+																	"cw_schema": {
+																		"value": "@json(item().SourceObjectSettings).schema",
+																		"type": "Expression"
+																	},
+																	"cw_table": {
+																		"value": "@json(item().SourceObjectSettings).table",
+																		"type": "Expression"
+																	}
+																}
+															}
+														],
+														"outputs": [
+															{
+																"referenceName": "MetadataDrivenCopyTask_qkw_DestinationDS",
+																"type": "DatasetReference",
+																"parameters": {
+																	"cw_compressionCodec": {
+																		"value": "@json(item().SinkObjectSettings).compressionCodec",
+																		"type": "Expression"
+																	},
+																	"cw_fileName": {
+																		"value": "@{json(item().SinkObjectSettings).fileName}-@{json(item().DataLoadingBehaviorSettings).watermarkColumnStartValue}-@{activity('GetMaxWatermarkValue').output.firstRow.CurrentMaxWaterMarkColumnValue}",
+																		"type": "Expression"
+																	},
+																	"cw_folderPath": {
+																		"value": "@json(item().SinkObjectSettings).folderPath",
+																		"type": "Expression"
+																	},
+																	"cw_container": {
+																		"value": "@json(item().SinkObjectSettings).container",
+																		"type": "Expression"
+																	}
+																}
+															}
+														]
+													},
+													{
+														"name": "UpdateWatermarkColumnValue",
+														"type": "SqlServerStoredProcedure",
+														"dependsOn": [
+															{
+																"activity": "DeltaLoadOneObject",
+																"dependencyConditions": [
+																	"Succeeded"
+																]
+															}
+														],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"storedProcedureName": "[[dbo].[UpdateWatermarkColumnValue_qkw]",
+															"storedProcedureParameters": {
+																"Id": {
+																	"value": {
+																		"value": "@item().Id",
+																		"type": "Expression"
+																	},
+																	"type": "Int32"
+																},
+																"watermarkColumnStartValue": {
+																	"value": {
+																		"value": "@activity('GetMaxWatermarkValue').output.firstRow.CurrentMaxWaterMarkColumnValue",
+																		"type": "Expression"
+																	},
+																	"type": "String"
+																}
+															}
+														},
+														"linkedServiceName": {
+															"referenceName": "AdventureWorks",
+															"type": "LinkedServiceReference"
+														}
+													}
+												]
 											}
-										}
+										],
+										"defaultActivities": [
+											{
+												"name": "DefaultFullLoadOneObject",
+												"description": "Take a full snapshot on this object and copy it to the destination",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [
+													{
+														"name": "Source",
+														"value": "@{json(item().SourceObjectSettings).schema}.@{json(item().SourceObjectSettings).table}"
+													},
+													{
+														"name": "Destination",
+														"value": "@{json(item().SinkObjectSettings).container}/@{json(item().SinkObjectSettings).folderPath}/@{json(item().SinkObjectSettings).fileName}"
+													}
+												],
+												"typeProperties": {
+													"source": {
+														"type": "AzureSqlSource",
+														"sqlReaderQuery": {
+															"value": "@json(item().CopySourceSettings).sqlReaderQuery",
+															"type": "Expression"
+														},
+														"partitionOption": {
+															"value": "@json(item().CopySourceSettings).partitionOption",
+															"type": "Expression"
+														},
+														"partitionSettings": {
+															"partitionColumnName": {
+																"value": "@json(item().CopySourceSettings).partitionColumnName",
+																"type": "Expression"
+															},
+															"partitionUpperBound": {
+																"value": "@json(item().CopySourceSettings).partitionUpperBound",
+																"type": "Expression"
+															},
+															"partitionLowerBound": {
+																"value": "@json(item().CopySourceSettings).partitionLowerBound",
+																"type": "Expression"
+															},
+															"partitionNames": "@json(item().CopySourceSettings).partitionNames"
+														}
+													},
+													"sink": {
+														"type": "ParquetSink",
+														"storeSettings": {
+															"type": "AzureBlobStorageWriteSettings"
+														},
+														"formatSettings": {
+															"type": "ParquetWriteSettings"
+														}
+													},
+													"enableStaging": false,
+													"validateDataConsistency": false,
+													"translator": {
+														"value": "@json(item().CopyActivitySettings).translator",
+														"type": "Expression"
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "MetadataDrivenCopyTask_qkw_SourceDS",
+														"type": "DatasetReference",
+														"parameters": {
+															"cw_schema": {
+																"value": "@json(item().SourceObjectSettings).schema",
+																"type": "Expression"
+															},
+															"cw_table": {
+																"value": "@json(item().SourceObjectSettings).table",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "MetadataDrivenCopyTask_qkw_DestinationDS",
+														"type": "DatasetReference",
+														"parameters": {
+															"cw_compressionCodec": {
+																"value": "@json(item().SinkObjectSettings).compressionCodec",
+																"type": "Expression"
+															},
+															"cw_fileName": {
+																"value": "@json(item().SinkObjectSettings).fileName",
+																"type": "Expression"
+															},
+															"cw_folderPath": {
+																"value": "@json(item().SinkObjectSettings).folderPath",
+																"type": "Expression"
+															},
+															"cw_container": {
+																"value": "@json(item().SinkObjectSettings).container",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
 									}
 								}
 							]
@@ -777,25 +3308,12 @@
 					"cancelAfter": {}
 				},
 				"parameters": {
-					"MaxNumberOfObjectsReturnedFromLookupActivity": {
-						"type": "Int"
-					},
-					"TopLevelPipelineName": {
-						"type": "String"
-					},
-					"TriggerName": {
-						"type": "String"
-					},
-					"CurrentSequentialNumberOfBatch": {
-						"type": "Int"
-					},
-					"SumOfObjectsToCopy": {
-						"type": "Int"
-					},
-					"SumOfObjectsToCopyForCurrentBatch": {
-						"type": "Int"
-					},
-					"MainControlTableName": {
+					"ObjectsPerGroupToCopy": {
+						"type": "Array"
+					}
+				},
+				"variables": {
+					"WatermarkValueQuoteChar": {
 						"type": "String"
 					}
 				},
@@ -1022,6 +3540,124 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/DateFixerPipeline')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MetadataDrivenCopyTask_qkw_MiddleLevel')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This pipeline will copy one batch of objects. The objects belonging to this batch will be copied parallelly.",
+				"activities": [
+					{
+						"name": "DivideOneBatchIntoMultipleGroups",
+						"description": "Divide objects from single batch into multiple sub parallel groups to avoid reaching the output limit of lookup activity.",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(0, add(div(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity),\n                    if(equals(mod(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity), 0), 0, 1)))",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "GetObjectsPerGroupToCopy",
+									"description": "Get objects (tables etc.) from control table required to be copied in this group. The order of objects to be copied following the TaskId in control table (ORDER BY [TaskId] DESC).",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "WITH OrderedControlTable AS (\n                             SELECT *, ROW_NUMBER() OVER (ORDER BY [TaskId], [Id] DESC) AS RowNumber\n                             FROM @{pipeline().parameters.MainControlTableName}\n                             where TopLevelPipelineName = '@{pipeline().parameters.TopLevelPipelineName}'\n                             and TriggerName like '%@{pipeline().parameters.TriggerName}%' and CopyEnabled = 1)\n                             SELECT * FROM OrderedControlTable WHERE RowNumber BETWEEN @{add(mul(int(item()),pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity),\n                             add(mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.CurrentSequentialNumberOfBatch), 1))}\n                             AND @{min(add(mul(int(item()), pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity), add(mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, pipeline().parameters.CurrentSequentialNumberOfBatch),\n                             pipeline().parameters.MaxNumberOfObjectsReturnedFromLookupActivity)),\n                            mul(pipeline().parameters.SumOfObjectsToCopyForCurrentBatch, add(pipeline().parameters.CurrentSequentialNumberOfBatch,1)), pipeline().parameters.SumOfObjectsToCopy)}",
+												"type": "Expression"
+											},
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "MetadataDrivenCopyTask_qkw_ControlDS",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"firstRowOnly": false
+									}
+								},
+								{
+									"name": "CopyObjectsInOneGroup",
+									"description": "Execute another pipeline to copy objects from one group. The objects belonging to this group will be copied parallelly.",
+									"type": "ExecutePipeline",
+									"dependsOn": [
+										{
+											"activity": "GetObjectsPerGroupToCopy",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "MetadataDrivenCopyTask_qkw_BottomLevel",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"ObjectsPerGroupToCopy": {
+												"value": "@activity('GetObjectsPerGroupToCopy').output.value",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"MaxNumberOfObjectsReturnedFromLookupActivity": {
+						"type": "Int"
+					},
+					"TopLevelPipelineName": {
+						"type": "String"
+					},
+					"TriggerName": {
+						"type": "String"
+					},
+					"CurrentSequentialNumberOfBatch": {
+						"type": "Int"
+					},
+					"SumOfObjectsToCopy": {
+						"type": "Int"
+					},
+					"SumOfObjectsToCopyForCurrentBatch": {
+						"type": "Int"
+					},
+					"MainControlTableName": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "MetadataDrivenCopyTask_qkw_20211027"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/MetadataDrivenCopyTask_qkw_BottomLevel')]"
 			]
 		},
 		{

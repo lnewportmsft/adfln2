@@ -7,10 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
-		"AdventureWorks_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AdventureWorks'"
-		},
 		"AzureSQLCSUSouth_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSQLCSUSouth'"
@@ -123,6 +119,14 @@
 			"type": "string",
 			"defaultValue": "adfdropoff"
 		},
+		"AdventureWorks_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "lnewportdatabase"
+		},
+		"AdventureWorksLT_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "lnewportadventureworkslt"
+		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByArea"
@@ -204,9 +208,6 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"AdventureWorks_connectionString": {
-						"value": "[parameters('AdventureWorks_connectionString')]"
-					},
 					"AzureSQLCSUSouth_connectionString": {
 						"value": "[parameters('AzureSQLCSUSouth_connectionString')]"
 					},
@@ -246,6 +247,9 @@
 					"link_azure_sql_corasqlanalyticneus01_connectionString": {
 						"value": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
 					},
+					"linkedService1_connectionString": {
+						"value": "[parameters('linkedService1_connectionString')]"
+					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
 					},
@@ -281,9 +285,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"linkedService1_connectionString": {
-						"value": "[parameters('linkedService1_connectionString')]"
 					},
 					"lndb_connectionString": {
 						"value": "[parameters('lndb_connectionString')]"
@@ -331,6 +332,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -352,12 +359,6 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
-					},
 					"SinkDataset_properties_typeProperties_fileName": {
 						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
 					},
@@ -369,6 +370,12 @@
 					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -389,12 +396,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					},
 					"adfdropoff_properties_typeProperties_fileName": {
 						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
@@ -421,6 +422,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"AdventureWorks_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('AdventureWorks_properties_typeProperties_connectionString_secretName')]"
+					},
+					"AdventureWorksLT_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('AdventureWorksLT_properties_typeProperties_connectionString_secretName')]"
 					},
 					"lnmyserver_properties_privateLinkResourceId": {
 						"value": "[parameters('lnmyserver_properties_privateLinkResourceId')]"
