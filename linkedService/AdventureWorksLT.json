@@ -1,0 +1,17 @@
+{
+	"name": "AdventureWorksLT",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "lnakv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "lnewportadventureworkslt"
+			}
+		}
+	}
+}
