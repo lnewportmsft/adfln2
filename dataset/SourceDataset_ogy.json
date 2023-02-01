@@ -12,7 +12,7 @@
 				"type": "HttpServerLocation"
 			},
 			"compression": {
-				"type": "TarGZip"
+				"type": "tar"
 			}
 		}
 	}
