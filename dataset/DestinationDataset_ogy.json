@@ -13,7 +13,7 @@
 				"container": "sample-documents"
 			},
 			"compression": {
-				"type": "TarGZip"
+				"type": "tar"
 			}
 		}
 	}
