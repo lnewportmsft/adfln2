@@ -29,7 +29,7 @@
 						"formatSettings": {
 							"type": "BinaryReadSettings",
 							"compressionProperties": {
-								"type": "TarGZipReadSettings"
+								"type": "TarReadSettings"
 							}
 						}
 					},
