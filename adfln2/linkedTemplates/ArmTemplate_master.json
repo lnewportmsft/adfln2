@@ -25,7 +25,8 @@
 		},
 		"LNDWPRE_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'"
+			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=lnewport.database.windows.net;Initial Catalog=lndw"
 		},
 		"LinkStage_coradlanalyticneus01_connectionString": {
 			"type": "secureString",
@@ -46,6 +47,10 @@
 		"lgndatalake_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'lgndatalake'"
+		},
+		"lgnmkstr_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lgnmkstr'"
 		},
 		"lgnstorage_connectionString": {
 			"type": "secureString",
@@ -147,6 +152,14 @@
 			"type": "string",
 			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
 		},
+		"USPTOApplication_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://bulkdata.uspto.gov/data/patent/application/multipagepdf/2022/app_pdf_20221027.tar"
+		},
+		"lgndatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1207-215830-awry3"
+		},
 		"lgndatalake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://lgndatalake.dfs.core.windows.net"
@@ -238,17 +251,14 @@
 					"lgndatalake_accountKey": {
 						"value": "[parameters('lgndatalake_accountKey')]"
 					},
+					"lgnmkstr_connectionString": {
+						"value": "[parameters('lgnmkstr_connectionString')]"
+					},
 					"lgnstorage_connectionString": {
 						"value": "[parameters('lgnstorage_connectionString')]"
 					},
 					"lgnstorageloans_connectionString": {
 						"value": "[parameters('lgnstorageloans_connectionString')]"
-					},
-					"link_azure_sql_corasqlanalyticneus01_connectionString": {
-						"value": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
-					},
-					"linkedService1_connectionString": {
-						"value": "[parameters('linkedService1_connectionString')]"
 					},
 					"DroughtMonitorAPI_properties_typeProperties_url": {
 						"value": "[parameters('DroughtMonitorAPI_properties_typeProperties_url')]"
@@ -264,6 +274,12 @@
 					},
 					"USGSSecretStore_properties_typeProperties_baseUrl": {
 						"value": "[parameters('USGSSecretStore_properties_typeProperties_baseUrl')]"
+					},
+					"USPTOApplication_properties_typeProperties_url": {
+						"value": "[parameters('USPTOApplication_properties_typeProperties_url')]"
+					},
+					"lgndatabricks_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('lgndatabricks_properties_typeProperties_existingClusterId')]"
 					},
 					"lgndatalake_properties_typeProperties_url": {
 						"value": "[parameters('lgndatalake_properties_typeProperties_url')]"
@@ -285,6 +301,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"link_azure_sql_corasqlanalyticneus01_connectionString": {
+						"value": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
+					},
+					"linkedService1_connectionString": {
+						"value": "[parameters('linkedService1_connectionString')]"
 					},
 					"lndb_connectionString": {
 						"value": "[parameters('lndb_connectionString')]"
@@ -332,12 +354,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -359,6 +375,12 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
+					},
 					"SinkDataset_properties_typeProperties_fileName": {
 						"value": "[parameters('SinkDataset_properties_typeProperties_fileName')]"
 					},
@@ -370,12 +392,6 @@
 					},
 					"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 						"value": "[parameters('SourceAvailabilityBlobStore1_properties_typeProperties_folderPath')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
-					},
-					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -396,6 +412,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_fileName": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]"
+					},
+					"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
+						"value": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
 					},
 					"adfdropoff_properties_typeProperties_fileName": {
 						"value": "[parameters('adfdropoff_properties_typeProperties_fileName')]"
@@ -482,6 +504,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_6')]"
+			]
+		},
+		{
+			"name": "adfln2_ArmTemplate_8",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_8.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfln2_ArmTemplate_7')]"
 			]
 		}
 	]

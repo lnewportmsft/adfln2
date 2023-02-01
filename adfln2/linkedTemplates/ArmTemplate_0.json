@@ -25,7 +25,8 @@
 		},
 		"LNDWPRE_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'"
+			"metadata": "Secure string for 'connectionString' of 'LNDWPRE'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=lnewport.database.windows.net;Initial Catalog=lndw"
 		},
 		"LinkStage_coradlanalyticneus01_connectionString": {
 			"type": "secureString",
@@ -47,6 +48,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'lgndatalake'"
 		},
+		"lgnmkstr_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'lgnmkstr'"
+		},
 		"lgnstorage_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorage'"
@@ -54,14 +59,6 @@
 		"lgnstorageloans_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'lgnstorageloans'"
-		},
-		"link_azure_sql_corasqlanalyticneus01_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'link_azure_sql_corasqlanalyticneus01'"
-		},
-		"linkedService1_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'linkedService1'"
 		},
 		"DroughtMonitorAPI_properties_typeProperties_url": {
 			"type": "string",
@@ -82,6 +79,14 @@
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"USPTOApplication_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://bulkdata.uspto.gov/data/patent/application/multipagepdf/2022/app_pdf_20221027.tar"
+		},
+		"lgndatabricks_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1207-215830-awry3"
 		},
 		"lgndatalake_properties_typeProperties_url": {
 			"type": "string",
@@ -346,6 +351,21 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/USPTOApplication')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('USPTOApplication_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/WorldWideImportersDW')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -371,7 +391,7 @@
 						"type": "SecureString",
 						"value": "[parameters('lgndatabricks_accessToken')]"
 					},
-					"existingClusterId": "1207-215830-awry3"
+					"existingClusterId": "[parameters('lgndatabricks_properties_typeProperties_existingClusterId')]"
 				}
 			},
 			"dependsOn": []
@@ -389,6 +409,19 @@
 						"type": "SecureString",
 						"value": "[parameters('lgndatalake_accountKey')]"
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lgnmkstr')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('lgnmkstr_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -415,32 +448,6 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('lgnstorageloans_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/link_azure_sql_corasqlanalyticneus01')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('link_azure_sql_corasqlanalyticneus01_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/linkedService1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('linkedService1_connectionString')]"
 				}
 			},
 			"dependsOn": []

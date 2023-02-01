@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adfln2"
 		},
+		"DestinationFilesBlobStore1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"DestinationFilesBlobStore1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "sinkdata/staged_sink"
+		},
 		"SinkDataset_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
@@ -22,20 +30,156 @@
 		"SourceAvailabilityBlobStore1_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "data/source"
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"SourceFilesBlobStore1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "data/source"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DestinationFilesBlobStore1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your destination Azure Blob Store.",
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_fileName')]",
+					"folderPath": "[parameters('DestinationFilesBlobStore1_properties_typeProperties_folderPath')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimEmp1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "surrogatekey",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmpFunction",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Level",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Role",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StartDate",
+						"type": "date"
+					},
+					{
+						"name": "EndDate",
+						"type": "date"
+					},
+					{
+						"name": "iscurrent",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "processtime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[DimEmp]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EmployeeFiles1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "MyAzureBlobLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "mycontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "EmpID",
+						"type": "String"
+					},
+					{
+						"name": "Region",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Function",
+						"type": "String"
+					},
+					{
+						"name": "Level",
+						"type": "String"
+					},
+					{
+						"name": "Role",
+						"type": "String"
+					},
+					{
+						"name": "StartDate",
+						"type": "String"
+					},
+					{
+						"name": "EndDate",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/FREDSink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -555,6 +699,28 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_ogy')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "USPTOApplication",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					},
+					"compression": {
+						"type": "TarGZip"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SourceDataset_vxm')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -628,310 +794,6 @@
 						"type": "String"
 					}
 				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_y74')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgnstorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"sheetName": "Accounts",
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "CSU South Consumption Plays.xlsx",
-						"container": "data"
-					},
-					"firstRowAsHeader": true
-				},
-				"schema": [
-					{
-						"name": "TPID",
-						"type": "String"
-					},
-					{
-						"name": "AccountName",
-						"type": "String"
-					},
-					{
-						"name": "Industry",
-						"type": "String"
-					},
-					{
-						"name": "Vertical",
-						"type": "String"
-					},
-					{
-						"name": "VerticalCategory",
-						"type": "String"
-					},
-					{
-						"name": "City",
-						"type": "String"
-					},
-					{
-						"name": "State",
-						"type": "String"
-					},
-					{
-						"name": "SegmentGroup",
-						"type": "String"
-					},
-					{
-						"name": "SubSegment",
-						"type": "String"
-					},
-					{
-						"name": "Segment",
-						"type": "String"
-					},
-					{
-						"name": "SalesGroup",
-						"type": "String"
-					},
-					{
-						"name": "SalesUnit",
-						"type": "String"
-					},
-					{
-						"name": "ATUGroup",
-						"type": "String"
-					},
-					{
-						"name": "ATU",
-						"type": "String"
-					},
-					{
-						"name": "ATU FY21",
-						"type": "String"
-					},
-					{
-						"name": "Sales Territory",
-						"type": "String"
-					},
-					{
-						"name": "Sales Territory FY21",
-						"type": "String"
-					},
-					{
-						"name": "ATUM",
-						"type": "String"
-					},
-					{
-						"name": "ATUM FY21",
-						"type": "String"
-					},
-					{
-						"name": "AE",
-						"type": "String"
-					},
-					{
-						"name": "AE FY21",
-						"type": "String"
-					},
-					{
-						"name": "AE Change FY22",
-						"type": "String"
-					},
-					{
-						"name": "Infra SSP",
-						"type": "String"
-					},
-					{
-						"name": "Infra SSP FY21",
-						"type": "String"
-					},
-					{
-						"name": "Infra Change FY22",
-						"type": "String"
-					},
-					{
-						"name": "D&AI SSP",
-						"type": "String"
-					},
-					{
-						"name": "D&AI SSP FY21",
-						"type": "String"
-					},
-					{
-						"name": "DAI Change FY22",
-						"type": "String"
-					},
-					{
-						"name": "App Dev",
-						"type": "String"
-					},
-					{
-						"name": "App Dev FY21",
-						"type": "String"
-					},
-					{
-						"name": "App Dev Change FY22",
-						"type": "String"
-					},
-					{
-						"name": "SAP SSP",
-						"type": "String"
-					},
-					{
-						"name": "Hunter",
-						"type": "String"
-					},
-					{
-						"name": "Hunter FY21",
-						"type": "String"
-					},
-					{
-						"name": "App Dev Change FY222",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_z0a')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgndatalake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "hciMastIncdntv6_hciMasterIncideObject_1900-01-01_2018-12-31.json",
-						"fileSystem": "raw"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_zyh')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "lgnstorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "nyctaxi"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "vendor_name",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Pickup_DateTime",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Dropoff_DateTime",
-						"type": "String"
-					},
-					{
-						"name": "Passenger_Count",
-						"type": "String"
-					},
-					{
-						"name": "Trip_Distance",
-						"type": "String"
-					},
-					{
-						"name": "Start_Lon",
-						"type": "String"
-					},
-					{
-						"name": "Start_Lat",
-						"type": "String"
-					},
-					{
-						"name": "Rate_Code",
-						"type": "String"
-					},
-					{
-						"name": "store_and_forward",
-						"type": "String"
-					},
-					{
-						"name": "End_Lon",
-						"type": "String"
-					},
-					{
-						"name": "End_Lat",
-						"type": "String"
-					},
-					{
-						"name": "Payment_Type",
-						"type": "String"
-					},
-					{
-						"name": "Fare_Amt",
-						"type": "String"
-					},
-					{
-						"name": "surcharge",
-						"type": "String"
-					},
-					{
-						"name": "mta_tax",
-						"type": "String"
-					},
-					{
-						"name": "Tip_Amt",
-						"type": "String"
-					},
-					{
-						"name": "Tolls_Amt",
-						"type": "String"
-					},
-					{
-						"name": "Total_Amt",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceFilesBlobStore1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your source files in Azure Blob Store.",
-				"linkedServiceName": {
-					"referenceName": "sourceBlob_LS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"fileName": "[parameters('SourceFilesBlobStore1_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('SourceFilesBlobStore1_properties_typeProperties_folderPath')]"
-				}
 			},
 			"dependsOn": []
 		}

@@ -18,7 +18,7 @@
 			"value": ""
 		},
 		"LNDWPRE_connectionString": {
-			"value": ""
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=lnewport.database.windows.net;Initial Catalog=lndw"
 		},
 		"LinkStage_coradlanalyticneus01_connectionString": {
 			"value": ""
@@ -33,6 +33,9 @@
 			"value": ""
 		},
 		"lgndatalake_accountKey": {
+			"value": ""
+		},
+		"lgnmkstr_connectionString": {
 			"value": ""
 		},
 		"lgnstorage_connectionString": {
@@ -109,6 +112,12 @@
 		},
 		"USGSSecretStore_properties_typeProperties_baseUrl": {
 			"value": "https://USGS-SecretStore.vault.azure.net/"
+		},
+		"USPTOApplication_properties_typeProperties_url": {
+			"value": "https://bulkdata.uspto.gov/data/patent/application/multipagepdf/2022/app_pdf_20221027.tar"
+		},
+		"lgndatabricks_properties_typeProperties_existingClusterId": {
+			"value": "1207-215830-awry3"
 		},
 		"lgndatalake_properties_typeProperties_url": {
 			"value": "https://lgndatalake.dfs.core.windows.net"
