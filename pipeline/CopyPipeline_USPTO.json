@@ -25,6 +25,12 @@
 						"storeSettings": {
 							"type": "HttpReadSettings",
 							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings",
+							"compressionProperties": {
+								"type": "TarGZipReadSettings"
+							}
 						}
 					},
 					"sink": {
