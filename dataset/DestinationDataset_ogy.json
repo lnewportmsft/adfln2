@@ -1,0 +1,20 @@
+{
+	"name": "DestinationDataset_ogy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lgnmkstr",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "sample-documents"
+			},
+			"compression": {
+				"type": "TarGZip"
+			}
+		}
+	}
+}
