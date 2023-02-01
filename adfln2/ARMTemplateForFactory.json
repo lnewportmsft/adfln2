@@ -6692,9 +6692,6 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"container": "sample-documents"
-					},
-					"compression": {
-						"type": "TarGZip"
 					}
 				}
 			},
