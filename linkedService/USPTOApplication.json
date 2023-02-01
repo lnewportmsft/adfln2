@@ -1,0 +1,12 @@
+{
+	"name": "USPTOApplication",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://bulkdata.uspto.gov/data/patent/application/multipagepdf/2022/app_pdf_20221027.tar",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
